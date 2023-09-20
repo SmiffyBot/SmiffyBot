@@ -21,3 +21,6 @@ Jednakże jesteśmy gdzie jesteśmy i jest aktualnie na ponad 1600 serwerach.
 
 ## Współtworzenie
 - Każdy bez wyjątku może został developerem bota. Wymagam jedynie przyzwoitej wiedzy języka Python, jak i umiejętność pisania botów, aby dowiedzieć się więcej, przeczytaj [contribution.md]().
+
+## Linki
+- [Discord](https://discord.gg/TmUpSDyzQn)
