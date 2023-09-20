@@ -1,0 +1,46 @@
+[tool.pyright]
+typeCheckingMode = "basic"
+pythonVersion = "3.9, 3.10, 3.11"
+
+
+[tool.pylint.messages_control]
+max-attributes = 15
+max-args = 10
+max-branches = 30
+max-public-methods = 50
+max-locals = 30
+max-nested-blocks = 10
+max-line-length = 120
+disable = """
+logging-fstring-interpolation,
+missing-module-docstring,
+missing-class-docstring,
+too-few-public-methods,
+protected-access,
+missing-function-docstring,
+no-name-in-module,
+inconsistent-return-statements,
+duplicate-code,
+invalid-name,
+import-error,
+too-many-return-statements,
+too-many-lines,
+too-many-statements,
+too-many-arguments
+"""
+
+[tool.ruff]
+line-length = 120
+
+exclude = [
+    "Lavalink",
+    "Data"
+]
+
+[tool.ruff.mccabe]
+max-complexity = 10
+
+[tool.black]
+line-length = 110
+target-version = ['py39', 'py310', 'py311']
+include = '\.pyi?$'
