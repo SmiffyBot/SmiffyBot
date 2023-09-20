@@ -1,8 +1,9 @@
 
 # 🤖 SmiffyBot
-![](https://img.shields.io/github/commit-activity/w/SmiffyBot/SmiffyBot?style=for-the-badge)
-![](https://img.shields.io/github/languages/top/SmiffyBot/SmiffyBot?style=for-the-badge)
-![](https://img.shields.io/github/license/SmiffyBot/SmiffyBot?style=for-the-badge&color=%233776ab)
+![](https://img.shields.io/github/commit-activity/w/SmiffyBot/SmiffyBot?style=for-the-badge&color=%232289e0)
+![](https://img.shields.io/github/languages/top/SmiffyBot/SmiffyBot?style=for-the-badge&color=%232289e0)
+![](https://img.shields.io/github/license/SmiffyBot/SmiffyBot?style=for-the-badge&color=%232289e0)
+
 
 ## O Projekcie
 - Smiffy jest to Polski bot discord, który pierwotnie miał być przeznaczony na jeden serwer.
