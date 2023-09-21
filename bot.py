@@ -25,7 +25,9 @@ class Smiffy(BotBase):
         bot_utils.load_cogs(bot=self)
         self.loop.create_task(bot_utils.set_activity(bot=self))
 
-    async def very_very_long_method_precommit_format_this_to_normal_size(self, arg_1: str, args_2: str, arg_3: str):
+    async def very_very_long_method_precommit_format_this_to_normal_size(
+        self, arg_1: str, args_2: str, arg_3: str
+    ):
         ...
 
     async def on_ready(self) -> None:
