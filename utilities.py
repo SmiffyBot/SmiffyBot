@@ -1533,7 +1533,7 @@ async def check_giveaway_requirement(
         elif requirement == "role":
             try:
                 role: Optional[Role] = await RoleConverter().convert(
-                    inter_or_message, # pyright: ignore
+                    inter_or_message,  # pyright: ignore
                     str(value),
                 )
                 if not role:
