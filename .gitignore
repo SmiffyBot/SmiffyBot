@@ -1,2 +1,2 @@
-Data/database.db
-Data/images
+*.db
+Data/images/
