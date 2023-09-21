@@ -1,14 +1,16 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional
 
-from nextcord import Embed, Color, utils, TextChannel, AuditLogAction, errors, Member
-from utilities import CustomCog
+from nextcord import AuditLogAction, Color, Embed, Member, TextChannel, errors, utils
+
 from enums import Emojis
+from utilities import CustomCog
 
 if TYPE_CHECKING:
-    from bot import Smiffy
-
     from nextcord.abc import GuildChannel
+
+    from bot import Smiffy
 
 
 class ChannelUpdate(CustomCog):

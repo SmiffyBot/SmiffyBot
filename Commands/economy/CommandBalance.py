@@ -1,8 +1,10 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional
 
-from nextcord import Member, SlashOption, Color
-from utilities import CustomInteraction, CustomCog
+from nextcord import Color, Member, SlashOption
+
+from utilities import CustomCog, CustomInteraction
 
 from .__main__ import EconomyCog, EconomyManager
 

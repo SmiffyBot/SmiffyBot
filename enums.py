@@ -1,5 +1,6 @@
 from enum import Enum
-from nextcord import TextChannel, VoiceChannel, StageChannel, CategoryChannel
+
+from nextcord import CategoryChannel, StageChannel, TextChannel, VoiceChannel
 
 
 class Emojis(str, Enum):

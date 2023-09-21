@@ -1,36 +1,33 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Iterable
-
-from io import BytesIO
-from asyncio import exceptions
-from itertools import islice
 
 from ast import literal_eval
-from easy_pil import Canvas, Editor, Font, load_image_async
+from asyncio import exceptions
+from io import BytesIO
+from itertools import islice
+from typing import TYPE_CHECKING, Iterable, Optional
 
+from easy_pil import Canvas, Editor, Font, load_image_async
 from nextcord import (
-    Embed,
+    ButtonStyle,
     Color,
-    utils,
-    slash_command,
-    SlashOption,
-    ui,
-    SelectOption,
+    Embed,
+    File,
+    Guild,
+    Member,
     Message,
     Role,
-    Guild,
+    SelectOption,
+    SlashOption,
     TextChannel,
-    Member,
-    File,
-    ButtonStyle,
+    slash_command,
+    ui,
+    utils,
 )
 
-from utilities import CustomInteraction, CustomCog, PermissionHandler
-
-from converters import RoleConverter, GuildChannelConverter
+from converters import GuildChannelConverter, RoleConverter
 from enums import Emojis, GuildChannelTypes
-
 from typings import DB_RESPONSE, UserlevelingData
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
     from bot import Smiffy

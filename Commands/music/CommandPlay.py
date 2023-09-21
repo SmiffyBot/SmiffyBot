@@ -1,27 +1,26 @@
 from __future__ import annotations
+
+from ast import literal_eval
+from datetime import timedelta
 from typing import TYPE_CHECKING
 
-from datetime import timedelta
-from ast import literal_eval
-
+from mafic import Playlist, SearchType, __version__, errors
 from nextcord import (
-    SlashOption,
-    Embed,
-    Color,
-    utils,
-    ui,
     ButtonStyle,
+    Color,
+    Embed,
+    Member,
+    SlashOption,
     TextChannel,
     Thread,
-    Member,
+    ui,
+    utils,
 )
 
-from mafic import Playlist, __version__, errors, SearchType
 from enums import Emojis
-
 from utilities import (
-    CustomInteraction,
     CustomCog,
+    CustomInteraction,
     DiscordSupportButton,
     PermissionHandler,
 )
@@ -29,12 +28,12 @@ from utilities import (
 from .__main__ import MusicCog, MusicPlayer
 
 if TYPE_CHECKING:
-    from bot import Smiffy
-    from mafic import Track, Node
-    from typings import PlayerT
-
-    from utilities import DB_RESPONSE, Optional, Union
+    from mafic import Node, Track
     from nextcord import Guild
+
+    from bot import Smiffy
+    from typings import PlayerT
+    from utilities import DB_RESPONSE, Optional, Union
 
 
 class MusicManagerView(ui.View):

@@ -1,21 +1,21 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Iterable
 
-from time import mktime
 from ast import literal_eval
-from easy_pil import Editor, load_image_async, Font
+from time import mktime
+from typing import TYPE_CHECKING, Iterable, Optional
 
-from nextcord import TextChannel, Embed, Color, utils, File, errors
+from easy_pil import Editor, Font, load_image_async
+from nextcord import Color, Embed, File, TextChannel, errors, utils
 
-from utilities import CustomCog
 from enums import Emojis
+from utilities import CustomCog
 
 if TYPE_CHECKING:
-    from bot import Smiffy
-
-    from typings import DB_RESPONSE
+    from nextcord import Guild, Member, RawMemberRemoveEvent, User
     from nextcord.abc import GuildChannel
-    from nextcord import RawMemberRemoveEvent, Guild, User, Member
+
+    from bot import Smiffy
+    from typings import DB_RESPONSE
 
 
 class MemberLeaveEvent(CustomCog):

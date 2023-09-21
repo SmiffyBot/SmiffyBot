@@ -1,16 +1,19 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from mafic import errors
-from nextcord import errors as nextcord_errors, Member
-from utilities import CustomInteraction, CustomCog, PermissionHandler
+from nextcord import Member
+from nextcord import errors as nextcord_errors
 
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
+
 from .__main__ import MusicCog, MusicPlayer
 
 if TYPE_CHECKING:
-    from typings import PlayerT
     from bot import Smiffy
+    from typings import PlayerT
 
 
 class CommandJoin(CustomCog):

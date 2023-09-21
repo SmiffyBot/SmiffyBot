@@ -1,7 +1,7 @@
 from typing import ClassVar
 
-from utilities import bot_utils, bot_logger, Database, BotBase, CircuitBreaker
 from typings import Bot_Settings, BotLogger
+from utilities import BotBase, CircuitBreaker, Database, bot_logger, bot_utils
 
 
 class Smiffy(BotBase):

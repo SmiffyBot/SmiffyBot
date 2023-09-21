@@ -1,16 +1,18 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from mafic import __version__  # pylint: disable=ungrouped-imports
-from nextcord import Embed, Color, utils
+from nextcord import Color, Embed, utils
 
 from enums import Emojis
-from utilities import CustomInteraction, CustomCog, Optional
+from utilities import CustomCog, CustomInteraction, Optional
 
 from .__main__ import MusicCog
 
 if TYPE_CHECKING:
     from mafic import Node, NodeStats
+
     from bot import Smiffy
 
 

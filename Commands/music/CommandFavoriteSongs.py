@@ -1,30 +1,31 @@
 from __future__ import annotations
+
+from ast import literal_eval
+from datetime import timedelta
 from typing import TYPE_CHECKING, Optional, Union
 
-from datetime import timedelta
-from ast import literal_eval
-
+from mafic import Playlist, SearchType, __version__, errors
 from nextcord import (
-    SlashOption,
-    ui,
-    Embed,
     Color,
-    utils,
-    SelectOption,
+    Embed,
     Member,
-    Thread,
+    SelectOption,
+    SlashOption,
     TextChannel,
+    Thread,
+    ui,
+    utils,
 )
 
-from mafic import SearchType, errors, __version__, Playlist
+from enums import Emojis
 from utilities import CustomCog, CustomInteraction
 
-from enums import Emojis
 from .__main__ import MusicCog, MusicPlayer
 
 if TYPE_CHECKING:
+    from mafic import Node, Track
+
     from bot import Smiffy
-    from mafic import Track, Node
     from typings import DB_RESPONSE, PlayerT
 
 

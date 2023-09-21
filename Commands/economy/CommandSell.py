@@ -1,11 +1,12 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional
 
-from nextcord import SlashOption, Member
-from utilities import CustomInteraction, CustomCog
+from nextcord import Member, SlashOption
 
-from typings import EconomyItemData, EconomyUserData
 from enums import Emojis
+from typings import EconomyItemData, EconomyUserData
+from utilities import CustomCog, CustomInteraction
 
 from .__main__ import EconomyCog, EconomyManager
 

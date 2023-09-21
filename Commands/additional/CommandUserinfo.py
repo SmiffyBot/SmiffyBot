@@ -1,15 +1,17 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 from time import mktime
-from nextcord import Embed, Color, utils, slash_command, user_command, Member
+from typing import TYPE_CHECKING
 
-from utilities import CustomInteraction, CustomCog
+from nextcord import Color, Embed, Member, slash_command, user_command, utils
+
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction
 
 if TYPE_CHECKING:
-    from bot import Smiffy
     from nextcord import Role
+
+    from bot import Smiffy
 
 
 class CommandUserInfo(CustomCog):

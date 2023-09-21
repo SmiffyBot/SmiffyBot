@@ -1,35 +1,34 @@
 from __future__ import annotations
+
+from ast import literal_eval
+from asyncio import sleep
+from json import JSONDecodeError
 from typing import TYPE_CHECKING, Optional
 
-from json import JSONDecodeError
-from asyncio import sleep
-from ast import literal_eval
-
-from nextcord import (
-    Embed,
-    Color,
-    utils,
-    slash_command,
-    SlashOption,
-    ui,
-    TextInputStyle,
-    AllowedMentions,
-    TextChannel,
-    errors,
-    Thread,
-)
-
 import scrapetube
+from nextcord import (
+    AllowedMentions,
+    Color,
+    Embed,
+    SlashOption,
+    TextChannel,
+    TextInputStyle,
+    Thread,
+    errors,
+    slash_command,
+    ui,
+    utils,
+)
 from requests import exceptions
 
-from utilities import CustomInteraction, CustomCog, PermissionHandler
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
+    from nextcord.abc import GuildChannel
+
     from bot import Smiffy
     from typings import DB_RESPONSE
-
-    from nextcord.abc import GuildChannel
 
 
 class VideoListener:

@@ -1,15 +1,17 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
 
 from time import mktime
-from nextcord import Embed, Color, utils, slash_command
+from typing import TYPE_CHECKING, Optional
 
-from utilities import CustomInteraction, CustomCog
+from nextcord import Color, Embed, slash_command, utils
+
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction
 
 if TYPE_CHECKING:
-    from bot import Smiffy
     from nextcord import Member
+
+    from bot import Smiffy
 
 
 class CommandSerwer(CustomCog):

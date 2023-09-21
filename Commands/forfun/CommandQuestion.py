@@ -1,9 +1,11 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 from random import choice
-from nextcord import Embed, Color, utils, slash_command, SlashOption
-from utilities import CustomInteraction, CustomCog
+from typing import TYPE_CHECKING
+
+from nextcord import Color, Embed, SlashOption, slash_command, utils
+
+from utilities import CustomCog, CustomInteraction
 
 if TYPE_CHECKING:
     from bot import Smiffy

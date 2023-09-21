@@ -1,43 +1,35 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
 
-from asyncio import exceptions, sleep
-from time import time
-
-from datetime import timedelta
 from ast import literal_eval
+from asyncio import exceptions, sleep
+from datetime import timedelta
 from random import randint
+from time import time
+from typing import TYPE_CHECKING, Optional
 
-from nextcord.ext.commands import errors
+from humanfriendly import parse_timespan
 from nextcord import (
-    slash_command,
-    SlashOption,
-    Embed,
-    utils,
-    Color,
-    Member,
-    ui,
     ButtonStyle,
+    Color,
+    Embed,
+    Member,
     Message,
     SelectOption,
-    errors as nextcord_errors,
+    SlashOption,
     TextChannel,
     Thread,
 )
+from nextcord import errors as nextcord_errors
+from nextcord import slash_command, ui, utils
+from nextcord.ext.commands import errors
 
-from humanfriendly import parse_timespan
-from enums import Emojis
 from converters import MemberConverter
-
-from utilities import (
-    CustomInteraction,
-    CustomCog,
-    PermissionHandler,
-)
+from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
-    from typings import DB_RESPONSE
     from bot import Smiffy
+    from typings import DB_RESPONSE
 
 
 class WarnsList(ui.Select):

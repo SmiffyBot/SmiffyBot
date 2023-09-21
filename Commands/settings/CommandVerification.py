@@ -1,36 +1,37 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any, Optional, Awaitable, Callable
 
-from string import ascii_lowercase
 from random import choice
-
-from nextcord import (
-    Embed,
-    Color,
-    utils,
-    slash_command,
-    SlashOption,
-    Role,
-    ui,
-    ButtonStyle,
-    Message,
-    File,
-    TextInputStyle,
-    SelectOption,
-    errors,
-    TextChannel,
-    Thread,
-    Member,
-)
+from string import ascii_lowercase
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Optional
 
 from captcha.image import ImageCaptcha
-from utilities import CustomInteraction, CustomCog, PermissionHandler
+from nextcord import (
+    ButtonStyle,
+    Color,
+    Embed,
+    File,
+    Member,
+    Message,
+    Role,
+    SelectOption,
+    SlashOption,
+    TextChannel,
+    TextInputStyle,
+    Thread,
+    errors,
+    slash_command,
+    ui,
+    utils,
+)
+
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
+    from nextcord import Guild
+
     from bot import Smiffy
     from typings import DB_RESPONSE
-    from nextcord import Guild
 
 
 class CustomButton(ui.Button):

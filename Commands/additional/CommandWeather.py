@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from nextcord import Embed, Color, utils, slash_command, SlashOption
 from geopy.geocoders import Nominatim
+from nextcord import Color, Embed, SlashOption, slash_command, utils
 
-from utilities import CustomInteraction, CustomCog
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction
 
 if TYPE_CHECKING:
-    from utilities import Optional, ClientResponse
     from bot import Smiffy
+    from utilities import ClientResponse, Optional
 
 
 class CommandWeather(CustomCog):

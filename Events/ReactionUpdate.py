@@ -1,17 +1,18 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Iterable
 
-from nextcord import Embed, Color, utils, TextChannel, errors
+from typing import TYPE_CHECKING, Iterable, Optional
 
-from utilities import CustomCog, check_giveaway_requirement
+from nextcord import Color, Embed, TextChannel, errors, utils
+
 from enums import Emojis
+from utilities import CustomCog, check_giveaway_requirement
 
 if TYPE_CHECKING:
+    from nextcord import Member, Message, PartialEmoji, RawReactionActionEvent, Role
+    from nextcord.abc import GuildChannel
+
     from bot import Smiffy
     from typings import DB_RESPONSE
-
-    from nextcord.abc import GuildChannel
-    from nextcord import Member, Role, RawReactionActionEvent, Message, PartialEmoji
 
 
 class ReactionUpdateEvent(CustomCog):

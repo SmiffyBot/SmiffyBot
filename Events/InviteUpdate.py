@@ -1,12 +1,13 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional
 
 from utilities import CustomCog
 
 if TYPE_CHECKING:
-    from bot import Smiffy
-    from nextcord import Invite, Guild
+    from nextcord import Guild, Invite
 
+    from bot import Smiffy
     from typings import DB_RESPONSE
 
 

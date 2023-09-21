@@ -1,16 +1,19 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from mafic import errors
 from nextcord import Member
-from utilities import CustomInteraction, CustomCog, PermissionHandler
 
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
+
 from .__main__ import MusicCog
 
 if TYPE_CHECKING:
-    from bot import Smiffy
     from nextcord import VoiceChannel
+
+    from bot import Smiffy
 
 
 class CommandDisconnect(CustomCog):

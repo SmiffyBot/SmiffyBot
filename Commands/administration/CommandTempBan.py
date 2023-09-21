@@ -1,32 +1,28 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING, Iterable
 
-from time import time
 from asyncio import sleep
-from humanfriendly import parse_timespan, InvalidTimespan
+from time import time
+from typing import TYPE_CHECKING, Iterable, Optional
 
+from humanfriendly import InvalidTimespan, parse_timespan
 from nextcord import (
-    slash_command,
-    SlashOption,
-    Member,
-    Embed,
     Color,
-    utils,
-    errors,
+    Embed,
+    Member,
     Object,
+    SlashOption,
+    errors,
+    slash_command,
+    utils,
 )
 
-from utilities import (
-    CustomInteraction,
-    CustomCog,
-    Avatars,
-    PermissionHandler,
-)
 from enums import Emojis
+from utilities import Avatars, CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
-    from bot import Smiffy
     from nextcord import BanEntry, Guild
+
+    from bot import Smiffy
     from typings import DB_RESPONSE
 
 

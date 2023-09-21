@@ -1,16 +1,19 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional
 
 from nextcord import Member
+
 from enums import Emojis
-from utilities import CustomInteraction, CustomCog, PermissionHandler
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 from .__main__ import MusicCog, MusicPlayer
 
 if TYPE_CHECKING:
+    from mafic import Track
+
     from bot import Smiffy
     from typings import PlayerT
-    from mafic import Track
 
 
 class CommandSkip(CustomCog):

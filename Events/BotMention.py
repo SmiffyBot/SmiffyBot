@@ -1,24 +1,18 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
 
 from datetime import timedelta
 from time import time
+from typing import TYPE_CHECKING, Optional
 
-from nextcord import (
-    Embed,
-    Color,
-    utils,
-    ui,
-    ButtonStyle,
-)
+from nextcord import ButtonStyle, Color, Embed, ui, utils
 
-from utilities import CustomCog, DiscordSupportButton
 from enums import Emojis
+from utilities import CustomCog, DiscordSupportButton
 
 if TYPE_CHECKING:
-    from bot import Smiffy
-
     from nextcord import Message, ShardInfo
+
+    from bot import Smiffy
 
 
 class ButtonsView(DiscordSupportButton):

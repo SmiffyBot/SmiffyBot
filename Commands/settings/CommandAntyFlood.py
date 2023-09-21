@@ -1,12 +1,12 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
 
 from asyncio import exceptions
+from typing import TYPE_CHECKING, Optional
 
-from nextcord import Embed, Color, utils, slash_command, Message
+from nextcord import Color, Embed, Message, slash_command, utils
 
-from utilities import CustomInteraction, CustomCog, PermissionHandler
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
     from bot import Smiffy

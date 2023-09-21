@@ -1,22 +1,19 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional
 
-from nextcord import (
-    Color,
-    slash_command,
-    SlashOption,
-    Member,
-    Role,
-    errors as nextcord_errors,
-)
+from nextcord import Color, Member, Role, SlashOption
+from nextcord import errors as nextcord_errors
+from nextcord import slash_command
 
-from utilities import CustomInteraction, CustomCog, PermissionHandler
 from converters import MessageConverter
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
-    from bot import Smiffy
     from nextcord import Message
+
+    from bot import Smiffy
     from typings import DB_RESPONSE
 
 

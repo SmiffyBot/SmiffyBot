@@ -1,29 +1,14 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 from datetime import timedelta
-from nextcord import (
-    slash_command,
-    SlashOption,
-    Member,
-    Embed,
-    Color,
-    utils,
-    errors,
-)
-from nextcord.ext.application_checks import (
-    ApplicationMissingPermissions,
-)
+from typing import TYPE_CHECKING
 
-from humanfriendly import parse_timespan, InvalidTimespan
+from humanfriendly import InvalidTimespan, parse_timespan
+from nextcord import Color, Embed, Member, SlashOption, errors, slash_command, utils
+from nextcord.ext.application_checks import ApplicationMissingPermissions
+
 from enums import Emojis
-
-from utilities import (
-    CustomInteraction,
-    CustomCog,
-    Avatars,
-    PermissionHandler,
-)
+from utilities import Avatars, CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
     from bot import Smiffy

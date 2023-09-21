@@ -1,18 +1,18 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
 
 from asyncio import sleep
+from typing import TYPE_CHECKING, Optional
 
-from nextcord import Member, TextChannel, Embed, Color, utils
+from nextcord import Color, Embed, Member, TextChannel, utils
 
-from utilities import CustomCog
 from enums import Emojis
+from utilities import CustomCog
 
 if TYPE_CHECKING:
+    from nextcord import Guild, VoiceState
+
     from bot import Smiffy
     from typings import DB_RESPONSE, PlayerT
-
-    from nextcord import VoiceState, Guild
 
 
 class VoiceUpdate(CustomCog):

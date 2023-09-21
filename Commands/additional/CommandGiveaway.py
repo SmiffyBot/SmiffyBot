@@ -1,43 +1,32 @@
 from __future__ import annotations
 
-from typing import List, Optional, Iterable, TYPE_CHECKING
-from random import choice
-
 from asyncio import sleep
-from time import mktime
 from datetime import datetime, timedelta
+from random import choice
+from time import mktime
+from typing import TYPE_CHECKING, Iterable, List, Optional
 
+from humanfriendly import InvalidTimespan, parse_timespan
+from nextcord import Attachment, Color, Embed, Member, SlashOption, TextChannel
+from nextcord import errors as nextcord_errors
+from nextcord import slash_command, ui
 from nextcord.ext.commands import errors
-from nextcord import (
-    Embed,
-    Color,
-    slash_command,
-    SlashOption,
-    Member,
-    ui,
-    TextChannel,
-    Attachment,
-    errors as nextcord_errors,
-)
 
-from humanfriendly import parse_timespan, InvalidTimespan
-
-from utilities import (
-    CustomInteraction,
-    CustomCog,
-    check_giveaway_requirement,
-    PermissionHandler,
-)
-from converters import RoleConverter, MessageConverter
-
+from converters import MessageConverter, RoleConverter
 from enums import Emojis
+from utilities import (
+    CustomCog,
+    CustomInteraction,
+    PermissionHandler,
+    check_giveaway_requirement,
+)
 
 if TYPE_CHECKING:
-    from bot import Smiffy
-
-    from typings import DB_RESPONSE
-    from nextcord.abc import GuildChannel
     from nextcord import Message, Role
+    from nextcord.abc import GuildChannel
+
+    from bot import Smiffy
+    from typings import DB_RESPONSE
 
 
 class RequirementModal(ui.Modal):

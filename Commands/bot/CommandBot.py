@@ -1,16 +1,18 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from nextcord import Embed, Color, slash_command, SlashOption, TextChannel, Member
+from nextcord import Color, Embed, Member, SlashOption, TextChannel, slash_command
 
-from utilities import CustomInteraction, CustomCog, bot_utils, PermissionHandler
-from errors import InvalidServerData
 from enums import Emojis
+from errors import InvalidServerData
+from utilities import CustomCog, CustomInteraction, PermissionHandler, bot_utils
 
 if TYPE_CHECKING:
-    from bot import Smiffy
-    from utilities import Optional, DB_RESPONSE
     from nextcord.abc import GuildChannel
+
+    from bot import Smiffy
+    from utilities import DB_RESPONSE, Optional
 
 
 class CommandBot(CustomCog):

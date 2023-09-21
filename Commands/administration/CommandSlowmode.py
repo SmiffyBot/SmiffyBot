@@ -1,15 +1,12 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from nextcord import slash_command, SlashOption
+from humanfriendly import InvalidTimespan, parse_timespan
+from nextcord import SlashOption, slash_command
 
-from humanfriendly import parse_timespan, InvalidTimespan
-from utilities import (
-    CustomInteraction,
-    CustomCog,
-    PermissionHandler,
-)
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
     from bot import Smiffy

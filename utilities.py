@@ -2,82 +2,72 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Union, Iterable, Any
-from logging import DEBUG, StreamHandler, getLogger, Logger, basicConfig, INFO
-
 from ast import literal_eval
+from asyncio import AbstractEventLoop, get_event_loop, new_event_loop, set_event_loop
+from logging import DEBUG, INFO, Logger, StreamHandler, basicConfig, getLogger
 from os import listdir
-from asyncio import get_event_loop, AbstractEventLoop, set_event_loop, new_event_loop
-
 from traceback import format_exc
-from orjson import loads
+from typing import TYPE_CHECKING, Any, Iterable, Optional, Union
+
 from aiofiles import open as aioopen
-
-from colorlog import ColoredFormatter
-from colorama import Fore, init as initialize_colarama
-
-from nextcord import (
-    Intents,
-    AllowedMentions,
-    Interaction,
-    Embed,
-    utils,
-    Game,
-    Status,
-    Member,
-    Color,
-    MemberCacheFlags,
-    ui,
-    ButtonStyle,
-    errors as nextcord_errors,
-    CallbackWrapper,
-    SlashApplicationCommand,
-    Permissions,
-    Asset,
-    Message,
-)
-
-from nextcord.ext.commands import errors, Cog, AutoShardedBot
-from nextcord.abc import GuildChannel
-from nextcord.ext.application_checks import (
-    ApplicationMissingPermissions,
-)
-
 from aiohttp import ClientSession, ClientTimeout, client_exceptions
 from aiosqlite import connect
+from colorama import Fore
+from colorama import init as initialize_colarama
+from colorlog import ColoredFormatter
 from cooldowns import CallableOnCooldown
-
-from cordcutter import TCallback, Cordcutter
-from typings import Bot_Settings, RED_COLOR, DB_RESPONSE
-from converters import RoleConverter
-
-from errors import (
-    MissingBotToken,
-    InvalidServerData,
-    MissingMusicPermissions,
-    ApplicationCommandIsGuildOnly,
+from cordcutter import Cordcutter, TCallback
+from nextcord import (
+    AllowedMentions,
+    Asset,
+    ButtonStyle,
+    CallbackWrapper,
+    Color,
+    Embed,
+    Game,
+    Intents,
+    Interaction,
+    Member,
+    MemberCacheFlags,
+    Message,
+    Permissions,
+    SlashApplicationCommand,
+    Status,
 )
+from nextcord import errors as nextcord_errors
+from nextcord import ui, utils
+from nextcord.abc import GuildChannel
+from nextcord.ext.application_checks import ApplicationMissingPermissions
+from nextcord.ext.commands import AutoShardedBot, Cog, errors
+from orjson import loads
+
+from converters import RoleConverter
+from errors import (
+    ApplicationCommandIsGuildOnly,
+    InvalidServerData,
+    MissingBotToken,
+    MissingMusicPermissions,
+)
+from typings import DB_RESPONSE, RED_COLOR, Bot_Settings
 
 if TYPE_CHECKING:
-    from bot import Smiffy
-
-    from typings import UserType, InterT
-
-    from aiosqlite import Cursor, Connection, Row
     from aiohttp import ClientResponse
+    from aiosqlite import Connection, Cursor, Row
     from mafic import NodePool
-
-    from nextcord.state import ConnectionState
-    from nextcord.types.interactions import InteractionType as InteractionPayload
     from nextcord import (
+        BaseApplicationCommand,
         Guild,
-        ShardInfo,
-        WebhookMessage,
         PartialInteractionMessage,
         Role,
-        BaseApplicationCommand,
+        ShardInfo,
         SlashApplicationSubcommand,
+        WebhookMessage,
     )
+    from nextcord.state import ConnectionState
+    from nextcord.types.interactions import InteractionType as InteractionPayload
+
+    from bot import Smiffy
+    from typings import InterT, UserType
 
 
 class CircuitBreaker(Cordcutter):

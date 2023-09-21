@@ -1,22 +1,23 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional
 
 from nextcord import (
-    Embed,
-    Color,
-    utils,
-    slash_command,
-    SlashOption,
-    AutoModerationEventType,
     AutoModerationAction,
     AutoModerationActionType,
-    AutoModerationTriggerType,
-    AutoModerationTriggerMetadata,
+    AutoModerationEventType,
     AutoModerationRule,
+    AutoModerationTriggerMetadata,
+    AutoModerationTriggerType,
+    Color,
+    Embed,
+    SlashOption,
+    slash_command,
+    utils,
 )
 
-from utilities import CustomInteraction, CustomCog, PermissionHandler
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
     from bot import Smiffy

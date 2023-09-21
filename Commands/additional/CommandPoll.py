@@ -1,26 +1,24 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from nextcord import (
-    Embed,
     Color,
-    utils,
-    slash_command,
+    Embed,
     SlashOption,
     TextChannel,
     Thread,
+    slash_command,
+    utils,
 )
 
-from utilities import (
-    CustomInteraction,
-    CustomCog,
-    PermissionHandler,
-)
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
-    from bot import Smiffy
     from nextcord import Message
+
+    from bot import Smiffy
 
 
 class CommandPoll(CustomCog):

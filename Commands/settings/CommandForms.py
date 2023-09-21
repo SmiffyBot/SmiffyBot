@@ -1,33 +1,31 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Iterable
 
 from ast import literal_eval
+from typing import TYPE_CHECKING, Iterable, Optional
 
 from nextcord import (
-    Embed,
-    Color,
-    utils,
-    slash_command,
-    SlashOption,
-    ui,
     ButtonStyle,
-    TextInputStyle,
+    Color,
+    Embed,
     Member,
+    SlashOption,
     TextChannel,
-    errors as nc_errors,
+    TextInputStyle,
     Thread,
 )
+from nextcord import errors as nc_errors
+from nextcord import slash_command, ui, utils
 from nextcord.abc import GuildChannel
 
-from utilities import CustomInteraction, CustomCog, PermissionHandler
 from converters import MessageConverter
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
+    from nextcord import Guild, Message
+
     from bot import Smiffy
     from typings import DB_RESPONSE
-
-    from nextcord import Guild, Message
 
 
 class DecisionFormView(ui.View):

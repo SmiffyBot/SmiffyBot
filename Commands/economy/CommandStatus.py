@@ -1,10 +1,11 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from nextcord import SlashOption
 
-from utilities import CustomInteraction, CustomCog, PermissionHandler
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 from .__main__ import EconomyCog, EconomyManager
 

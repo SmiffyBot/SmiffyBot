@@ -1,26 +1,26 @@
 # pylint: disable=unused-argument
 
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional
 
-from easy_pil import Editor, load_image_async, Font
+from easy_pil import Editor, Font, load_image_async
 from easy_pil.canvas import Image
-
 from nextcord import (
-    Embed,
-    Color,
-    utils,
-    slash_command,
-    SlashOption,
-    File,
-    ui,
     ButtonStyle,
-    TextChannel,
+    Color,
+    Embed,
+    File,
     Member,
+    SlashOption,
+    TextChannel,
+    slash_command,
+    ui,
+    utils,
 )
 
-from utilities import CustomInteraction, CustomCog, PermissionHandler
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
     from bot import Smiffy

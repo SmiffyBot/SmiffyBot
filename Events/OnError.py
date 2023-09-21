@@ -1,17 +1,18 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Any
 
 from traceback import format_exception
+from typing import TYPE_CHECKING, Any, Optional
+
 from nextcord import TextChannel
 
-from utilities import CustomCog, CustomInteraction, bot_utils
 from errors import InvalidServerData
+from utilities import CustomCog, CustomInteraction, bot_utils
 
 if TYPE_CHECKING:
-    from bot import Smiffy
-
     from nextcord import BaseApplicationCommand, SlashApplicationSubcommand
     from nextcord.abc import GuildChannel
+
+    from bot import Smiffy
 
 
 class OnError(CustomCog):

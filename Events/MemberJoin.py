@@ -1,20 +1,21 @@
 from __future__ import annotations
+
+from ast import literal_eval
+from time import mktime
 from typing import TYPE_CHECKING, Iterable, Optional
 
-from time import mktime
-from ast import literal_eval
-from easy_pil import Editor, load_image_async, Font
+from easy_pil import Editor, Font, load_image_async
+from nextcord import Color, Embed, File, Role, TextChannel, errors, utils
 
-from nextcord import TextChannel, Embed, Color, utils, File, errors, Role
-from utilities import CustomCog
 from enums import Emojis
+from utilities import CustomCog
 
 if TYPE_CHECKING:
+    from nextcord import Guild, Invite, Member, User
+    from nextcord.abc import GuildChannel
+
     from bot import Smiffy
     from typings import DB_RESPONSE
-
-    from nextcord.abc import GuildChannel
-    from nextcord import Member, Invite, Guild, User
 
 
 class MemberJoin(CustomCog):

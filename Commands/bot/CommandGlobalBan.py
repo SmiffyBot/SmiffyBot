@@ -1,15 +1,16 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from nextcord import slash_command, SlashOption
-from nextcord.ext.application_checks import is_owner, errors
-from utilities import CustomInteraction, CustomCog
+from nextcord import SlashOption, slash_command
+from nextcord.ext.application_checks import errors, is_owner
 
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction
 
 if TYPE_CHECKING:
     from bot import Smiffy
-    from utilities import Optional, DB_RESPONSE
+    from utilities import DB_RESPONSE, Optional
 
 
 class CommandGlobalBan(CustomCog):

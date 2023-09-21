@@ -1,20 +1,20 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Type
 
 from asyncio import sleep
 from datetime import timedelta
+from typing import TYPE_CHECKING, Optional, Type
 
-from nextcord import slash_command, Guild, Embed, Color, utils, TextChannel, ui
-from mafic import NodePool, TrackEndEvent, Strategy, Player, VoiceRegion, __version__
 from aiohttp import client_exceptions
+from mafic import NodePool, Player, Strategy, TrackEndEvent, VoiceRegion, __version__
+from nextcord import Color, Embed, Guild, TextChannel, slash_command, ui, utils
 
-from utilities import CustomCog, bot_utils, CustomInteraction
 from bot import Smiffy
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, bot_utils
 
 if TYPE_CHECKING:
+    from mafic import Node, Track
     from nextcord.abc import Connectable, GuildChannel
-    from mafic import Track, Node
 
     from typings import DB_RESPONSE
 

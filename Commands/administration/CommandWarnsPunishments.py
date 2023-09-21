@@ -1,21 +1,17 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 from ast import literal_eval
-from nextcord import Embed, Color, utils, slash_command, SlashOption, ui, SelectOption
+from typing import TYPE_CHECKING
 
-from humanfriendly import parse_timespan, InvalidTimespan
+from humanfriendly import InvalidTimespan, parse_timespan
+from nextcord import Color, Embed, SelectOption, SlashOption, slash_command, ui, utils
 
-from utilities import (
-    CustomInteraction,
-    CustomCog,
-    PermissionHandler,
-)
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
     from bot import Smiffy
-    from utilities import Optional, DB_RESPONSE
+    from utilities import DB_RESPONSE, Optional
 
 
 class WarningsPunishmentsList(ui.Select):

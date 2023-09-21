@@ -1,33 +1,32 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Iterable
-
-from asyncio import exceptions
-from itertools import islice
 
 from ast import literal_eval
+from asyncio import exceptions
+from itertools import islice
 from time import mktime
+from typing import TYPE_CHECKING, Iterable, Optional
 
 from nextcord import (
-    slash_command,
+    Color,
+    Embed,
+    Guild,
     Member,
     SlashOption,
-    Guild,
-    user_command,
-    Embed,
-    Color,
-    utils,
     TextChannel,
+    slash_command,
+    user_command,
+    utils,
 )
 
-from utilities import CustomCog, CustomInteraction, PermissionHandler
 from converters import GuildChannelConverter
 from enums import Emojis, GuildChannelTypes
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
+    from nextcord import Message
+
     from bot import Smiffy
     from typings import DB_RESPONSE
-
-    from nextcord import Message
 
 
 class CommandInvites(CustomCog):

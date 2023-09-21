@@ -1,9 +1,11 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from nextcord import SlashOption, Member
+from nextcord import Member, SlashOption
+
 from enums import Emojis
-from utilities import CustomInteraction, CustomCog, PermissionHandler
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 from .__main__ import MusicCog, MusicPlayer
 

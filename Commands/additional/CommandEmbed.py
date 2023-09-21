@@ -1,15 +1,10 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from nextcord import (
-    Embed,
-    Color,
-    slash_command,
-    SlashOption,
-    Attachment,
-)
+from nextcord import Attachment, Color, Embed, SlashOption, slash_command
 
-from utilities import CustomInteraction, CustomCog
+from utilities import CustomCog, CustomInteraction
 
 if TYPE_CHECKING:
     from bot import Smiffy

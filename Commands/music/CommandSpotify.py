@@ -1,40 +1,34 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any
 
 from asyncio import sleep
 from datetime import timedelta
+from typing import TYPE_CHECKING, Any
 
+from mafic import Playlist, SearchType, __version__, errors
 from nextcord import (
-    SlashOption,
-    ui,
-    Embed,
     Color,
-    utils,
+    Embed,
+    Member,
     SelectOption,
+    SlashOption,
     TextChannel,
     Thread,
-    Member,
+    ui,
+    utils,
 )
 
-from mafic import errors, SearchType, __version__, Playlist
-from utilities import (
-    CustomInteraction,
-    CustomCog,
-    bot_utils,
-    PermissionHandler,
-)
-
-from errors import MissingSpotifyData
 from enums import Emojis
+from errors import MissingSpotifyData
+from utilities import CustomCog, CustomInteraction, PermissionHandler, bot_utils
 
 from .__main__ import MusicCog, MusicPlayer
 from .CommandPlay import MusicManagerView
 
 if TYPE_CHECKING:
-    from bot import Smiffy
-    from typings import PlayerT, DB_RESPONSE
-
     from mafic import Node, Track
+
+    from bot import Smiffy
+    from typings import DB_RESPONSE, PlayerT
     from utilities import ClientResponse, Optional
 
 

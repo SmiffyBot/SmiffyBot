@@ -1,20 +1,17 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 from itertools import islice
-from nextcord import slash_command, SlashOption, Object, Embed, Color, utils, errors
+from typing import TYPE_CHECKING
 
-from utilities import (
-    CustomInteraction,
-    CustomCog,
-    Optional,
-    PermissionHandler,
-)
+from nextcord import Color, Embed, Object, SlashOption, errors, slash_command, utils
+
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, Optional, PermissionHandler
 
 if TYPE_CHECKING:
-    from bot import Smiffy
     from nextcord import BanEntry
+
+    from bot import Smiffy
 
 
 class CommandUnban(CustomCog):

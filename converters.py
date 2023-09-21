@@ -1,20 +1,20 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any, Optional, Union, TypeVar, Iterable, Type, Generic
 
 import re
 from abc import ABC
+from typing import TYPE_CHECKING, Any, Generic, Iterable, Optional, Type, TypeVar, Union
 
-from nextcord import OptionConverter, utils, Role, Message, Member, HTTPException
+from nextcord import HTTPException, Member, Message, OptionConverter, Role, utils
 from nextcord.abc import GuildChannel
 
 from enums import GuildChannelTypes
 
 if TYPE_CHECKING:
+    from nextcord import DMChannel, Guild, PartialMessageable, TextChannel, Thread
+    from nextcord.gateway import DiscordWebSocket
+
     from bot import Smiffy
     from utilities import CustomInteraction
-
-    from nextcord import Guild, TextChannel, Thread, DMChannel, PartialMessageable
-    from nextcord.gateway import DiscordWebSocket
 
     PartialMessageableChannel = Union[TextChannel, Thread, DMChannel, PartialMessageable]
 

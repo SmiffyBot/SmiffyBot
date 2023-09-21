@@ -1,18 +1,20 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 from datetime import timedelta
-from nextcord import ui, SelectOption, Embed, utils, Color
+from typing import TYPE_CHECKING
+
+from nextcord import Color, Embed, SelectOption, ui, utils
 
 from enums import Emojis
-from utilities import CustomInteraction, CustomCog
+from utilities import CustomCog, CustomInteraction
 
 from .__main__ import MusicCog, MusicPlayer
 
 if TYPE_CHECKING:
+    from mafic import Track
+
     from bot import Smiffy
     from typings import PlayerT
-    from mafic import Track
 
 
 class QueueList(ui.Select):

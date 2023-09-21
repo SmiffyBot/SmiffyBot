@@ -1,13 +1,13 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
 
 from ast import literal_eval
+from typing import TYPE_CHECKING, Optional
 
-from nextcord import Embed, Color, utils, slash_command, SlashOption, Role, errors
+from nextcord import Color, Embed, Role, SlashOption, errors, slash_command, utils
 from nextcord.ext.application_checks import check
 
-from utilities import CustomInteraction, CustomCog
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction
 
 if TYPE_CHECKING:
     from bot import Smiffy

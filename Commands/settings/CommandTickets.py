@@ -1,39 +1,38 @@
 #  pylint: disable=too-many-lines
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Iterable
 
-from asyncio import sleep
 from ast import literal_eval
+from asyncio import sleep
 from io import BytesIO
+from typing import TYPE_CHECKING, Iterable, Optional
 
+from chat_exporter import export, link
 from nextcord import (
-    Embed,
-    Color,
-    utils,
-    slash_command,
-    TextChannel,
-    SlashOption,
-    ui,
-    ButtonStyle,
-    TextInputStyle,
-    Message,
-    SelectOption,
-    Role,
-    CategoryChannel,
-    errors,
-    File,
     AllowedMentions,
+    ButtonStyle,
+    CategoryChannel,
+    Color,
+    Embed,
+    File,
     Member,
+    Message,
+    Role,
+    SelectOption,
+    SlashOption,
+    TextChannel,
+    TextInputStyle,
     Thread,
+    errors,
+    slash_command,
+    ui,
+    utils,
 )
 from nextcord.abc import GuildChannel
 
-from chat_exporter import link, export
 from converters import MessageConverter
-
-from utilities import CustomInteraction, CustomCog, PermissionHandler
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
     from bot import Smiffy

@@ -1,16 +1,17 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional
 
-from nextcord import Embed, Color, utils, errors, TextChannel
+from nextcord import Color, Embed, TextChannel, errors, utils
 
-from utilities import CustomCog
 from enums import Emojis
+from utilities import CustomCog
 
 if TYPE_CHECKING:
-    from bot import Smiffy
-
-    from nextcord.abc import GuildChannel
     from nextcord import Message
+    from nextcord.abc import GuildChannel
+
+    from bot import Smiffy
 
 
 class MessageEdit(CustomCog):

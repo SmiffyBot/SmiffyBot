@@ -1,14 +1,9 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from nextcord import (
-    Embed,
-    Color,
-    utils,
-    Guild,
-    File,
-    errors,
-)
+from nextcord import Color, Embed, File, Guild, errors, utils
+
 from utilities import CustomCog, DiscordSupportButton
 
 if TYPE_CHECKING:

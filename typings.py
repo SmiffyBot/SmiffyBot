@@ -1,12 +1,14 @@
 # pylint: disable=unused-import
 from __future__ import annotations
 
-from typing import Any, TypedDict, TypeVar, Optional, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, Optional, TypedDict, TypeVar, Union
+
 from aiosqlite import Row
+
 from utilities import Logger
 
 if TYPE_CHECKING:
-    from nextcord import VoiceProtocol, Interaction, Member, User
+    from nextcord import Interaction, Member, User, VoiceProtocol
 
 
 DB_RESPONSE = Row
