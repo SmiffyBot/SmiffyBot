@@ -60,7 +60,7 @@ class CommandUserInfo(CustomCog):
 
         embed.set_footer(
             text=f"Smiffy v{self.bot.__version__}",
-            icon_url=interaction.avatars.get_user_avatar(self.bot.user),
+            icon_url=self.bot.avatar_url,
         )
 
         await interaction.send(embed=embed)
