@@ -37,18 +37,35 @@ class CommandTempBan(CustomCog):
         description="Zbanuj użytkownika na określony czas!",
         dm_permission=False,
     )  # pyright: ignore
-    @PermissionHandler(ban_members=True, user_role_has_permission="tempban")
+    @PermissionHandler(
+        ban_members=True,
+        user_role_has_permission="tempban",
+    )
     async def tempban(
         self,
         interaction: CustomInteraction,
-        member: Member = SlashOption(name="osoba", description="Podaj osobę, którą chcesz zbanować."),
-        ban_duration: str = SlashOption(name="czas_blokady", description="Podaj czas bana np. 5m"),
+        member: Member = SlashOption(
+            name="osoba",
+            description="Podaj osobę, którą chcesz zbanować.",
+        ),
+        ban_duration: str = SlashOption(
+            name="czas_blokady",
+            description="Podaj czas bana np. 5m",
+        ),
         delete_messages: int = SlashOption(
             name="wiadomosci",
             description="Wybierz czy usuwać ostatnie wiadomości użytkownika",
-            choices={"Ostatnie 7 dni": 7, "Ostatnie 24h": 1, "Nie usuwaj": 0},
+            choices={
+                "Ostatnie 7 dni": 7,
+                "Ostatnie 24h": 1,
+                "Nie usuwaj": 0,
+            },
         ),
-        reason: Optional[str] = SlashOption(name="powod", description="Podaj powód bana", max_length=256),
+        reason: Optional[str] = SlashOption(
+            name="powod",
+            description="Podaj powód bana",
+            max_length=256,
+        ),
     ):
         if not reason:
             reason = "Brak"
@@ -91,20 +108,30 @@ class CommandTempBan(CustomCog):
             value=f"{Emojis.REPLY.value} `{member}`",
             inline=False,
         )
-        embed.add_field(name="`🗨️` Powód", value=f"{Emojis.REPLY.value} `{reason}`", inline=False)
+        embed.add_field(
+            name="`🗨️` Powód",
+            value=f"{Emojis.REPLY.value} `{reason}`",
+            inline=False,
+        )
         embed.add_field(
             name="`⏱️` Czas",
             value=f"{Emojis.REPLY.value} `{ban_duration}`",
             inline=False,
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_footer(
             text=f"Smiffy v{self.bot.__version__}",
             icon_url=self.bot.user.display_avatar.url,
         )
 
         try:
-            await member.ban(reason=reason, delete_message_days=delete_messages)
+            await member.ban(
+                reason=reason,
+                delete_message_days=delete_messages,
+            )
         except Exception as e:  # pylint: disable=broad-exception-caught
             return await interaction.send_error_message(description=f"Wystąpił nieoczekiwany błąd. {e}")
 
@@ -112,7 +139,13 @@ class CommandTempBan(CustomCog):
 
         await self.bot.loop.create_task(self.unban_member(interaction.guild, member, seconds))
 
-    async def send_dm_message(self, member: Member, root: Member, reason: str, ban_duration: str) -> None:
+    async def send_dm_message(
+        self,
+        member: Member,
+        root: Member,
+        reason: str,
+        ban_duration: str,
+    ) -> None:
         assert self.bot.user
 
         embed = Embed(
@@ -121,27 +154,48 @@ class CommandTempBan(CustomCog):
             color=Color.red(),
         )
 
-        embed.set_author(name=root, icon_url=root.display_avatar.url)
+        embed.set_author(
+            name=root,
+            icon_url=root.display_avatar.url,
+        )
         embed.set_thumbnail(url=Avatars.get_guild_icon(root.guild))
 
-        embed.add_field(name="`👤` Administrator", value=f"{Emojis.REPLY.value} `{root}`")
-        embed.add_field(name="`🗨️` Powód", value=f"{Emojis.REPLY.value} `{reason}`", inline=False)
+        embed.add_field(
+            name="`👤` Administrator",
+            value=f"{Emojis.REPLY.value} `{root}`",
+        )
+        embed.add_field(
+            name="`🗨️` Powód",
+            value=f"{Emojis.REPLY.value} `{reason}`",
+            inline=False,
+        )
         embed.add_field(
             name="`📌` Serwer",
             value=f"{Emojis.REPLY.value} `{root.guild.name}`",
             inline=False,
         )
 
-        embed.add_field(name="`⏱️` Czas", value=f"{Emojis.REPLY.value} `{ban_duration}`")
+        embed.add_field(
+            name="`⏱️` Czas",
+            value=f"{Emojis.REPLY.value} `{ban_duration}`",
+        )
 
-        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{self.bot.__version__}",
+            icon_url=self.bot.avatar_url,
+        )
 
         try:
             await member.send(embed=embed)
         except errors.Forbidden:
             pass
 
-    async def unban_member(self, guild: Guild, member: Member, duration: float) -> None:
+    async def unban_member(
+        self,
+        guild: Guild,
+        member: Member,
+        duration: float,
+    ) -> None:
         """
         The unban_member function is used to unban a member from the guild.
 
@@ -161,7 +215,10 @@ class CommandTempBan(CustomCog):
         await sleep(duration)
         try:
             await guild.unban(user=member)
-        except (errors.HTTPException, errors.Forbidden):
+        except (
+            errors.HTTPException,
+            errors.Forbidden,
+        ):
             pass
 
         await self.bot.db.execute_fetchone(
@@ -193,7 +250,11 @@ class CommandTempBan(CustomCog):
                 (guild_id, member_id),
             )
 
-        async def unban_user(guild_to_unban: Guild, ban_entry: BanEntry, duration: int) -> None:
+        async def unban_user(
+            guild_to_unban: Guild,
+            ban_entry: BanEntry,
+            duration: int,
+        ) -> None:
             if ban_entry.user:
                 unix_now = time() + 7200
                 seconds_diff: int = int(duration - unix_now)
@@ -201,7 +262,10 @@ class CommandTempBan(CustomCog):
                     await sleep(seconds_diff)
 
                 await guild_to_unban.unban(user=ban_entry.user)
-                await delete_row(guild_id=guild_to_unban.id, member_id=ban_entry.user.id)
+                await delete_row(
+                    guild_id=guild_to_unban.id,
+                    member_id=ban_entry.user.id,
+                )
 
         response: Iterable[Optional[DB_RESPONSE]] = await self.bot.db.execute_fetchall(
             "SELECT * FROM tempbans"
@@ -226,7 +290,10 @@ class CommandTempBan(CustomCog):
 
                 try:
                     ban_object: Optional[BanEntry] = await guild.fetch_ban(Object(id=int(user_id)))
-                except (errors.NotFound, errors.Forbidden):
+                except (
+                    errors.NotFound,
+                    errors.Forbidden,
+                ):
                     await delete_row(data[0], user_id)
                     continue
 

@@ -13,7 +13,11 @@ if TYPE_CHECKING:
 
 
 class CommandHex(CustomCog):
-    @slash_command(name="hex", description="Pokazuje wpisany kolor hex", dm_permission=False)
+    @slash_command(
+        name="hex",
+        description="Pokazuje wpisany kolor hex",
+        dm_permission=False,
+    )
     async def hex(
         self,
         interaction: CustomInteraction,
@@ -29,7 +33,9 @@ class CommandHex(CustomCog):
         api_url: str = f"https://some-random-api.com/canvas/misc/colorviewer?hex={color_hex.replace('#', '')}"
 
         response: Optional[ClientResponse] = await self.bot.session.send_api_request(
-            interaction=interaction, url=api_url, method="GET"
+            interaction=interaction,
+            url=api_url,
+            method="GET",
         )
         if not response:
             return

@@ -29,7 +29,9 @@ class MusicPlayer(Player[Smiffy]):
         self.queue: list[Track] = []
 
         @bot.listen()
-        async def on_track_end(event: TrackEndEvent):
+        async def on_track_end(
+            event: TrackEndEvent,
+        ):
             assert isinstance(event.player, MusicPlayer)
 
             if self.loop:
@@ -41,11 +43,15 @@ class MusicPlayer(Player[Smiffy]):
                 await event.player.play(current_track)
 
                 if await self.get_notify_status(event.player.guild):
-                    await self.send_playing_song_notify(event.player, current_track)
+                    await self.send_playing_song_notify(
+                        event.player,
+                        current_track,
+                    )
 
     async def get_notify_status(self, guild: Guild) -> bool:
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT notify FROM music_settings WHERE guild_id = ?", (guild.id,)
+            "SELECT notify FROM music_settings WHERE guild_id = ?",
+            (guild.id,),
         )
         if not response or not response[0]:
             return True
@@ -53,9 +59,15 @@ class MusicPlayer(Player[Smiffy]):
         return False
 
     async def send_playing_song_notify(
-        self, player: MusicPlayer, track: Track, view: Optional[ui.View] = None
+        self,
+        player: MusicPlayer,
+        track: Track,
+        view: Optional[ui.View] = None,
     ):
-        if not isinstance(player.channel_last_command, TextChannel):
+        if not isinstance(
+            player.channel_last_command,
+            TextChannel,
+        ):
             return
 
         track_lenght: str = str(timedelta(seconds=int(track.length / 1000)))
@@ -67,7 +79,10 @@ class MusicPlayer(Player[Smiffy]):
             timestamp=utils.utcnow(),
         )
 
-        embed.add_field(name="`⏰` Długość", value=f"{Emojis.REPLY.value} `{track_lenght}`")
+        embed.add_field(
+            name="`⏰` Długość",
+            value=f"{Emojis.REPLY.value} `{track_lenght}`",
+        )
         embed.add_field(
             name="`👤` Autor",
             value=f"{Emojis.REPLY.value} `{track.author}`",
@@ -97,8 +112,8 @@ class MusicCog(CustomCog):
         super().__init__(bot=bot)
 
         self.player_regions: tuple[VoiceRegion, ...] = (
-            VoiceRegion.EUROPE,  # Currently we support only Europe
-        )
+            VoiceRegion.EUROPE,
+        )  # Currently we support only Europe
 
         attempts: Optional[int] = bot_utils.get_value_from_config("LAVALINK_CONNECTION_ATTEMPTS")
         interval: Optional[int] = bot_utils.get_value_from_config("LAVALINK_ATTEMPT_INTERVAL")
@@ -106,13 +121,19 @@ class MusicCog(CustomCog):
         self.connection_attempts: int = attempts if attempts else 1
         self.attempt_interval: int = interval if interval else 3
 
-        self.bot.pool = NodePool(bot, default_strategies=[Strategy.USAGE, Strategy.SHARD])
+        self.bot.pool = NodePool(
+            bot,
+            default_strategies=[
+                Strategy.USAGE,
+                Strategy.SHARD,
+            ],
+        )
         self.bot.loop.create_task(self.add_music_nodes())
 
     @property
     def get_node_settings(
         self,
-    ) -> dict[str, str | None | Type[MusicPlayer] | tuple[VoiceRegion, ...]]:
+    ) -> dict[str, str | None | Type[MusicPlayer] | tuple[VoiceRegion, ...],]:
         host: Optional[str] = bot_utils.get_value_from_config("LAVALINK_ADDRESS")
         port: Optional[str] = bot_utils.get_value_from_config("LAVALINK_PORT")
         password: Optional[str] = bot_utils.get_value_from_config("LAVALINK_PASSWORD")

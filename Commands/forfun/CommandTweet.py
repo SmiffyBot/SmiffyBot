@@ -21,7 +21,10 @@ class CommandTweet(CustomCog):
     async def tweet(
         self,
         interaction: CustomInteraction,
-        title: str = SlashOption(name="treść", description="Podaj treść tweeta"),
+        title: str = SlashOption(
+            name="treść",
+            description="Podaj treść tweeta",
+        ),
     ):
         assert interaction.user
 
@@ -33,7 +36,9 @@ class CommandTweet(CustomCog):
         )
 
         response: Optional[ClientResponse] = await self.bot.session.send_api_request(
-            interaction=interaction, url=api_url, method="GET"
+            interaction=interaction,
+            url=api_url,
+            method="GET",
         )
 
         if not response:

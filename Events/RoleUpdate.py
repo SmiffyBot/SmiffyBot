@@ -19,7 +19,10 @@ class RoleUpdate(CustomCog):
         logs_channel: Optional[GuildChannel] = await self.get_logs_channel(role.guild)
 
         if isinstance(logs_channel, TextChannel):
-            async for entry in logs_channel.guild.audit_logs(action=AuditLogAction.role_create, limit=1):
+            async for entry in logs_channel.guild.audit_logs(
+                action=AuditLogAction.role_create,
+                limit=1,
+            ):
                 user = entry.user
 
                 embed = Embed(
@@ -34,9 +37,15 @@ class RoleUpdate(CustomCog):
                     inline=False,
                 )
 
-                embed.add_field(name="`⚙️` Identyfikator", value=f"{Emojis.REPLY.value} `{role.id}`")
+                embed.add_field(
+                    name="`⚙️` Identyfikator",
+                    value=f"{Emojis.REPLY.value} `{role.id}`",
+                )
 
-                embed.set_author(name=user, icon_url=self.avatars.get_user_avatar(user))
+                embed.set_author(
+                    name=user,
+                    icon_url=self.avatars.get_user_avatar(user),
+                )
                 embed.set_thumbnail(url=self.avatars.get_guild_icon(role.guild))
 
                 try:
@@ -61,7 +70,10 @@ class RoleUpdate(CustomCog):
             if not new_color and not new_name:
                 return
 
-            async for entry in before.guild.audit_logs(action=AuditLogAction.role_update, limit=1):
+            async for entry in before.guild.audit_logs(
+                action=AuditLogAction.role_update,
+                limit=1,
+            ):
                 user = entry.user
 
                 embed = Embed(
@@ -93,7 +105,10 @@ class RoleUpdate(CustomCog):
                         value=f"{Emojis.REPLY.value} `{before.color}`",
                     )
 
-                embed.set_author(name=user, icon_url=self.avatars.get_user_avatar(user))
+                embed.set_author(
+                    name=user,
+                    icon_url=self.avatars.get_user_avatar(user),
+                )
                 embed.set_thumbnail(url=self.avatars.get_guild_icon(after.guild))
 
                 try:
@@ -106,7 +121,10 @@ class RoleUpdate(CustomCog):
         logs_channel: Optional[GuildChannel] = await self.get_logs_channel(role.guild)
 
         if isinstance(logs_channel, TextChannel):
-            async for entry in logs_channel.guild.audit_logs(action=AuditLogAction.role_delete, limit=1):
+            async for entry in logs_channel.guild.audit_logs(
+                action=AuditLogAction.role_delete,
+                limit=1,
+            ):
                 user = entry.user
 
                 embed = Embed(
@@ -121,9 +139,15 @@ class RoleUpdate(CustomCog):
                     value=f"{Emojis.REPLY.value} `{role.id}`",
                     inline=False,
                 )
-                embed.add_field(name="`🔵` Kolor", value=f"{Emojis.REPLY.value} `{role.color}`")
+                embed.add_field(
+                    name="`🔵` Kolor",
+                    value=f"{Emojis.REPLY.value} `{role.color}`",
+                )
 
-                embed.set_author(name=user, icon_url=self.avatars.get_user_avatar(user))
+                embed.set_author(
+                    name=user,
+                    icon_url=self.avatars.get_user_avatar(user),
+                )
                 embed.set_thumbnail(url=self.avatars.get_guild_icon(role.guild))
 
                 try:

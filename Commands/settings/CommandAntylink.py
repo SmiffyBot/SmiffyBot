@@ -37,7 +37,10 @@ class PunishmentSelect(ui.Select):
             ),
         ]
 
-        super().__init__(placeholder="Wybierz karę.", options=options)
+        super().__init__(
+            placeholder="Wybierz karę.",
+            options=options,
+        )
 
     async def callback(self, interaction: CustomInteraction) -> None:
         assert interaction.guild
@@ -48,7 +51,8 @@ class PunishmentSelect(ui.Select):
         bot: Smiffy = interaction.bot
 
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-            "SELECT * FROM antylink WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM antylink WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if response:
             await interaction.send_error_message(description="Antylink już jest włączony.")
@@ -56,7 +60,10 @@ class PunishmentSelect(ui.Select):
 
         await bot.db.execute_fetchone(
             "INSERT INTO antylink(guild_id, punishment) VALUES(?,?)",
-            (interaction.guild.id, punishment.lower()),
+            (
+                interaction.guild.id,
+                punishment.lower(),
+            ),
         )
 
         await interaction.send_success_message(
@@ -78,7 +85,10 @@ class CommandAntylink(CustomCog):
     async def antylink(self, interaction: CustomInteraction):  # pylint: disable=unused-argument
         ...
 
-    @antylink.subcommand(name="włącz", description="Włącza system Antylink")  # pyright: ignore
+    @antylink.subcommand(
+        name="włącz",
+        description="Włącza system Antylink",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def antylink_on(self, interaction: CustomInteraction):
         embed = Embed(
@@ -87,23 +97,37 @@ class CommandAntylink(CustomCog):
             description=f"{Emojis.REPLY.value} Wybrana przez ciebie kara zostane nadana po wysłaniu linku.",
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
         punishmentlistview = PunishmentSelectView()
-        await interaction.send(embed=embed, ephemeral=True, view=punishmentlistview)
+        await interaction.send(
+            embed=embed,
+            ephemeral=True,
+            view=punishmentlistview,
+        )
 
-    @antylink.subcommand(name="wyłącz", description="Wyłącza system Antylink")  # pyright: ignore
+    @antylink.subcommand(
+        name="wyłącz",
+        description="Wyłącza system Antylink",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def antylink_off(self, interaction: CustomInteraction):
         assert interaction.guild
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM antylink WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM antylink WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if not response:
             return await interaction.send_error_message(description="Antylink już jest wyłączony.")
 
-        await self.bot.db.execute_fetchone("DELETE FROM antylink WHERE guild_id = ?", (interaction.guild.id,))
+        await self.bot.db.execute_fetchone(
+            "DELETE FROM antylink WHERE guild_id = ?",
+            (interaction.guild.id,),
+        )
         await interaction.send_success_message(
             title=f"Pomyślnie zaktualizowano {Emojis.GREENBUTTON.value}",
             color=Color.green(),

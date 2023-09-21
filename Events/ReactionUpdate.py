@@ -44,7 +44,10 @@ class ReactionUpdateEvent(CustomCog):
                 color=Color.green(),
                 timestamp=utils.utcnow(),
             )
-            embed.set_author(name=member, icon_url=self.avatars.get_user_avatar(member))
+            embed.set_author(
+                name=member,
+                icon_url=self.avatars.get_user_avatar(member),
+            )
             embed.set_thumbnail(url=self.avatars.get_guild_icon(channel.guild))
 
             for data in reactionroles_response:
@@ -58,7 +61,10 @@ class ReactionUpdateEvent(CustomCog):
                             colour=Color.red(),
                             timestamp=utils.utcnow(),
                         )
-                        embed.set_author(name=member, icon_url=self.avatars.get_user_avatar(member))
+                        embed.set_author(
+                            name=member,
+                            icon_url=self.avatars.get_user_avatar(member),
+                        )
                         embed.set_thumbnail(url=self.avatars.get_guild_icon(channel.guild))
                         try:
                             await member.send(embed=embed)
@@ -72,7 +78,10 @@ class ReactionUpdateEvent(CustomCog):
                         value=f"{Emojis.REPLY.value} `{role}`",
                     )
                     try:
-                        await member.add_roles(role, reason="Smiffy (ReactionRole)")
+                        await member.add_roles(
+                            role,
+                            reason="Smiffy (ReactionRole)",
+                        )
                     except errors.Forbidden:
                         embed = Embed(
                             title=f"{Emojis.REDBUTTON.value} Wystąpił bląd.",
@@ -95,11 +104,15 @@ class ReactionUpdateEvent(CustomCog):
                     break
 
         suggestion_response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM suggestions WHERE guild_id = ?", (message.guild.id,)
+            "SELECT * FROM suggestions WHERE guild_id = ?",
+            (message.guild.id,),
         )
 
         if suggestion_response and suggestion_response[1] == payload.channel_id:
-            if clicked_emoji.id in (951968571540529233, 951968542083932250):
+            if clicked_emoji.id in (
+                951968571540529233,
+                951968542083932250,
+            ):
                 for embed in message.embeds:
                     upvotes: int = -1
                     downvotes: int = -1
@@ -129,7 +142,10 @@ class ReactionUpdateEvent(CustomCog):
                 timestamp=utils.utcnow(),
                 description=f"{Emojis.REPLY.value} Nie spełniasz podanych wymagań aby dołączyć do konkursu.",
             )
-            embed.set_author(name=member, icon_url=self.avatars.get_user_avatar(member))
+            embed.set_author(
+                name=member,
+                icon_url=self.avatars.get_user_avatar(member),
+            )
             embed.set_thumbnail(url=self.avatars.get_guild_icon(channel.guild))
 
             try:
@@ -165,7 +181,10 @@ class ReactionUpdateEvent(CustomCog):
                 color=Color.red(),
                 timestamp=utils.utcnow(),
             )
-            embed.set_author(name=member, icon_url=self.avatars.get_user_avatar(member))
+            embed.set_author(
+                name=member,
+                icon_url=self.avatars.get_user_avatar(member),
+            )
             embed.set_thumbnail(url=self.avatars.get_guild_icon(channel.guild))
 
             for data in reactionroles_response:
@@ -180,7 +199,10 @@ class ReactionUpdateEvent(CustomCog):
                             colour=Color.red(),
                             timestamp=utils.utcnow(),
                         )
-                        embed.set_author(name=member, icon_url=self.avatars.get_user_avatar(member))
+                        embed.set_author(
+                            name=member,
+                            icon_url=self.avatars.get_user_avatar(member),
+                        )
                         embed.set_thumbnail(url=self.avatars.get_guild_icon(channel.guild))
                         try:
                             await member.send(embed=embed)
@@ -194,7 +216,10 @@ class ReactionUpdateEvent(CustomCog):
                         value=f"{Emojis.REPLY.value} `{role}`",
                     )
                     try:
-                        await member.remove_roles(role, reason="Smiffy (ReactionRole)")
+                        await member.remove_roles(
+                            role,
+                            reason="Smiffy (ReactionRole)",
+                        )
                     except errors.Forbidden:
                         embed = Embed(
                             title=f"{Emojis.REDBUTTON.value} Wystąpił bląd.",
@@ -217,11 +242,15 @@ class ReactionUpdateEvent(CustomCog):
                     break
 
         suggestion_response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM suggestions WHERE guild_id = ?", (message.guild.id,)
+            "SELECT * FROM suggestions WHERE guild_id = ?",
+            (message.guild.id,),
         )
 
         if suggestion_response and suggestion_response[1] == payload.channel_id:
-            if clicked_emoji.id in (951968571540529233, 951968542083932250):
+            if clicked_emoji.id in (
+                951968571540529233,
+                951968542083932250,
+            ):
                 for embed in message.embeds:
                     upvotes: int = -1
                     downvotes: int = -1

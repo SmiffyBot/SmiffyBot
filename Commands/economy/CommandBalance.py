@@ -14,13 +14,15 @@ if TYPE_CHECKING:
 
 class CommandBalance(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
-        name="stan_konta", description="Wyświetla stan konta osoby"
+        name="stan_konta",
+        description="Wyświetla stan konta osoby",
     )
     async def economy_balance(
         self,
         interaction: CustomInteraction,
         user: Optional[Member] = SlashOption(
-            name="osoba", description="Podaj osobę której chcesz sprawdzić balans"
+            name="osoba",
+            description="Podaj osobę której chcesz sprawdzić balans",
         ),
     ):
         await interaction.response.defer()
@@ -38,7 +40,10 @@ class CommandBalance(CustomCog):
         if not await manager.get_guild_economy_status(interaction.guild):
             return await interaction.send_error_message(description="Ekonomia na serwerze jest wyłączona.")
 
-        money, bank_money = await manager.get_user_balance(member)
+        (
+            money,
+            bank_money,
+        ) = await manager.get_user_balance(member)
 
         await interaction.send_success_message(
             title=f"`💸` Stan konta {member}",

@@ -16,7 +16,8 @@ if TYPE_CHECKING:
 
 class CommandPause(CustomCog):
     @MusicCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
-        name="pauza", description="Pauzuje aktualną piosenke"
+        name="pauza",
+        description="Pauzuje aktualną piosenke",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_pause(self, interaction: CustomInteraction):
@@ -50,7 +51,10 @@ class CommandPause(CustomCog):
 
         await player.pause()
 
-        resume_command: str = interaction.get_command_mention(command_name="muzyka", sub_command="wznów")
+        resume_command: str = interaction.get_command_mention(
+            command_name="muzyka",
+            sub_command="wznów",
+        )
 
         await interaction.send_success_message(
             title=f"Pomyślnie włączono pauze {Emojis.GREENBUTTON.value}",

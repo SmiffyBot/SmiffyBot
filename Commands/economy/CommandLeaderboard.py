@@ -16,7 +16,10 @@ if TYPE_CHECKING:
 
 class CommandLeaderboard(CustomCog):
     async def get_leaderboard(
-        self, guild: Guild, manager: EconomyManager, accounts: list[EconomyUserData]
+        self,
+        guild: Guild,
+        manager: EconomyManager,
+        accounts: list[EconomyUserData],
     ) -> dict[Member, int]:
         total_money_lb: dict[Member, int] = {}
 
@@ -64,11 +67,17 @@ class CommandLeaderboard(CustomCog):
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
         index: int = 0
-        for member, total_money in leaderboard.items():
+        for (
+            member,
+            total_money,
+        ) in leaderboard.items():
             index += 1
             embed.add_field(
                 name=f"`🔱` {index}. {member}",

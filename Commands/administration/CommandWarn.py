@@ -50,7 +50,10 @@ class WarnsList(ui.Select):
                 )
             )
 
-        super().__init__(placeholder="Wybierz następną stronę ostrzeżeń", options=pages_list)
+        super().__init__(
+            placeholder="Wybierz następną stronę ostrzeżeń",
+            options=pages_list,
+        )
 
     async def callback(self, interaction: CustomInteraction) -> None:
         if not interaction.message:
@@ -86,7 +89,12 @@ class WarnsListView(ui.View):
 
 
 class DeleteAllWarnsView(ui.View):
-    def __init__(self, author_id: int, bot: Smiffy, person: Optional[Member] = None):
+    def __init__(
+        self,
+        author_id: int,
+        bot: Smiffy,
+        person: Optional[Member] = None,
+    ):
         super().__init__(timeout=None)
 
         self.author_id: int = author_id
@@ -99,7 +107,9 @@ class DeleteAllWarnsView(ui.View):
         emoji="<:suggestionlike:997650032683667506>",
     )
     async def confirm(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         assert interaction.guild and interaction.message
 
@@ -110,13 +120,17 @@ class DeleteAllWarnsView(ui.View):
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         await interaction.edit_original_message(embed=embed, view=None)
 
         # if not person then it's global, for whole server.
         if not self.person:
             await self.bot.db.execute_fetchone(
-                "DELETE FROM warnings WHERE guild_id = ?", (interaction.guild.id,)
+                "DELETE FROM warnings WHERE guild_id = ?",
+                (interaction.guild.id,),
             )
 
             embed = Embed(
@@ -125,16 +139,28 @@ class DeleteAllWarnsView(ui.View):
                 description=f"{Emojis.REPLY.value} Pomyślnie usunięto wszystkie ostrzeżenia na serwerze.",
                 timestamp=utils.utcnow(),
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{self.bot.__version__}",
+                icon_url=self.bot.avatar_url,
+            )
 
-            await interaction.followup.edit_message(message_id=interaction.message.id, embed=embed)
+            await interaction.followup.edit_message(
+                message_id=interaction.message.id,
+                embed=embed,
+            )
 
         else:
             await self.bot.db.execute_fetchone(
                 "DELETE FROM warnings WHERE guild_id = ? AND user_id = ?",
-                (interaction.guild.id, self.person.id),
+                (
+                    interaction.guild.id,
+                    self.person.id,
+                ),
             )
 
             embed = Embed(
@@ -143,12 +169,21 @@ class DeleteAllWarnsView(ui.View):
                 description=f"{Emojis.REPLY.value} Pomyślnie usunięto wszystkie ostrzeżenia: {self.person.mention}",
                 timestamp=utils.utcnow(),
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{self.bot.__version__}",
+                icon_url=self.bot.avatar_url,
+            )
 
             if interaction.message:
-                await interaction.followup.edit_message(message_id=interaction.message.id, embed=embed)
+                await interaction.followup.edit_message(
+                    message_id=interaction.message.id,
+                    embed=embed,
+                )
 
     @ui.button(  # pyright: ignore[reportGeneralTypeIssues]
         label="Nie",
@@ -156,7 +191,9 @@ class DeleteAllWarnsView(ui.View):
         emoji="<:suggestiondislike:997650135209222344>",
     )
     async def cancel(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         if interaction.message:
             await interaction.message.delete()
@@ -167,7 +204,10 @@ class DeleteAllWarnsView(ui.View):
         if interaction.user.id == self.author_id:
             return True
 
-        return await interaction.send_error_message(description="Nie możesz tego użyć", ephemeral=True)
+        return await interaction.send_error_message(
+            description="Nie możesz tego użyć",
+            ephemeral=True,
+        )
 
 
 class DeletePunishmentMessage(ui.View):
@@ -186,26 +226,47 @@ class DeletePunishmentMessage(ui.View):
         )
 
     @ui.button(
-        label="Usuń Wiadomość", style=ButtonStyle.gray, emoji="❌"
+        label="Usuń Wiadomość",
+        style=ButtonStyle.gray,
+        emoji="❌",
     )  # pyright: ignore[reportGeneralTypeIssues]
     async def delete(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         await interaction.delete_original_message(delay=1)
 
 
 class CommandWarn(CustomCog):
-    @slash_command(name="ostrzeżenia", description="System ostrzeżeń", dm_permission=False)
+    @slash_command(
+        name="ostrzeżenia",
+        description="System ostrzeżeń",
+        dm_permission=False,
+    )
     async def warnings_system(self, interaction: CustomInteraction):
         pass
 
-    @warnings_system.subcommand(name="nadaj", description="Nadaje ostrzeżenie osobie.")  # pyright: ignore
-    @PermissionHandler(moderate_members=True, user_role_has_permission="warn")
+    @warnings_system.subcommand(
+        name="nadaj",
+        description="Nadaje ostrzeżenie osobie.",
+    )  # pyright: ignore
+    @PermissionHandler(
+        moderate_members=True,
+        user_role_has_permission="warn",
+    )
     async def warn_add(
         self,
         interaction: CustomInteraction,
-        member: Member = SlashOption(name="osoba", description="Podaj osobę którą chcesz zwarnować."),
-        reason: str = SlashOption(name="powod", description="Podaj powód warna.", max_length=256),
+        member: Member = SlashOption(
+            name="osoba",
+            description="Podaj osobę którą chcesz zwarnować.",
+        ),
+        reason: str = SlashOption(
+            name="powod",
+            description="Podaj powód warna.",
+            max_length=256,
+        ),
     ):
         assert interaction.guild and isinstance(interaction.user, Member)
 
@@ -239,7 +300,11 @@ class CommandWarn(CustomCog):
 
             await self.bot.db.execute_fetchone(
                 "UPDATE warnings SET warns = ? WHERE guild_id = ? and user_id = ?",
-                (str(member_warns), interaction.guild.id, member.id),
+                (
+                    str(member_warns),
+                    interaction.guild.id,
+                    member.id,
+                ),
             )
 
         else:
@@ -248,7 +313,11 @@ class CommandWarn(CustomCog):
 
             await self.bot.db.execute_fetchone(
                 "INSERT INTO warnings(guild_id, user_id, warns) VALUES(?,?,?)",
-                (interaction.guild.id, member.id, str(new_warn)),
+                (
+                    interaction.guild.id,
+                    member.id,
+                    str(new_warn),
+                ),
             )
 
         embed = Embed(
@@ -258,18 +327,31 @@ class CommandWarn(CustomCog):
         )
 
         embed.set_thumbnail(url=interaction.guild_icon_url)
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
 
-        embed.add_field(name="`👤` Użytkownik", value=f"{Emojis.REPLY.value} {member.mention}")
+        embed.add_field(
+            name="`👤` Użytkownik",
+            value=f"{Emojis.REPLY.value} {member.mention}",
+        )
 
-        embed.add_field(name="`🗨️` Powód", value=f"{Emojis.REPLY.value} `{reason}`", inline=False)
+        embed.add_field(
+            name="`🗨️` Powód",
+            value=f"{Emojis.REPLY.value} `{reason}`",
+            inline=False,
+        )
 
         embed.add_field(
             name="`📃` Aktualne ostrzeżenia",
             value=f"{Emojis.REPLY.value} `{len(member_warns)}`",
         )
 
-        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{self.bot.__version__}",
+            icon_url=self.bot.avatar_url,
+        )
 
         await interaction.send(embed=embed)
 
@@ -290,9 +372,15 @@ class CommandWarn(CustomCog):
                     description=f"{Emojis.REPLY.value} Nie posiadam wystarczających permisji, "
                     f"aby nadać karę użytkownikowi: {member}",
                 )
-                embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+                embed.set_author(
+                    name=interaction.user,
+                    icon_url=interaction.user_avatar_url,
+                )
                 embed.set_thumbnail(url=interaction.guild_icon_url)
-                if isinstance(interaction.channel, (TextChannel, Thread)):
+                if isinstance(
+                    interaction.channel,
+                    (TextChannel, Thread),
+                ):
                     await interaction.channel.send(embed=embed)
                 return
 
@@ -302,13 +390,19 @@ class CommandWarn(CustomCog):
                 description=f"{Emojis.REPLY.value} {member.mention} otrzymał/a karę za `{len(member_warns)}` ostrzeżeń",
                 timestamp=utils.utcnow(),
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
 
             button_delete_message: ui.View = DeletePunishmentMessage()
             warnings_data: dict[str, tuple[str, str]] = literal_eval(response[1])
 
-            for warn_count, punishment_data in warnings_data.items():
+            for (
+                warn_count,
+                punishment_data,
+            ) in warnings_data.items():
                 if int(warn_count) == len(member_warns):
                     action: str = punishment_data[0]
                     punishment_duration: str = punishment_data[1]
@@ -322,7 +416,11 @@ class CommandWarn(CustomCog):
                         duration: float = parse_timespan(punishment_duration)
 
                         if action == "mute":
-                            if await self.mute_person(interaction, member, duration):
+                            if await self.mute_person(
+                                interaction,
+                                member,
+                                duration,
+                            ):
                                 embed.description = embed_description.format(
                                     mention=member.mention,
                                     punishment=action.capitalize(),
@@ -330,13 +428,24 @@ class CommandWarn(CustomCog):
                                     duration=punishment_duration,
                                 )
 
-                                if isinstance(interaction.channel, (TextChannel, Thread)):
+                                if isinstance(
+                                    interaction.channel,
+                                    (
+                                        TextChannel,
+                                        Thread,
+                                    ),
+                                ):
                                     return await interaction.channel.send(
-                                        embed=embed, view=button_delete_message
+                                        embed=embed,
+                                        view=button_delete_message,
                                     )
 
                         if action == "tempban":
-                            if await self.tempban_person(interaction, member, duration):
+                            if await self.tempban_person(
+                                interaction,
+                                member,
+                                duration,
+                            ):
                                 embed.description = embed_description.format(
                                     mention=member.mention,
                                     punishment=action.capitalize(),
@@ -344,9 +453,16 @@ class CommandWarn(CustomCog):
                                     duration=punishment_duration,
                                 )
 
-                                if isinstance(interaction.channel, (TextChannel, Thread)):
+                                if isinstance(
+                                    interaction.channel,
+                                    (
+                                        TextChannel,
+                                        Thread,
+                                    ),
+                                ):
                                     return await interaction.channel.send(
-                                        embed=embed, view=button_delete_message
+                                        embed=embed,
+                                        view=button_delete_message,
                                     )
 
                         break
@@ -359,8 +475,17 @@ class CommandWarn(CustomCog):
                                 warn_count=warn_count,
                                 duration=punishment_duration,
                             )
-                            if isinstance(interaction.channel, (TextChannel, Thread)):
-                                return await interaction.channel.send(embed=embed, view=button_delete_message)
+                            if isinstance(
+                                interaction.channel,
+                                (
+                                    TextChannel,
+                                    Thread,
+                                ),
+                            ):
+                                return await interaction.channel.send(
+                                    embed=embed,
+                                    view=button_delete_message,
+                                )
 
                     if action.lower() == "ban":
                         if await self.ban_person(interaction, member):
@@ -370,11 +495,24 @@ class CommandWarn(CustomCog):
                                 warn_count=warn_count,
                                 duration=punishment_duration,
                             )
-                            if isinstance(interaction.channel, (TextChannel, Thread)):
-                                return await interaction.channel.send(embed=embed, view=button_delete_message)
+                            if isinstance(
+                                interaction.channel,
+                                (
+                                    TextChannel,
+                                    Thread,
+                                ),
+                            ):
+                                return await interaction.channel.send(
+                                    embed=embed,
+                                    view=button_delete_message,
+                                )
 
     @staticmethod
-    async def mute_person(interaction: CustomInteraction, member: Member, duration: float) -> bool:
+    async def mute_person(
+        interaction: CustomInteraction,
+        member: Member,
+        duration: float,
+    ) -> bool:
         try:
             await member.edit(timeout=timedelta(seconds=duration))
         except nextcord_errors.Forbidden:
@@ -384,9 +522,15 @@ class CommandWarn(CustomCog):
                 timestamp=utils.utcnow(),
                 description=f"Nie posiadam wystarczających permisji, aby nadać karę użytkownikowi: `{member}`",
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            if isinstance(interaction.channel, (TextChannel, Thread)):
+            if isinstance(
+                interaction.channel,
+                (TextChannel, Thread),
+            ):
                 await interaction.channel.send(embed=embed)
             return False
 
@@ -397,25 +541,43 @@ class CommandWarn(CustomCog):
                 timestamp=utils.utcnow(),
                 description="Wystąpił niespodziewany błąd.",
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            if isinstance(interaction.channel, (TextChannel, Thread)):
+            if isinstance(
+                interaction.channel,
+                (TextChannel, Thread),
+            ):
                 await interaction.channel.send(embed=embed)
             return False
 
         return True
 
-    async def tempban_person(self, interaction: CustomInteraction, member: Member, duration: float) -> bool:
+    async def tempban_person(
+        self,
+        interaction: CustomInteraction,
+        member: Member,
+        duration: float,
+    ) -> bool:
         assert interaction.guild
 
         try:
-            await member.ban(reason="KaryWarny - Smiffy", delete_message_days=0)
+            await member.ban(
+                reason="KaryWarny - Smiffy",
+                delete_message_days=0,
+            )
 
             ban_duration: int = int(time() + duration) + 7200
 
             await self.bot.db.execute_fetchone(
                 "INSERT INTO tempbans(guild_id, user_id, ban_duration) VALUES(?,?,?)",
-                (interaction.guild.id, member.id, ban_duration),
+                (
+                    interaction.guild.id,
+                    member.id,
+                    ban_duration,
+                ),
             )
 
             async def unban_person():
@@ -426,7 +588,10 @@ class CommandWarn(CustomCog):
 
                 await self.bot.db.execute_fetchone(
                     "DELETE FROM tempbans WHERE guild_id = ? AND user_id = ?",
-                    (interaction.guild.id, member.id),
+                    (
+                        interaction.guild.id,
+                        member.id,
+                    ),
                 )
 
             await self.bot.loop.create_task(unban_person())
@@ -438,9 +603,15 @@ class CommandWarn(CustomCog):
                 timestamp=utils.utcnow(),
                 description=f"Nie posiadam wystarczających permisji, aby nadać karę użytkownikowi: `{member}`",
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            if isinstance(interaction.channel, (TextChannel, Thread)):
+            if isinstance(
+                interaction.channel,
+                (TextChannel, Thread),
+            ):
                 await interaction.channel.send(embed=embed)
             return False
 
@@ -451,9 +622,15 @@ class CommandWarn(CustomCog):
                 timestamp=utils.utcnow(),
                 description=f"Wystąpił nieoczekiwany błąd: {e}",
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            if isinstance(interaction.channel, (TextChannel, Thread)):
+            if isinstance(
+                interaction.channel,
+                (TextChannel, Thread),
+            ):
                 await interaction.channel.send(embed=embed)
 
             return False
@@ -461,7 +638,10 @@ class CommandWarn(CustomCog):
         return True
 
     @staticmethod
-    async def kick_person(interaction: CustomInteraction, member: Member) -> bool:
+    async def kick_person(
+        interaction: CustomInteraction,
+        member: Member,
+    ) -> bool:
         try:
             await member.kick(reason="KaryWarny - Smiffy")
         except nextcord_errors.Forbidden:
@@ -471,9 +651,15 @@ class CommandWarn(CustomCog):
                 timestamp=utils.utcnow(),
                 description=f"Nie posiadam wystarczających permisji, aby nadać karę użytkownikowi: `{member}`",
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            if isinstance(interaction.channel, (TextChannel, Thread)):
+            if isinstance(
+                interaction.channel,
+                (TextChannel, Thread),
+            ):
                 await interaction.channel.send(embed=embed)
             return False
 
@@ -484,9 +670,15 @@ class CommandWarn(CustomCog):
                 timestamp=utils.utcnow(),
                 description="Wystąpił niespodziewany błąd.",
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            if isinstance(interaction.channel, (TextChannel, Thread)):
+            if isinstance(
+                interaction.channel,
+                (TextChannel, Thread),
+            ):
                 await interaction.channel.send(embed=embed)
 
             return False
@@ -494,7 +686,10 @@ class CommandWarn(CustomCog):
         return True
 
     @staticmethod
-    async def ban_person(interaction: CustomInteraction, member: Member) -> bool:
+    async def ban_person(
+        interaction: CustomInteraction,
+        member: Member,
+    ) -> bool:
         try:
             await member.ban(reason="KaryWarny - Smiffy")
         except nextcord_errors.Forbidden:
@@ -504,10 +699,16 @@ class CommandWarn(CustomCog):
                 timestamp=utils.utcnow(),
                 description=f"Nie posiadam wystarczających permisji, aby nadać karę użytkownikowi: `{member}`",
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
 
-            if isinstance(interaction.channel, (TextChannel, Thread)):
+            if isinstance(
+                interaction.channel,
+                (TextChannel, Thread),
+            ):
                 await interaction.channel.send(embed=embed)
             return False
 
@@ -518,23 +719,36 @@ class CommandWarn(CustomCog):
                 timestamp=utils.utcnow(),
                 description="Wystąpił niespodziewany błąd.",
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
 
-            if isinstance(interaction.channel, (TextChannel, Thread)):
+            if isinstance(
+                interaction.channel,
+                (TextChannel, Thread),
+            ):
                 await interaction.channel.send(embed=embed)
 
             return False
 
         return True
 
-    @warnings_system.subcommand(name="usuń", description="Usuwa ostrzeżenie osobie.")  # pyright: ignore
-    @PermissionHandler(moderate_members=True, user_role_has_permission="warn")
+    @warnings_system.subcommand(
+        name="usuń",
+        description="Usuwa ostrzeżenie osobie.",
+    )  # pyright: ignore
+    @PermissionHandler(
+        moderate_members=True,
+        user_role_has_permission="warn",
+    )
     async def warn_remove(
         self,
         interaction: CustomInteraction,
         member: Member = SlashOption(
-            name="osoba", description="Podaj osobę której chcesz usunąć ostrzeżenie."
+            name="osoba",
+            description="Podaj osobę której chcesz usunąć ostrzeżenie.",
         ),
         warn_id: str = SlashOption(
             name="warn_id",
@@ -569,7 +783,11 @@ class CommandWarn(CustomCog):
 
         await self.bot.db.execute_fetchone(
             "UPDATE warnings SET warns = ? WHERE guild_id = ? and user_id = ?",
-            (str(warnings_data), interaction.guild.id, member.id),
+            (
+                str(warnings_data),
+                interaction.guild.id,
+                member.id,
+            ),
         )
 
         embed = Embed(
@@ -578,8 +796,14 @@ class CommandWarn(CustomCog):
             timestamp=utils.utcnow(),
         )
         embed.set_thumbnail(url=interaction.guild_icon_url)
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
-        embed.add_field(name="`👤` Użytkownik", value=f"{Emojis.REPLY.value} {member.mention}")
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
+        embed.add_field(
+            name="`👤` Użytkownik",
+            value=f"{Emojis.REPLY.value} {member.mention}",
+        )
 
         embed.add_field(
             name="`🗨️` Warn",
@@ -592,7 +816,10 @@ class CommandWarn(CustomCog):
             value=f"{Emojis.REPLY.value} `{len(warnings_data)}`",
         )
 
-        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{self.bot.__version__}",
+            icon_url=self.bot.avatar_url,
+        )
         await interaction.send(embed=embed)
 
     @warnings_system.subcommand(
@@ -627,10 +854,16 @@ class CommandWarn(CustomCog):
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
-        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{self.bot.__version__}",
+            icon_url=self.bot.avatar_url,
+        )
 
         for index, warn_id in enumerate(warnings_data):
             embed.add_field(
@@ -650,14 +883,20 @@ class CommandWarn(CustomCog):
         name="usuń_wszystkie",
         description="Zresetuj wszystkie warny osobie lub na całym serwerze.",
     )
-    @PermissionHandler(moderate_members=True, user_role_has_permission="warn")
+    @PermissionHandler(
+        moderate_members=True,
+        user_role_has_permission="warn",
+    )
     async def warns_delete_all(
         self,
         interaction: CustomInteraction,
         choice: str = SlashOption(
             name="wybor",
             description="Wybierz spośród opcji.",
-            choices={"Jednej osobie": "person", "Cały serwer": "all"},
+            choices={
+                "Jednej osobie": "person",
+                "Cały serwer": "all",
+            },
         ),
     ):
         assert isinstance(interaction.user, Member)
@@ -676,8 +915,14 @@ class CommandWarn(CustomCog):
                 timestamp=utils.utcnow(),
             )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
-            embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
+            embed.set_footer(
+                text=f"Smiffy v{self.bot.__version__}",
+                icon_url=self.bot.avatar_url,
+            )
             await interaction.send(embed=embed)
 
             try:
@@ -691,12 +936,16 @@ class CommandWarn(CustomCog):
                 embed.title = "<:clock:992157767244714156> Konfiguracja wstrzymana."
                 embed.description = "*Instalacja przerwana (Upłynął limit czasu).*"
                 embed.colour = Color.red()
-                embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+                embed.set_footer(
+                    text=f"Smiffy v{self.bot.__version__}",
+                    icon_url=self.bot.avatar_url,
+                )
                 return await interaction.edit_original_message(embed=embed)
 
             try:
                 member: Optional[Member] = await MemberConverter().convert(
-                    interaction, member_message.content  # pyright: ignore
+                    interaction,
+                    member_message.content,  # pyright: ignore
                 )
 
                 if not member:
@@ -709,9 +958,15 @@ class CommandWarn(CustomCog):
                     timestamp=utils.utcnow(),
                     description="**Nie mogłem odnaleźć podanego użytkownika.** Spróbuj jeszcze raz.",
                 )
-                embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+                embed.set_author(
+                    name=interaction.user,
+                    icon_url=interaction.user_avatar_url,
+                )
                 embed.set_thumbnail(url=interaction.guild_icon_url)
-                embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+                embed.set_footer(
+                    text=f"Smiffy v{self.bot.__version__}",
+                    icon_url=self.bot.avatar_url,
+                )
                 return await interaction.edit_original_message(embed=embed)
 
             await member_message.delete()
@@ -733,11 +988,21 @@ class CommandWarn(CustomCog):
             color=Color.yellow(),
             timestamp=utils.utcnow(),
         )
-        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{self.bot.__version__}",
+            icon_url=self.bot.avatar_url,
+        )
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
-        buttons = DeleteAllWarnsView(interaction.user.id, self.bot, person=member)
+        buttons = DeleteAllWarnsView(
+            interaction.user.id,
+            self.bot,
+            person=member,
+        )
 
         if choice != "all":
             await interaction.edit_original_message(embed=embed, view=buttons)

@@ -17,7 +17,10 @@ class CommandPing(CustomCog):
         dm_permission=False,
     )
     async def ping(self, interaction: CustomInteraction):
-        latency, shard = interaction.get_bot_latency(interaction.guild)
+        (
+            latency,
+            shard,
+        ) = interaction.get_bot_latency(interaction.guild)
 
         await interaction.send("> Ping! :ping_pong:")
         await interaction.edit_original_message(

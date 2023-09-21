@@ -30,7 +30,11 @@ if TYPE_CHECKING:
 
 
 class SongsList(ui.Select):
-    def __init__(self, inter: CustomInteraction, songs_data: list[dict[str, str]]):
+    def __init__(
+        self,
+        inter: CustomInteraction,
+        songs_data: list[dict[str, str]],
+    ):
         self.songs_data: list[dict[str, str]] = songs_data
         self.inter: CustomInteraction = inter
 
@@ -48,7 +52,10 @@ class SongsList(ui.Select):
                 )
             )
 
-        super().__init__(placeholder="Wybierz następną stronę piosenek", options=pages_list)
+        super().__init__(
+            placeholder="Wybierz następną stronę piosenek",
+            options=pages_list,
+        )
 
     async def callback(self, interaction: CustomInteraction) -> None:
         assert interaction.message
@@ -78,7 +85,11 @@ class SongsList(ui.Select):
 
 
 class SongsListView(ui.View):
-    def __init__(self, inter: CustomInteraction, songs_data: list[dict[str, str]]):
+    def __init__(
+        self,
+        inter: CustomInteraction,
+        songs_data: list[dict[str, str]],
+    ):
         super().__init__(timeout=None)
 
         self.add_item(SongsList(inter, songs_data))
@@ -102,7 +113,10 @@ class SelectMusic(ui.Select):
             if len(options) == 5:
                 break
 
-        super().__init__(placeholder="Wybierz piosenkę", options=options)
+        super().__init__(
+            placeholder="Wybierz piosenkę",
+            options=options,
+        )
 
     async def callback(self, interaction: CustomInteraction) -> None:
         assert isinstance(interaction.user, Member)
@@ -113,11 +127,15 @@ class SelectMusic(ui.Select):
         node: Node = bot.pool.label_to_node["MAIN"]
 
         tracks: Optional[Union[list[Track], Playlist]] = await node.fetch_tracks(
-            query=song_link, search_type=SearchType.YOUTUBE.value
+            query=song_link,
+            search_type=SearchType.YOUTUBE.value,
         )
 
         if not tracks or isinstance(tracks, Playlist):
-            await interaction.send_error_message(description="Wystąpił nieoczekiwany błąd.", ephemeral=True)
+            await interaction.send_error_message(
+                description="Wystąpił nieoczekiwany błąd.",
+                ephemeral=True,
+            )
             return
 
         track: Track = tracks[0]
@@ -189,7 +207,10 @@ class CommandFavoriteSongs(CustomCog):
     async def music_favorite_songs(self, interaction: CustomInteraction):  # pylint: disable=unused-argument
         ...
 
-    @music_favorite_songs.subcommand(name="uruchom", description="Uruchamia ulubione piosenki")
+    @music_favorite_songs.subcommand(
+        name="uruchom",
+        description="Uruchamia ulubione piosenki",
+    )
     async def music_play_favorite_songs(self, interaction: CustomInteraction):
         assert interaction.guild and isinstance(interaction.user, Member)
 
@@ -266,7 +287,10 @@ class CommandFavoriteSongs(CustomCog):
                 timestamp=utils.utcnow(),
             )
 
-            embed.add_field(name="`⏰` Długość", value=f"{Emojis.REPLY.value} `{track_lenght}`")
+            embed.add_field(
+                name="`⏰` Długość",
+                value=f"{Emojis.REPLY.value} `{track_lenght}`",
+            )
             embed.add_field(
                 name="`👤` Autor",
                 value=f"{Emojis.REPLY.value} `{__track.author}`",
@@ -289,10 +313,16 @@ class CommandFavoriteSongs(CustomCog):
                 icon_url=interaction.user_avatar_url,
             )
 
-            if isinstance(interaction.channel, (TextChannel, Thread)):
+            if isinstance(
+                interaction.channel,
+                (TextChannel, Thread),
+            ):
                 await interaction.channel.send(embed=embed)
 
-    @music_favorite_songs.subcommand(name="lista", description="Lista z ulubionymi piosenkami")
+    @music_favorite_songs.subcommand(
+        name="lista",
+        description="Lista z ulubionymi piosenkami",
+    )
     async def music_list_favorite_song(self, interaction: CustomInteraction):
         assert interaction.user
 
@@ -321,7 +351,10 @@ class CommandFavoriteSongs(CustomCog):
             colour=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
         for index, song_data in enumerate(songs):
@@ -337,13 +370,23 @@ class CommandFavoriteSongs(CustomCog):
                 inline=False,
             )
         pages: SongsListView = SongsListView(interaction, songs)
-        await interaction.send(embed=embed, ephemeral=True, view=pages)
+        await interaction.send(
+            embed=embed,
+            ephemeral=True,
+            view=pages,
+        )
 
-    @music_favorite_songs.subcommand(name="usuń", description="Usuwa piosenkę z ulubionych")
+    @music_favorite_songs.subcommand(
+        name="usuń",
+        description="Usuwa piosenkę z ulubionych",
+    )
     async def music_delete_favorite_song(
         self,
         interaction: CustomInteraction,
-        song: str = SlashOption(name="piosenka", description="Podaj tytuł piosenki"),
+        song: str = SlashOption(
+            name="piosenka",
+            description="Podaj tytuł piosenki",
+        ),
     ):
         assert isinstance(interaction.user, Member)
 
@@ -381,7 +424,10 @@ class CommandFavoriteSongs(CustomCog):
 
                 await self.bot.db.execute_fetchone(
                     "UPDATE music_users SET favorite_songs = ? WHERE user_id = ?",
-                    (str(songs), interaction.user.id),
+                    (
+                        str(songs),
+                        interaction.user.id,
+                    ),
                 )
                 return
 
@@ -392,7 +438,9 @@ class CommandFavoriteSongs(CustomCog):
 
     @music_delete_favorite_song.on_autocomplete("song")
     async def song_delete_autocomplete(
-        self, interaction: CustomInteraction, query: Optional[str]
+        self,
+        interaction: CustomInteraction,
+        query: Optional[str],
     ) -> Optional[list[str]]:
         assert isinstance(interaction.user, Member)
 
@@ -418,18 +466,25 @@ class CommandFavoriteSongs(CustomCog):
         get_near_song: list = [title for title in songs_titles if title.lower().startswith(query.lower())]
         return get_near_song
 
-    @music_favorite_songs.subcommand(name="dodaj", description="Dodaje piosenke do ulubionych")
+    @music_favorite_songs.subcommand(
+        name="dodaj",
+        description="Dodaje piosenke do ulubionych",
+    )
     async def music_add_favorite_song(
         self,
         interaction: CustomInteraction,
-        query: str = SlashOption(name="piosenka", description="Podaj tytuł piosenki lub jej link."),
+        query: str = SlashOption(
+            name="piosenka",
+            description="Podaj tytuł piosenki lub jej link.",
+        ),
     ):
         await interaction.response.defer(ephemeral=True)
 
         node: Node = self.bot.pool.label_to_node["MAIN"]
 
         tracks: Optional[Union[list[Track], Playlist]] = await node.fetch_tracks(
-            query=query, search_type=SearchType.YOUTUBE.value
+            query=query,
+            search_type=SearchType.YOUTUBE.value,
         )
 
         if not tracks:
@@ -450,12 +505,22 @@ class CommandFavoriteSongs(CustomCog):
             timestamp=utils.utcnow(),
             description=f"{Emojis.REPLY.value} Wybierz z listy, którą piosenkę chcesz dodać.",
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
-        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{self.bot.__version__}",
+            icon_url=self.bot.avatar_url,
+        )
 
-        await interaction.send(embed=embed, view=SelectMusicView(tracks), ephemeral=True)
+        await interaction.send(
+            embed=embed,
+            view=SelectMusicView(tracks),
+            ephemeral=True,
+        )
 
 
 def setup(bot: Smiffy):

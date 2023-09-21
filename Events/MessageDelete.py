@@ -63,15 +63,22 @@ class MessageDelete(CustomCog):
                     icon_url=self.avatars.get_user_avatar(message.author),
                 )
                 embed.set_thumbnail(url=self.avatars.get_guild_icon(message.guild))
-                embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+                embed.set_footer(
+                    text=f"Smiffy v{self.bot.__version__}",
+                    icon_url=self.bot.avatar_url,
+                )
 
                 try:
                     await logs_channel.send(embed=embed)
-                except (errors.Forbidden, errors.HTTPException):
+                except (
+                    errors.Forbidden,
+                    errors.HTTPException,
+                ):
                     pass
 
         ghostping_response = await self.bot.db.execute_fetchone(
-            "SELECT * FROM antyghostping WHERE guild_id = ?", (message.guild.id,)
+            "SELECT * FROM antyghostping WHERE guild_id = ?",
+            (message.guild.id,),
         )
 
         permissions: bool = message.author.guild_permissions.manage_messages
@@ -93,11 +100,20 @@ class MessageDelete(CustomCog):
                 )
                 embed.set_thumbnail(url=self.avatars.get_guild_icon(message.guild))
 
-                embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+                embed.set_footer(
+                    text=f"Smiffy v{self.bot.__version__}",
+                    icon_url=self.bot.avatar_url,
+                )
 
                 try:
-                    await message.channel.send(embed=embed, delete_after=21600)
-                except (errors.HTTPException, errors.Forbidden):
+                    await message.channel.send(
+                        embed=embed,
+                        delete_after=21600,
+                    )
+                except (
+                    errors.HTTPException,
+                    errors.Forbidden,
+                ):
                     pass
 
 

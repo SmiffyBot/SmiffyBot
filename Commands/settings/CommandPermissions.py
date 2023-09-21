@@ -15,7 +15,9 @@ if TYPE_CHECKING:
 
 
 def is_guild_owner():
-    def predicate(interaction: CustomInteraction) -> bool:
+    def predicate(
+        interaction: CustomInteraction,
+    ) -> bool:
         assert interaction.guild
         assert interaction.user
 
@@ -45,7 +47,10 @@ class CommandPermissions(CustomCog):
     async def permission(self, interaction: CustomInteraction) -> None:
         pass
 
-    @permission.subcommand(name="dodaj", description="Dodaj uprawnienia dla roli podanej komendy")
+    @permission.subcommand(
+        name="dodaj",
+        description="Dodaj uprawnienia dla roli podanej komendy",
+    )
     @is_guild_owner()
     async def permission_add(
         self,
@@ -78,7 +83,11 @@ class CommandPermissions(CustomCog):
                 permissions_data.append(command)
                 await self.bot.db.execute_fetchone(
                     "UPDATE permissions SET permissions_data = ? WHERE guild_id = ? AND role_id = ?",
-                    (str(permissions_data), interaction.guild.id, role.id),
+                    (
+                        str(permissions_data),
+                        interaction.guild.id,
+                        role.id,
+                    ),
                 )
             else:
                 return await interaction.send_error_message(
@@ -88,7 +97,11 @@ class CommandPermissions(CustomCog):
             permissions_data: list[str] = [command]
             await self.bot.db.execute_fetchone(
                 "INSERT INTO permissions(guild_id, role_id, permissions_data) VALUES(?,?,?)",
-                (interaction.guild.id, role.id, str(permissions_data)),
+                (
+                    interaction.guild.id,
+                    role.id,
+                    str(permissions_data),
+                ),
             )
 
         return await interaction.send_success_message(
@@ -98,13 +111,20 @@ class CommandPermissions(CustomCog):
         )
 
     @permission_add.error  # pyright: ignore
-    async def permission_add_error(self, interaction: CustomInteraction, error):
+    async def permission_add_error(
+        self,
+        interaction: CustomInteraction,
+        error,
+    ):
         if isinstance(error, errors.ApplicationCheckFailure):
             return await interaction.send_error_message(
                 description="Tylko właściciel serwera może użyć tej komendy."
             )
 
-    @permission.subcommand(name="usuń", description="Usuń uprawnienia roli do podanej komendy")
+    @permission.subcommand(
+        name="usuń",
+        description="Usuń uprawnienia roli do podanej komendy",
+    )
     @is_guild_owner()
     async def permission_remove(
         self,
@@ -114,7 +134,10 @@ class CommandPermissions(CustomCog):
             description="Wybierz komendę dla której chcesz usunąć uprawnienia",
             choices=supported_commands,
         ),
-        role: Role = SlashOption(name="rola", description="Wybierz rolę której chcesz usunąć uprawnienie"),
+        role: Role = SlashOption(
+            name="rola",
+            description="Wybierz rolę której chcesz usunąć uprawnienie",
+        ),
     ):
         assert interaction.guild
 
@@ -132,7 +155,11 @@ class CommandPermissions(CustomCog):
 
                 await self.bot.db.execute_fetchone(
                     "UPDATE permissions SET permissions_data = ? WHERE guild_id = ? AND role_id = ?",
-                    (str(role_permissions), interaction.guild.id, role.id),
+                    (
+                        str(role_permissions),
+                        interaction.guild.id,
+                        role.id,
+                    ),
                 )
 
                 command_mention: str = interaction.get_command_mention(command_name=command)
@@ -149,18 +176,28 @@ class CommandPermissions(CustomCog):
         )
 
     @permission_remove.error  # pyright: ignore
-    async def permission_remove_error(self, interaction: CustomInteraction, error):
+    async def permission_remove_error(
+        self,
+        interaction: CustomInteraction,
+        error,
+    ):
         if isinstance(error, errors.ApplicationCheckFailure):
             return await interaction.send_error_message(
                 description="Tej komendy może użyć tylko właściciel serwera!"
             )
 
-    @permission.subcommand(name="lista", description="Lista uprawnień dla podanej roli")
+    @permission.subcommand(
+        name="lista",
+        description="Lista uprawnień dla podanej roli",
+    )
     @is_guild_owner()
     async def permission_list(
         self,
         interaction: CustomInteraction,
-        role: Role = SlashOption(name="rola", description="Podaj rolę, której chcesz sprawdzić uprawnienia"),
+        role: Role = SlashOption(
+            name="rola",
+            description="Podaj rolę, której chcesz sprawdzić uprawnienia",
+        ),
     ):
         assert interaction.guild
 
@@ -188,12 +225,19 @@ class CommandPermissions(CustomCog):
             description=f"{Emojis.REPLY.value} Uprawnienia roli: {role.mention}\n\n" + description,
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
         await interaction.send(embed=embed)
 
     @permission_list.error  # pyright: ignore
-    async def permission_list_error(self, interaction: CustomInteraction, error):
+    async def permission_list_error(
+        self,
+        interaction: CustomInteraction,
+        error,
+    ):
         if isinstance(error, errors.ApplicationCheckFailure):
             return await interaction.send_error_message(
                 description="Tej komendy może użyć tylko właściciel serwera!"

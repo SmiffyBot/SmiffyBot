@@ -18,7 +18,8 @@ if TYPE_CHECKING:
 class VoiceUpdate(CustomCog):
     async def alerts_enabled(self, guild: Guild) -> bool:
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT notify FROM music_settings WHERE guild_id = ?", (guild.id,)
+            "SELECT notify FROM music_settings WHERE guild_id = ?",
+            (guild.id,),
         )
         if not response or not response[0]:
             return True
@@ -43,7 +44,11 @@ class VoiceUpdate(CustomCog):
                 if await self.alerts_enabled(state.channel.guild):
                     player: Optional[PlayerT] = state.channel.guild.voice_client  # pyright: ignore
 
-                    if player and getattr(player, "channel_last_command", None):
+                    if player and getattr(
+                        player,
+                        "channel_last_command",
+                        None,
+                    ):
                         channel: TextChannel = player.channel_last_command  # pyright: ignore
 
                         embed = Embed(

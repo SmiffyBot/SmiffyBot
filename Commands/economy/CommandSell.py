@@ -16,7 +16,8 @@ if TYPE_CHECKING:
 
 class CommandSell(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
-        name="sprzedaj", description="Sprzedaje przedmiot za 50% ceny sklepu"
+        name="sprzedaj",
+        description="Sprzedaje przedmiot za 50% ceny sklepu",
     )
     async def economy_buy(
         self,
@@ -37,7 +38,8 @@ class CommandSell(CustomCog):
             return await interaction.send_error_message(description="Ekonomia na serwerze jest wyłączona.")
 
         item_data: Optional[EconomyItemData] = await manager.get_guild_item(
-            guild=interaction.guild, item_name=item_name
+            guild=interaction.guild,
+            item_name=item_name,
         )
         if not item_data:
             return await interaction.send_error_message(description="Podany przedmiot nie istnieje.")
@@ -52,8 +54,14 @@ class CommandSell(CustomCog):
         user_items.remove(item_id)
         item_price: int = int(item_data["price"] / 2)
 
-        await manager.add_user_money(interaction.user, {"money": item_price})
-        await manager.update_user_account(interaction.user, data={"items": user_items})
+        await manager.add_user_money(
+            interaction.user,
+            {"money": item_price},
+        )
+        await manager.update_user_account(
+            interaction.user,
+            data={"items": user_items},
+        )
 
         await interaction.send_success_message(
             title=f"Pomyślnie sprzedano {Emojis.GREENBUTTON.value}",
@@ -62,7 +70,9 @@ class CommandSell(CustomCog):
 
     @economy_buy.on_autocomplete("item_name")
     async def buy_autocomplete(
-        self, interaction: CustomInteraction, query: Optional[str]
+        self,
+        interaction: CustomInteraction,
+        query: Optional[str],
     ) -> Optional[list[str]]:
         assert interaction.guild and isinstance(interaction.user, Member)
 

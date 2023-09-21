@@ -12,12 +12,22 @@ if TYPE_CHECKING:
 
 
 class CommandUnmute(CustomCog):
-    @slash_command(name="unmute", description="Odcisza użytkownika.", dm_permission=False)  # pyright: ignore
-    @PermissionHandler(moderate_members=True, user_role_has_permission="unmute")
+    @slash_command(
+        name="unmute",
+        description="Odcisza użytkownika.",
+        dm_permission=False,
+    )  # pyright: ignore
+    @PermissionHandler(
+        moderate_members=True,
+        user_role_has_permission="unmute",
+    )
     async def unmute(
         self,
         interaction: CustomInteraction,
-        member: Member = SlashOption(name="osoba", description="Wybierz osobę którą chcesz odciszyć."),
+        member: Member = SlashOption(
+            name="osoba",
+            description="Wybierz osobę którą chcesz odciszyć.",
+        ),
     ):
         assert interaction.user and interaction.guild
 

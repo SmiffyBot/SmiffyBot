@@ -23,7 +23,12 @@ if TYPE_CHECKING:
 
 
 class ReplyAnswerModal(ui.Modal):
-    def __init__(self, text: str, value: str, image: Optional[Attachment]):
+    def __init__(
+        self,
+        text: str,
+        value: str,
+        image: Optional[Attachment],
+    ):
         super().__init__("Odpowiedź bota")
 
         self.text, self.value = text, value
@@ -55,7 +60,8 @@ class ReplyAnswerModal(ui.Modal):
         bot: Smiffy = interaction.bot
 
         response: Iterable[DB_RESPONSE] = await bot.db.execute_fetchall(
-            "SELECT * FROM autoresponder WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM autoresponder WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         for data in response:
@@ -99,9 +105,13 @@ class CommandAutoResponder(CustomCog):
         pass
 
     @autoresponder.subcommand(  # pyright: ignore
-        name="dodaj", description="Dodaj automatyczną odpowiedź bota"
+        name="dodaj",
+        description="Dodaj automatyczną odpowiedź bota",
     )
-    @PermissionHandler(manage_messages=True, user_role_has_permission="autoresponder")
+    @PermissionHandler(
+        manage_messages=True,
+        user_role_has_permission="autoresponder",
+    )
     async def autoresponder_add(
         self,
         interaction: CustomInteraction,
@@ -120,18 +130,28 @@ class CommandAutoResponder(CustomCog):
             },
         ),
         image: Optional[Attachment] = SlashOption(
-            name="obraz", description="Obraz dołączony do odpowiedzi bota"
+            name="obraz",
+            description="Obraz dołączony do odpowiedzi bota",
         ),
     ):
-        if image and image.content_type not in ("image/jpeg", "image/png"):
+        if image and image.content_type not in (
+            "image/jpeg",
+            "image/png",
+        ):
             return await interaction.send_error_message(
                 description="Obraz musi być w formacie `jpg` lub `.png`"
             )
 
         await interaction.response.send_modal(ReplyAnswerModal(text, value, image))
 
-    @autoresponder.subcommand(name="usuń", description="Usuwa automatyczną odpowiedź bota")  # pyright: ignore
-    @PermissionHandler(manage_messages=True, user_role_has_permission="autoresponder")
+    @autoresponder.subcommand(
+        name="usuń",
+        description="Usuwa automatyczną odpowiedź bota",
+    )  # pyright: ignore
+    @PermissionHandler(
+        manage_messages=True,
+        user_role_has_permission="autoresponder",
+    )
     async def autoresponder_remove(
         self,
         interaction: CustomInteraction,
@@ -147,7 +167,10 @@ class CommandAutoResponder(CustomCog):
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
             "SELECT * FROM autoresponder WHERE guild_id = ? AND message_content = ?",
-            (interaction.guild.id, message_content.lower()),
+            (
+                interaction.guild.id,
+                message_content.lower(),
+            ),
         )
 
         if not response:
@@ -157,7 +180,10 @@ class CommandAutoResponder(CustomCog):
 
         await self.bot.db.execute_fetchone(
             "DELETE FROM autoresponder WHERE guild_id = ? AND message_content = ?",
-            (interaction.guild.id, message_content.lower()),
+            (
+                interaction.guild.id,
+                message_content.lower(),
+            ),
         )
 
         return await interaction.send_success_message(
@@ -168,12 +194,15 @@ class CommandAutoResponder(CustomCog):
 
     @autoresponder_remove.on_autocomplete("message_content")
     async def autoresponder_remove_autocomplete(
-        self, interaction: CustomInteraction, query: Optional[str]
+        self,
+        interaction: CustomInteraction,
+        query: Optional[str],
     ) -> Optional[list[str]]:
         assert interaction.guild
 
         response: Iterable[DB_RESPONSE] = await self.bot.db.execute_fetchall(
-            "SELECT * FROM autoresponder WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM autoresponder WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         list_of_messages: list[str] = [message_data[1] for message_data in response]
 
@@ -185,7 +214,10 @@ class CommandAutoResponder(CustomCog):
         ][0:25]
         return get_near_message
 
-    @autoresponder.subcommand(name="info", description="Informacje o obecnych automatycznych odpowiedziach")
+    @autoresponder.subcommand(
+        name="info",
+        description="Informacje o obecnych automatycznych odpowiedziach",
+    )
     async def autoresponder_info(
         self,
         interaction: CustomInteraction,
@@ -201,7 +233,10 @@ class CommandAutoResponder(CustomCog):
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
             "SELECT * FROM autoresponder WHERE guild_id = ? AND message_content = ?",
-            (interaction.guild.id, message_content.lower()),
+            (
+                interaction.guild.id,
+                message_content.lower(),
+            ),
         )
 
         if not response:
@@ -214,7 +249,10 @@ class CommandAutoResponder(CustomCog):
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
         embed.add_field(
@@ -235,19 +273,25 @@ class CommandAutoResponder(CustomCog):
             "Wiadomość taka sama jak tekst": "equals",
         }.items():
             if option == response[2]:
-                embed.add_field(name="`⚙️` Ustawienie", value=f"{Emojis.REPLY.value} {text}")
+                embed.add_field(
+                    name="`⚙️` Ustawienie",
+                    value=f"{Emojis.REPLY.value} {text}",
+                )
                 break
 
         await interaction.send(embed=embed)
 
     @autoresponder_info.on_autocomplete("message_content")
     async def info_autocomplete(
-        self, interaction: CustomInteraction, query: Optional[str]
+        self,
+        interaction: CustomInteraction,
+        query: Optional[str],
     ) -> Optional[list[str]]:
         assert interaction.guild
 
         response: Iterable[DB_RESPONSE] = await self.bot.db.execute_fetchall(
-            "SELECT * FROM autoresponder WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM autoresponder WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         list_of_messages: list[str] = [message_data[1] for message_data in response]
 

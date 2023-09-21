@@ -21,9 +21,15 @@ class CommandDidYouMean(CustomCog):
     async def didyoumean(
         self,
         interaction: CustomInteraction,
-        text: str = SlashOption(name="tekst", description="Podaj treść nakładki", max_length=32),
+        text: str = SlashOption(
+            name="tekst",
+            description="Podaj treść nakładki",
+            max_length=32,
+        ),
         second_text: str = SlashOption(
-            name="drugi_tekst", description="Podaj drugą treść nakładki", max_length=32
+            name="drugi_tekst",
+            description="Podaj drugą treść nakładki",
+            max_length=32,
         ),
     ):
         text, second_text = text.replace("&", ""), second_text.replace("&", "")
@@ -33,7 +39,9 @@ class CommandDidYouMean(CustomCog):
         api_url: str = f"https://api.alexflipnote.dev/didyoumean?top={text}&bottom={second_text}"
 
         response: Optional[ClientResponse] = await self.bot.session.send_api_request(
-            interaction=interaction, url=api_url, method="GET"
+            interaction=interaction,
+            url=api_url,
+            method="GET",
         )
 
         if not response:

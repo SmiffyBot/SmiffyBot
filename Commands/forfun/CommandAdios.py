@@ -31,7 +31,9 @@ class CommandAdios(CustomCog):
         api_url: str = f"https://vacefron.nl/api/adios?user={user.display_avatar.url}"
 
         response: Optional[ClientResponse] = await self.bot.session.send_api_request(
-            interaction=interaction, url=api_url, method="GET"
+            interaction=interaction,
+            url=api_url,
+            method="GET",
         )
 
         if not response:

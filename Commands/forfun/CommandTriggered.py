@@ -21,14 +21,19 @@ class CommandTriggered(CustomCog):
     async def triggered(
         self,
         interaction: CustomInteraction,
-        member: Member = SlashOption(name="osoba", description="Podaj osobę"),
+        member: Member = SlashOption(
+            name="osoba",
+            description="Podaj osobę",
+        ),
     ):
         await interaction.response.defer()
 
         api_url = f"https://some-random-api.com/canvas/triggered?avatar={interaction.avatars.get_user_avatar(member)}"
 
         response: Optional[ClientResponse] = await self.bot.session.send_api_request(
-            interaction=interaction, url=api_url, method="GET"
+            interaction=interaction,
+            url=api_url,
+            method="GET",
         )
 
         if not response:

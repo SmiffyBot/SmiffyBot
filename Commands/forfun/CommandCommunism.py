@@ -21,7 +21,10 @@ class CommandCommunism(CustomCog):
     async def communism(
         self,
         interaction: CustomInteraction,
-        member: Member = SlashOption(name="osoba", description="Wybierz osobę"),
+        member: Member = SlashOption(
+            name="osoba",
+            description="Wybierz osobę",
+        ),
     ):
         await interaction.response.defer()
 
@@ -31,7 +34,9 @@ class CommandCommunism(CustomCog):
         )
 
         response: Optional[ClientResponse] = await self.bot.session.send_api_request(
-            interaction=interaction, url=api_url, method="GET"
+            interaction=interaction,
+            url=api_url,
+            method="GET",
         )
         if not response:
             return

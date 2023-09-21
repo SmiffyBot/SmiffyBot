@@ -15,7 +15,9 @@ if TYPE_CHECKING:
 class CommandStartRole(CustomCog):
     @slash_command(name="startowarola", dm_permission=False)
     async def startrole(
-        self, interaction: CustomInteraction, dm_permission=False
+        self,
+        interaction: CustomInteraction,
+        dm_permission=False,
     ):  # pylint: disable=unused-argument
         ...
 
@@ -27,7 +29,10 @@ class CommandStartRole(CustomCog):
     async def startrole_on(
         self,
         interaction: CustomInteraction,
-        role: Role = SlashOption(name="rola", description="Podaj rolę która ma być nadawana."),
+        role: Role = SlashOption(
+            name="rola",
+            description="Podaj rolę która ma być nadawana.",
+        ),
     ):
         assert interaction.guild
         assert isinstance(interaction.user, Member)
@@ -46,7 +51,8 @@ class CommandStartRole(CustomCog):
             )
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM startrole WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM startrole WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if response:
             await self.bot.db.execute_fetchone(
@@ -65,19 +71,24 @@ class CommandStartRole(CustomCog):
             color=Color.dark_theme(),
         )
 
-    @startrole.subcommand(name="wyłącz", description="Wyłącza startowa role")  # pyright: ignore
+    @startrole.subcommand(
+        name="wyłącz",
+        description="Wyłącza startowa role",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def startrole_off(self, interaction: CustomInteraction):
         assert interaction.guild
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM startrole WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM startrole WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if not response:
             return await interaction.send_error_message(description="Startowa rola już jest wyłączona.")
 
         await self.bot.db.execute_fetchone(
-            "DELETE FROM startrole WHERE guild_id = ?", (interaction.guild.id,)
+            "DELETE FROM startrole WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         return await interaction.send_success_message(

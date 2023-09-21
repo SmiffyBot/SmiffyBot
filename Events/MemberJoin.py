@@ -20,12 +20,23 @@ if TYPE_CHECKING:
 
 class MemberJoin(CustomCog):
     @staticmethod
-    def format_text(main_text: str, first_text: str, second_text: str, member: Member) -> Iterable[str]:
-        for text in (main_text, first_text, second_text):
+    def format_text(
+        main_text: str,
+        first_text: str,
+        second_text: str,
+        member: Member,
+    ) -> Iterable[str]:
+        for text in (
+            main_text,
+            first_text,
+            second_text,
+        ):
             yield text.replace("{user}", str(member)).replace("{user_name}", member.name).replace(
-                "{user_discriminator}", "#" + member.discriminator
+                "{user_discriminator}",
+                "#" + member.discriminator,
             ).replace("{user_id}", str(member.id)).replace("{guild_name}", member.guild.name).replace(
-                "{guild_total_members}", str(member.guild.member_count)
+                "{guild_total_members}",
+                str(member.guild.member_count),
             ).replace(
                 "{guild_id}", str(member.guild.id)
             )
@@ -35,7 +46,16 @@ class MemberJoin(CustomCog):
         second_text: str = data[1]
         third_text: str = data[2]
 
-        main_text, second_text, third_text = self.format_text(main_text, second_text, third_text, member)
+        (
+            main_text,
+            second_text,
+            third_text,
+        ) = self.format_text(
+            main_text,
+            second_text,
+            third_text,
+            member,
+        )
 
         user_avatar = self.avatars.get_user_avatar(member)
 
@@ -49,9 +69,21 @@ class MemberJoin(CustomCog):
         poppins_small = Font.poppins(size=60, variant="light")
 
         background.paste(profile, (760, 170))
-        background.ellipse((760, 170), 400, 400, outline="#fff", stroke_width=4)
+        background.ellipse(
+            (760, 170),
+            400,
+            400,
+            outline="#fff",
+            stroke_width=4,
+        )
 
-        background.text((950, 610), f"{main_text}", color="#07f763", font=poppins, align="center")
+        background.text(
+            (950, 610),
+            f"{main_text}",
+            color="#07f763",
+            font=poppins,
+            align="center",
+        )
         background.text(
             (950, 730),
             f"{second_text}",
@@ -67,11 +99,20 @@ class MemberJoin(CustomCog):
             align="center",
         )
 
-        _file = File(fp=background.image_bytes, filename="welcomecard.jpg")
+        _file = File(
+            fp=background.image_bytes,
+            filename="welcomecard.jpg",
+        )
 
         return _file
 
-    async def update_invites(self, inviter: User, member: Member, normal: int = 0, fake: int = 0):
+    async def update_invites(
+        self,
+        inviter: User,
+        member: Member,
+        normal: int = 0,
+        fake: int = 0,
+    ):
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
             "SELECT normal, fake, invited FROM user_invites WHERE guild_id = ? AND user_id = ?",
             (member.guild.id, inviter.id),
@@ -80,7 +121,15 @@ class MemberJoin(CustomCog):
         if not response:
             return await self.bot.db.execute_fetchone(
                 "INSERT INTO user_invites(guild_id, user_id, normal, left, fake, bonus, invited) VALUES(?,?,?,?,?,?,?)",
-                (member.guild.id, inviter.id, normal, 0, fake, 0, f"[{member.id}]"),
+                (
+                    member.guild.id,
+                    inviter.id,
+                    normal,
+                    0,
+                    fake,
+                    0,
+                    f"[{member.id}]",
+                ),
             )
 
         normal_i, fake_i = response[0:2]
@@ -95,31 +144,71 @@ class MemberJoin(CustomCog):
 
         await self.bot.db.execute_fetchone(
             "UPDATE user_invites SET normal = ?, fake = ?, invited = ? WHERE guild_id = ? AND user_id = ?",
-            (normal_i, fake_i, str(invited), member.guild.id, inviter.id),
+            (
+                normal_i,
+                fake_i,
+                str(invited),
+                member.guild.id,
+                inviter.id,
+            ),
         )
 
     @staticmethod
-    def format_invite_notify(content: str, inviter: User, joiner: Member, inviter_invites: int) -> str:
+    def format_invite_notify(
+        content: str,
+        inviter: User,
+        joiner: Member,
+        inviter_invites: int,
+    ) -> str:
         content = (
             content.replace("{user}", str(joiner))
             .replace("{user_name}", str(joiner.name))
-            .replace("{user_mention}", str(joiner.mention))
-            .replace("{user_discriminator}", str(joiner.discriminator))
+            .replace(
+                "{user_mention}",
+                str(joiner.mention),
+            )
+            .replace(
+                "{user_discriminator}",
+                str(joiner.discriminator),
+            )
             .replace("{user_id}", str(joiner.id))
-            .replace("{guild_name}", str(joiner.guild.name))
-            .replace("{guild_total_members}", str(joiner.guild.member_count))
+            .replace(
+                "{guild_name}",
+                str(joiner.guild.name),
+            )
+            .replace(
+                "{guild_total_members}",
+                str(joiner.guild.member_count),
+            )
             .replace("{guild_id}", str(joiner.guild.id))
             .replace("{inviter}", str(inviter))
-            .replace("{inviter_name}", str(inviter.name))
-            .replace("{inviter_mention}", str(inviter.mention))
-            .replace("{inviter_discriminator}", str(inviter.discriminator))
+            .replace(
+                "{inviter_name}",
+                str(inviter.name),
+            )
+            .replace(
+                "{inviter_mention}",
+                str(inviter.mention),
+            )
+            .replace(
+                "{inviter_discriminator}",
+                str(inviter.discriminator),
+            )
             .replace("{inviter_id}", str(inviter.id))
-            .replace("{inviter_total_invites}", str(inviter_invites))
+            .replace(
+                "{inviter_total_invites}",
+                str(inviter_invites),
+            )
         )
 
         return content
 
-    async def handle_invites_notify(self, data: dict, inviter: Optional[User], joiner: Member):
+    async def handle_invites_notify(
+        self,
+        data: dict,
+        inviter: Optional[User],
+        joiner: Member,
+    ):
         channel_id: int = data["notify_channel"]
         notify_content: str = data["notify_content"]
 
@@ -137,11 +226,19 @@ class MemberJoin(CustomCog):
             ) = await self.get_user_invites(joiner.guild.id, inviter.id)
             total: int = (normal - left) + bonus
 
-            formatted_content: str = self.format_invite_notify(notify_content, inviter, joiner, total)
+            formatted_content: str = self.format_invite_notify(
+                notify_content,
+                inviter,
+                joiner,
+                total,
+            )
 
             try:
                 await channel.send(formatted_content)
-            except (errors.Forbidden, errors.HTTPException):
+            except (
+                errors.Forbidden,
+                errors.HTTPException,
+            ):
                 pass
         else:
             try:
@@ -149,7 +246,10 @@ class MemberJoin(CustomCog):
                     f"Nie jestem w stanie sprawdzić kto zaprosił: **{joiner}**. "
                     f"Być może to zaproszenie tymczasowe."
                 )
-            except (errors.Forbidden, errors.HTTPException):
+            except (
+                errors.Forbidden,
+                errors.HTTPException,
+            ):
                 pass
 
     async def handle_invites(self, member: Member):
@@ -182,10 +282,16 @@ class MemberJoin(CustomCog):
                     ):
                         if now.day - member.created_at.day < 7:
                             return await self.update_invites(
-                                inviter=guild_invite.inviter, member=member, fake=1
+                                inviter=guild_invite.inviter,
+                                member=member,
+                                fake=1,
                             )
 
-                    await self.update_invites(inviter=guild_invite.inviter, member=member, normal=1)
+                    await self.update_invites(
+                        inviter=guild_invite.inviter,
+                        member=member,
+                        normal=1,
+                    )
 
         self.bot.dispatch("invite_update", member.guild)
         # Even if the bot did not find an inviter we still update,
@@ -222,26 +328,45 @@ class MemberJoin(CustomCog):
                     value=f"{Emojis.REPLY.value} `{member.guild.member_count}`",
                 )
 
-                embed.set_author(name=member, icon_url=self.avatars.get_user_avatar(member))
+                embed.set_author(
+                    name=member,
+                    icon_url=self.avatars.get_user_avatar(member),
+                )
                 embed.set_thumbnail(url=self.avatars.get_guild_icon(member.guild))
 
-                embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+                embed.set_footer(
+                    text=f"Smiffy v{self.bot.__version__}",
+                    icon_url=self.bot.avatar_url,
+                )
 
                 await logs_channel.send(embed=embed)
 
-            except (errors.HTTPException, errors.Forbidden):
+            except (
+                errors.HTTPException,
+                errors.Forbidden,
+            ):
                 pass
 
         startrole_response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT role_id FROM startrole WHERE guild_id = ?", (member.guild.id,)
+            "SELECT role_id FROM startrole WHERE guild_id = ?",
+            (member.guild.id,),
         )
 
         if startrole_response and startrole_response[0]:
             try:
-                role: Optional[Role] = await self.bot.getch_role(member.guild, startrole_response[0])
+                role: Optional[Role] = await self.bot.getch_role(
+                    member.guild,
+                    startrole_response[0],
+                )
                 if role:
-                    await member.add_roles(role, reason="Smiffy - (StartRole)")
-            except (errors.Forbidden, errors.HTTPException):
+                    await member.add_roles(
+                        role,
+                        reason="Smiffy - (StartRole)",
+                    )
+            except (
+                errors.Forbidden,
+                errors.HTTPException,
+            ):
                 pass
 
         welcomes_response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
@@ -256,8 +381,14 @@ class MemberJoin(CustomCog):
                     data: tuple[str, ...] = literal_eval(welcomes_response[1])
                     file: File = await self.create_welcome_file(data, member)
 
-                    await lobby_channel.send(file=file, content=f"{member.mention}")
-                except (errors.HTTPException, errors.Forbidden):
+                    await lobby_channel.send(
+                        file=file,
+                        content=f"{member.mention}",
+                    )
+                except (
+                    errors.HTTPException,
+                    errors.Forbidden,
+                ):
                     pass
 
 

@@ -67,7 +67,10 @@ class EditModal(ui.Modal):
         self.add_item(self.input)
 
     async def callback(self, interaction: CustomInteraction):
-        await interaction.response.send_message("Edytowanie podglądu...", ephemeral=True)
+        await interaction.response.send_message(
+            "Edytowanie podglądu...",
+            ephemeral=True,
+        )
         self.stop()
 
 
@@ -77,7 +80,8 @@ class EditButtons(ui.View):
 
         if interaction.user.id != self.interaction.user.id:
             await interaction.send_error_message(
-                description="Tylko autor użytej komendy może tego użyć.", ephemeral=True
+                description="Tylko autor użytej komendy może tego użyć.",
+                ephemeral=True,
             )
 
             return False
@@ -101,9 +105,14 @@ class EditButtons(ui.View):
         self.first_text: str = "Pierwszy tekst"
         self.second_text: str = "Drugi tekst"
 
-    @ui.button(label="Główny tekst", style=ButtonStyle.grey)  # pyright: ignore
+    @ui.button(
+        label="Główny tekst",
+        style=ButtonStyle.grey,
+    )  # pyright: ignore
     async def main_title(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         if self.goodbye:
             modal = EditModal(
@@ -112,7 +121,10 @@ class EditButtons(ui.View):
                 title="Edytuj tekst pożegnania",
             )
         else:
-            modal = EditModal(placeholder_text=self.main_text, main_text=True)
+            modal = EditModal(
+                placeholder_text=self.main_text,
+                main_text=True,
+            )
 
         await interaction.response.send_modal(modal)
 
@@ -128,9 +140,14 @@ class EditButtons(ui.View):
             if interaction.message:
                 await interaction.message.edit(embed=self.embed, file=image)
 
-    @ui.button(label="Pierwszy tekst", style=ButtonStyle.grey)  # pyright: ignore
+    @ui.button(
+        label="Pierwszy tekst",
+        style=ButtonStyle.grey,
+    )  # pyright: ignore
     async def first_title(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         if self.goodbye:
             modal = EditModal(
@@ -139,7 +156,10 @@ class EditButtons(ui.View):
                 title="Edytuj tekst pożegnania",
             )
         else:
-            modal = EditModal(placeholder_text=self.main_text, first_text=True)
+            modal = EditModal(
+                placeholder_text=self.main_text,
+                first_text=True,
+            )
 
         await interaction.response.send_modal(modal)
 
@@ -155,9 +175,14 @@ class EditButtons(ui.View):
             if interaction.message:
                 await interaction.message.edit(embed=self.embed, file=image)
 
-    @ui.button(label="Drugi tekst", style=ButtonStyle.grey)  # pyright: ignore
+    @ui.button(
+        label="Drugi tekst",
+        style=ButtonStyle.grey,
+    )  # pyright: ignore
     async def second_title(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         if self.goodbye:
             modal = EditModal(
@@ -166,7 +191,10 @@ class EditButtons(ui.View):
                 title="Edytuj tekst pożegnania",
             )
         else:
-            modal = EditModal(placeholder_text=self.main_text, second_text=True)
+            modal = EditModal(
+                placeholder_text=self.main_text,
+                second_text=True,
+            )
 
         await interaction.response.send_modal(modal)
 
@@ -183,9 +211,16 @@ class EditButtons(ui.View):
                 await interaction.message.edit(embed=self.embed, file=image)
 
     @ui.button(  # pyright: ignore
-        label="Zakończ", style=ButtonStyle.green, emoji=Emojis.GREENBUTTON.value, row=2
+        label="Zakończ",
+        style=ButtonStyle.green,
+        emoji=Emojis.GREENBUTTON.value,
+        row=2,
     )
-    async def end(self, button: ui.Button, interaction: CustomInteraction):
+    async def end(
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
+    ):
         assert interaction.guild
 
         if not interaction.message:
@@ -196,18 +231,27 @@ class EditButtons(ui.View):
         bot: Smiffy = interaction.bot
         if not self.goodbye:
             response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-                "SELECT * FROM welcomes WHERE guild_id = ?", (interaction.guild.id,)
+                "SELECT * FROM welcomes WHERE guild_id = ?",
+                (interaction.guild.id,),
             )
             if response:
                 return await interaction.send_error_message(
                     description="Niestety, ale przywitania już są ustawione."
                 )
 
-            data: tuple[str, ...] = (self.main_text, self.first_text, self.second_text)
+            data: tuple[str, ...] = (
+                self.main_text,
+                self.first_text,
+                self.second_text,
+            )
 
             await bot.db.execute_fetchone(
                 "INSERT INTO welcomes(guild_id, welcome_channel_id, welcome_data) VALUES(?,?,?)",
-                (interaction.guild.id, self.channel_id, str(data)),
+                (
+                    interaction.guild.id,
+                    self.channel_id,
+                    str(data),
+                ),
             )
 
             await interaction.message.delete()
@@ -219,7 +263,8 @@ class EditButtons(ui.View):
 
         else:
             response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-                "SELECT * FROM goodbyes WHERE guild_id = ?", (interaction.guild.id,)
+                "SELECT * FROM goodbyes WHERE guild_id = ?",
+                (interaction.guild.id,),
             )
 
             if response:
@@ -227,11 +272,19 @@ class EditButtons(ui.View):
                     description="Niestety, ale pożegnania już są ustawione."
                 )
 
-            data: tuple[str, ...] = (self.main_text, self.first_text, self.second_text)
+            data: tuple[str, ...] = (
+                self.main_text,
+                self.first_text,
+                self.second_text,
+            )
 
             await bot.db.execute_fetchone(
                 "INSERT INTO goodbyes(guild_id, goodbye_channel_id, goodbye_data) VALUES(?,?,?)",
-                (interaction.guild.id, self.channel_id, str(data)),
+                (
+                    interaction.guild.id,
+                    self.channel_id,
+                    str(data),
+                ),
             )
 
             await interaction.send_success_message(
@@ -246,8 +299,14 @@ class EditButtons(ui.View):
         second_text: str = self.first_text
         third_text: str = self.second_text
 
-        main_text, second_text, third_text = self.format_text(
-            self.main_text, self.first_text, self.second_text
+        (
+            main_text,
+            second_text,
+            third_text,
+        ) = self.format_text(
+            self.main_text,
+            self.first_text,
+            self.second_text,
         )
 
         user_avatar: str = self.interaction.user_avatar_url
@@ -266,7 +325,13 @@ class EditButtons(ui.View):
         poppins_small = Font.poppins(size=60, variant="light")
 
         background.paste(profile, (760, 170))
-        background.ellipse((760, 170), 400, 400, outline="#fff", stroke_width=4)
+        background.ellipse(
+            (760, 170),
+            400,
+            400,
+            outline="#fff",
+            stroke_width=4,
+        )
 
         if not self.goodbye:
             background.text(
@@ -301,26 +366,62 @@ class EditButtons(ui.View):
         )
 
         if not self.goodbye:
-            _file: File = File(fp=background.image_bytes, filename="welcomecard.jpg")
+            _file: File = File(
+                fp=background.image_bytes,
+                filename="welcomecard.jpg",
+            )
         else:
-            _file: File = File(fp=background.image_bytes, filename="goodbyecard.jpg")
+            _file: File = File(
+                fp=background.image_bytes,
+                filename="goodbyecard.jpg",
+            )
 
         return _file
 
-    def format_text(self, main_text: str, first_text: str, second_text: str) -> tuple[str, ...]:
+    def format_text(
+        self,
+        main_text: str,
+        first_text: str,
+        second_text: str,
+    ) -> tuple[str, ...]:
         assert isinstance(self.interaction.user, Member) and self.interaction.guild
 
         list_with_texts: list[str] = []
 
-        for text in (main_text, first_text, second_text):
+        for text in (
+            main_text,
+            first_text,
+            second_text,
+        ):
             list_with_texts.append(
-                text.replace("{user}", str(self.interaction.user))
-                .replace("{user_name}", self.interaction.user.name)
-                .replace("{user_discriminator}", f"#{self.interaction.user.discriminator}")
-                .replace("{user_id}", str(self.interaction.user.id))
-                .replace("{guild_name}", self.interaction.guild.name)
-                .replace("{guild_total_members}", str(self.interaction.guild.member_count))
-                .replace("{guild_id}", f"{self.interaction.guild.id}")
+                text.replace(
+                    "{user}",
+                    str(self.interaction.user),
+                )
+                .replace(
+                    "{user_name}",
+                    self.interaction.user.name,
+                )
+                .replace(
+                    "{user_discriminator}",
+                    f"#{self.interaction.user.discriminator}",
+                )
+                .replace(
+                    "{user_id}",
+                    str(self.interaction.user.id),
+                )
+                .replace(
+                    "{guild_name}",
+                    self.interaction.guild.name,
+                )
+                .replace(
+                    "{guild_total_members}",
+                    str(self.interaction.guild.member_count),
+                )
+                .replace(
+                    "{guild_id}",
+                    f"{self.interaction.guild.id}",
+                )
             )
 
         return (
@@ -335,12 +436,18 @@ class CommandLobby(CustomCog):
     async def goodbye(self, interaction: CustomInteraction):
         pass
 
-    @goodbye.subcommand(name="włącz", description="Ustaw pożegnania na serwerze")  # pyright: ignore
+    @goodbye.subcommand(
+        name="włącz",
+        description="Ustaw pożegnania na serwerze",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def goodbye_on(
         self,
         interaction: CustomInteraction,
-        channel: TextChannel = SlashOption(name="kanał_powiadomień", description="Podaj kanał od pożegnań"),
+        channel: TextChannel = SlashOption(
+            name="kanał_powiadomień",
+            description="Podaj kanał od pożegnań",
+        ),
     ):
         await interaction.response.defer()
 
@@ -358,9 +465,21 @@ class CommandLobby(CustomCog):
         poppins_small = Font.poppins(size=60, variant="light")
 
         background.paste(profile, (760, 170))
-        background.ellipse((760, 170), 400, 400, outline="#fff", stroke_width=4)
+        background.ellipse(
+            (760, 170),
+            400,
+            400,
+            outline="#fff",
+            stroke_width=4,
+        )
 
-        background.text((950, 610), f"{main_text}", color="#fc0828", font=poppins, align="center")
+        background.text(
+            (950, 610),
+            f"{main_text}",
+            color="#fc0828",
+            font=poppins,
+            align="center",
+        )
         background.text(
             (950, 720),
             f"{second_text}",
@@ -376,7 +495,10 @@ class CommandLobby(CustomCog):
             align="center",
         )
 
-        _file: File = File(fp=background.image_bytes, filename="goodbyecard.jpg")
+        _file: File = File(
+            fp=background.image_bytes,
+            filename="goodbyecard.jpg",
+        )
 
         description: str = """ **Dostępne atrybuty:**
 
@@ -399,23 +521,33 @@ class CommandLobby(CustomCog):
             timestamp=utils.utcnow(),
         )
         embed.set_image(url="attachment://goodbyecard.jpg")
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
 
         buttons = EditButtons(embed, interaction, channel.id, True)
         await interaction.send(file=_file, embed=embed, view=buttons)
 
-    @goodbye.subcommand(name="wyłącz", description="Wyłacz pożegnania na serwerze!")  # pyright: ignore
+    @goodbye.subcommand(
+        name="wyłącz",
+        description="Wyłacz pożegnania na serwerze!",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def goodbye_off(self, interaction: CustomInteraction):
         assert interaction.guild
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM goodbyes WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM goodbyes WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if not response:
             return await interaction.send_error_message(description="Pożegnania nie są włączone.")
 
-        await self.bot.db.execute_fetchone("DELETE FROM goodbyes WHERE guild_id = ?", (interaction.guild.id,))
+        await self.bot.db.execute_fetchone(
+            "DELETE FROM goodbyes WHERE guild_id = ?",
+            (interaction.guild.id,),
+        )
 
         return await interaction.send_success_message(
             title=f"Pomyślnie wyłączono pożegnania {Emojis.GREENBUTTON.value}",
@@ -426,12 +558,18 @@ class CommandLobby(CustomCog):
     async def welcome(self, interaction: CustomInteraction) -> None:
         pass
 
-    @welcome.subcommand(name="włącz", description="Ustaw przywitania na serwerze!")  # pyright: ignore
+    @welcome.subcommand(
+        name="włącz",
+        description="Ustaw przywitania na serwerze!",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def welcome_on(
         self,
         interaction: CustomInteraction,
-        channel: TextChannel = SlashOption(name="kanał_przywitań", description="Podaj kanał od przywitań"),
+        channel: TextChannel = SlashOption(
+            name="kanał_przywitań",
+            description="Podaj kanał od przywitań",
+        ),
     ) -> None:
         await interaction.response.defer()
 
@@ -450,9 +588,21 @@ class CommandLobby(CustomCog):
         poppins_small = Font.poppins(size=60, variant="light")
 
         background.paste(profile, (760, 170))
-        background.ellipse((760, 170), 400, 400, outline="#fff", stroke_width=4)
+        background.ellipse(
+            (760, 170),
+            400,
+            400,
+            outline="#fff",
+            stroke_width=4,
+        )
 
-        background.text((950, 610), f"{main_text}", color="#07f763", font=poppins, align="center")
+        background.text(
+            (950, 610),
+            f"{main_text}",
+            color="#07f763",
+            font=poppins,
+            align="center",
+        )
         background.text(
             (950, 720),
             f"{second_text}",
@@ -468,7 +618,10 @@ class CommandLobby(CustomCog):
             align="center",
         )
 
-        _file = File(fp=background.image_bytes, filename="welcomecard.jpg")
+        _file = File(
+            fp=background.image_bytes,
+            filename="welcomecard.jpg",
+        )
 
         description: str = """ **Dostępne atrybuty:**
 
@@ -491,25 +644,38 @@ class CommandLobby(CustomCog):
             timestamp=utils.utcnow(),
         )
 
-        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{self.bot.__version__}",
+            icon_url=self.bot.avatar_url,
+        )
         embed.set_image(url="attachment://welcomecard.jpg")
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
 
         buttons = EditButtons(embed, interaction, channel.id)
         await interaction.send(file=_file, embed=embed, view=buttons)
 
-    @welcome.subcommand(name="wyłącz", description="Wyłącza aktualne przywitania")  # pyright: ignore
+    @welcome.subcommand(
+        name="wyłącz",
+        description="Wyłącza aktualne przywitania",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def welcome_off(self, interaction: CustomInteraction):
         assert interaction.guild
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM welcomes WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM welcomes WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if not response:
             return await interaction.send_error_message(description="Przywitania już są wyłączone.")
 
-        await self.bot.db.execute_fetchone("DELETE FROM welcomes WHERE guild_id = ?", (interaction.guild.id,))
+        await self.bot.db.execute_fetchone(
+            "DELETE FROM welcomes WHERE guild_id = ?",
+            (interaction.guild.id,),
+        )
 
         await interaction.send_success_message(
             title=f"Pomyślnie wyłączono przywitania {Emojis.GREENBUTTON.value}",

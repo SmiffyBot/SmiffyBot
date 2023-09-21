@@ -22,7 +22,10 @@ class ChannelUpdate(CustomCog):
             return
 
         author: Optional[Member] = None
-        async for entry in new_channel.guild.audit_logs(action=AuditLogAction.channel_create, limit=1):
+        async for entry in new_channel.guild.audit_logs(
+            action=AuditLogAction.channel_create,
+            limit=1,
+        ):
             if not isinstance(entry.user, Member):
                 return
 
@@ -33,7 +36,10 @@ class ChannelUpdate(CustomCog):
             timestamp=utils.utcnow(),
             colour=Color.green(),
         )
-        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{self.bot.__version__}",
+            icon_url=self.bot.avatar_url,
+        )
 
         embed.set_thumbnail(url=self.avatars.get_guild_icon(new_channel.guild))
 
@@ -44,15 +50,27 @@ class ChannelUpdate(CustomCog):
         )
 
         if author:
-            embed.set_author(name=author, icon_url=author.display_avatar.url)
+            embed.set_author(
+                name=author,
+                icon_url=author.display_avatar.url,
+            )
 
-            embed.add_field(name="`👤` Autor", value=f"{Emojis.REPLY.value} {author.mention}")
+            embed.add_field(
+                name="`👤` Autor",
+                value=f"{Emojis.REPLY.value} {author.mention}",
+            )
         else:
-            embed.set_author(name=self.bot.user, icon_url=self.bot.avatar_url)
+            embed.set_author(
+                name=self.bot.user,
+                icon_url=self.bot.avatar_url,
+            )
 
         try:
             await logs_channel.send(embed=embed)
-        except (errors.HTTPException, errors.Forbidden):
+        except (
+            errors.HTTPException,
+            errors.Forbidden,
+        ):
             pass
 
     @CustomCog.listener()
@@ -64,7 +82,10 @@ class ChannelUpdate(CustomCog):
 
         author: Optional[Member] = None
 
-        async for entry in deleted_channel.guild.audit_logs(action=AuditLogAction.channel_delete, limit=1):
+        async for entry in deleted_channel.guild.audit_logs(
+            action=AuditLogAction.channel_delete,
+            limit=1,
+        ):
             if not isinstance(entry.user, Member):
                 return
 
@@ -76,7 +97,10 @@ class ChannelUpdate(CustomCog):
             colour=Color.red(),
         )
         embed.set_thumbnail(url=self.avatars.get_guild_icon(deleted_channel.guild))
-        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{self.bot.__version__}",
+            icon_url=self.bot.avatar_url,
+        )
 
         embed.add_field(
             name="`🗨️` Kanał",
@@ -85,15 +109,27 @@ class ChannelUpdate(CustomCog):
         )
 
         if author:
-            embed.set_author(name=author, icon_url=author.display_avatar.url)
+            embed.set_author(
+                name=author,
+                icon_url=author.display_avatar.url,
+            )
 
-            embed.add_field(name="`👤` Usuwajacy", value=f"{Emojis.REPLY.value} {author.mention}")
+            embed.add_field(
+                name="`👤` Usuwajacy",
+                value=f"{Emojis.REPLY.value} {author.mention}",
+            )
         else:
-            embed.set_author(name=self.bot.user, icon_url=self.bot.avatar_url)
+            embed.set_author(
+                name=self.bot.user,
+                icon_url=self.bot.avatar_url,
+            )
 
         try:
             await logs_channel.send(embed=embed)
-        except (errors.HTTPException, errors.Forbidden):
+        except (
+            errors.HTTPException,
+            errors.Forbidden,
+        ):
             pass
 
 

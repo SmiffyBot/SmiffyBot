@@ -20,13 +20,25 @@ class CommandMute(CustomCog):
         description="Wycisz upierdliwego użytkownika :>",
         dm_permission=False,
     )  # pyright: ignore
-    @PermissionHandler(moderate_members=True, user_role_has_permission="mute")
+    @PermissionHandler(
+        moderate_members=True,
+        user_role_has_permission="mute",
+    )
     async def mute(
         self,
         interaction: CustomInteraction,
-        member: Member = SlashOption(name="osoba", description="Podaj użytkownika którego chcesz wyciszyć"),
-        time: str = SlashOption(name="czas", description="Podaj na ile chcesz wyciszyć użytkownika. np. 5m"),
-        reason: str = SlashOption(name="powod", description="Podaj powód wyciszenia"),
+        member: Member = SlashOption(
+            name="osoba",
+            description="Podaj użytkownika którego chcesz wyciszyć",
+        ),
+        time: str = SlashOption(
+            name="czas",
+            description="Podaj na ile chcesz wyciszyć użytkownika. np. 5m",
+        ),
+        reason: str = SlashOption(
+            name="powod",
+            description="Podaj powód wyciszenia",
+        ),
     ):
         if not isinstance(member, Member) or not isinstance(interaction.user, Member):
             # This should never happen, but discord sometimes messes things up - not sure why.
@@ -63,7 +75,10 @@ class CommandMute(CustomCog):
 
         try:
             await member.edit(timeout=timedelta(seconds=duration))
-        except (ApplicationMissingPermissions, errors.Forbidden):
+        except (
+            ApplicationMissingPermissions,
+            errors.Forbidden,
+        ):
             return await interaction.send_error_message(
                 description=f"**Użytkownik: {member.mention} posiada zbyt duże uprawnienia**",
             )
@@ -74,41 +89,82 @@ class CommandMute(CustomCog):
             timestamp=utils.utcnow(),
         )
         embed.set_thumbnail(url=interaction.guild_icon_url)
-        embed.add_field(name="`👤` Użytkownik", value=f"{Emojis.REPLY.value} `{member}`")
-        embed.add_field(name="`🗨️`  Powód", value=f"{Emojis.REPLY.value} `{reason}`", inline=False)
-        embed.add_field(name="`⏱️` Czas", value=f"{Emojis.REPLY.value} `{time}`", inline=False)
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.add_field(
+            name="`👤` Użytkownik",
+            value=f"{Emojis.REPLY.value} `{member}`",
+        )
+        embed.add_field(
+            name="`🗨️`  Powód",
+            value=f"{Emojis.REPLY.value} `{reason}`",
+            inline=False,
+        )
+        embed.add_field(
+            name="`⏱️` Czas",
+            value=f"{Emojis.REPLY.value} `{time}`",
+            inline=False,
+        )
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
 
         embed.set_footer(
             text=f"Smiffy v{self.bot.__version__}",
             icon_url=self.bot.user.display_avatar.url,
         )
 
-        await self.send_dm_message(member=member, root=interaction.user, reason=reason, duration=time)
+        await self.send_dm_message(
+            member=member,
+            root=interaction.user,
+            reason=reason,
+            duration=time,
+        )
 
         await interaction.send(embed=embed)
 
-    async def send_dm_message(self, member: Member, root: Member, reason: str, duration: str) -> None:
+    async def send_dm_message(
+        self,
+        member: Member,
+        root: Member,
+        reason: str,
+        duration: str,
+    ) -> None:
         embed = Embed(
             title=f"Zostałeś/aś wyciszony/a {Emojis.REDBUTTON.value}",
             color=Color.red(),
             timestamp=utils.utcnow(),
         )
 
-        embed.add_field(name="`👤` Administrator", value=f"{Emojis.REPLY.value} `{root}`")
-        embed.add_field(name="`🗨️` Powód", value=f"{Emojis.REPLY.value} `{reason}`", inline=False)
+        embed.add_field(
+            name="`👤` Administrator",
+            value=f"{Emojis.REPLY.value} `{root}`",
+        )
+        embed.add_field(
+            name="`🗨️` Powód",
+            value=f"{Emojis.REPLY.value} `{reason}`",
+            inline=False,
+        )
         embed.add_field(
             name="`📌` Serwer",
             value=f"{Emojis.REPLY.value} `{root.guild.name}`",
             inline=False,
         )
 
-        embed.add_field(name="`⏱️` Czas", value=f"{Emojis.REPLY.value} `{duration}`")
+        embed.add_field(
+            name="`⏱️` Czas",
+            value=f"{Emojis.REPLY.value} `{duration}`",
+        )
 
         embed.set_thumbnail(url=Avatars.get_guild_icon(member.guild))
-        embed.set_author(name=root, icon_url=Avatars.get_user_avatar(root))
+        embed.set_author(
+            name=root,
+            icon_url=Avatars.get_user_avatar(root),
+        )
 
-        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{self.bot.__version__}",
+            icon_url=self.bot.avatar_url,
+        )
 
         try:
             await member.send(embed=embed)

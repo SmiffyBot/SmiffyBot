@@ -25,18 +25,44 @@ class CommandPoll(CustomCog):
     def __init__(self, bot: Smiffy) -> None:
         super().__init__(bot=bot)
 
-        self._emojis: list = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"]
+        self._emojis: list = [
+            "1️⃣",
+            "2️⃣",
+            "3️⃣",
+            "4️⃣",
+            "5️⃣",
+            "6️⃣",
+            "7️⃣",
+            "8️⃣",
+        ]
 
     @slash_command(
-        name="ankieta", description="Bot tworzy nową ankiete!", dm_permission=False
+        name="ankieta",
+        description="Bot tworzy nową ankiete!",
+        dm_permission=False,
     )  # pyright: ignore
-    @PermissionHandler(manage_messages=True, user_role_has_permission="poll")
+    @PermissionHandler(
+        manage_messages=True,
+        user_role_has_permission="poll",
+    )
     async def poll(
         self,
         interaction: CustomInteraction,
-        topic: str = SlashOption(name="temat", description="Podaj temat ankiety", max_length=96),
-        option_1: str = SlashOption(name="opcja_1", description="Podaj opcję nr. 1", max_length=256),
-        option_2: str = SlashOption(name="opcja_2", description="Podaj opcję nr. 2", max_length=256),
+        topic: str = SlashOption(
+            name="temat",
+            description="Podaj temat ankiety",
+            max_length=96,
+        ),
+        option_1: str = SlashOption(
+            name="opcja_1",
+            description="Podaj opcję nr. 1",
+            max_length=256,
+        ),
+        option_2: str = SlashOption(
+            name="opcja_2",
+            description="Podaj opcję nr. 2",
+            max_length=256,
+        ),
         option_3: str = SlashOption(
             name="opcja_3",
             description="Podaj opcję nr. 3",
@@ -122,11 +148,17 @@ class CommandPoll(CustomCog):
             timestamp=utils.utcnow(),
             description=_description,
         )
-        embed.set_footer(text=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_footer(
+            text=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_author(name="✨ Smiffy Ankieta")
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
-        if isinstance(interaction.channel, (TextChannel, Thread)):
+        if isinstance(
+            interaction.channel,
+            (TextChannel, Thread),
+        ):
             await interaction.send_success_message(
                 title=f"Pomyślnie utworzono ankiete {Emojis.GREENBUTTON.value}",
                 ephemeral=True,

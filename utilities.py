@@ -80,7 +80,11 @@ class CircuitBreaker(Cordcutter):
         :return: A instance of the class
         """
 
-        super().__init__(client=client, threshold=2, ignore_exceptions=client.ignore_exceptions)
+        super().__init__(
+            client=client,
+            threshold=2,
+            ignore_exceptions=client.ignore_exceptions,
+        )
 
         self.on_tripped_call(callback=self.tripped_callback)  # pyright: ignore[reportGeneralTypeIssues]
 
@@ -131,10 +135,16 @@ class BotUtils:
         """
 
         if not bot.is_ready():
-            await bot.change_presence(activity=Game(name="Running..."), status=Status.idle)
+            await bot.change_presence(
+                activity=Game(name="Running..."),
+                status=Status.idle,
+            )
             await bot.wait_until_ready()
 
-        await bot.change_presence(activity=Game(name="/help"), status=Status.dnd)
+        await bot.change_presence(
+            activity=Game(name="/help"),
+            status=Status.dnd,
+        )
 
     def print_welcome_message(self, bot: Smiffy) -> None:
         """
@@ -184,7 +194,15 @@ class BotUtils:
 
         suggested_shards: int = round(ratio + 0.5)
 
-        if shards not in (suggested_shards, suggested_shards + 1) or ratio <= 0.3 and shards != 1:
+        if (
+            shards
+            not in (
+                suggested_shards,
+                suggested_shards + 1,
+            )
+            or ratio <= 0.3
+            and shards != 1
+        ):
             description: str = (
                 Fore.RED
                 + f"""------- SHARDS CHECK -------
@@ -290,20 +308,32 @@ class BotUtils:
         """
 
         bot.load_cog("Commands.music.__main__", "__main__")
-        bot.load_cog("Commands.economy.__main__", "__main__")
+        bot.load_cog(
+            "Commands.economy.__main__",
+            "__main__",
+        )
 
-        cog_folders: list[str] = ["./Commands", "./Events"]
+        cog_folders: list[str] = [
+            "./Commands",
+            "./Events",
+        ]
         for cog_folder in cog_folders:
             for file_or_folder in listdir(cog_folder):
                 if file_or_folder.endswith(".py"):
                     extenstion_path: str = f"{cog_folder[2::]}.{file_or_folder[:-3]}"
-                    bot.load_cog(extenstion_path, file_or_folder)
+                    bot.load_cog(
+                        extenstion_path,
+                        file_or_folder,
+                    )
                 else:
                     # this is folder with cogs
                     for file in listdir(f"./{cog_folder}/{file_or_folder}"):
                         if file.endswith(".py") and file != "__main__.py":
                             extenstion_path: str = f"{cog_folder[2::]}.{file_or_folder}.{file[:-3]}"
-                            bot.load_cog(extenstion_path, file)
+                            bot.load_cog(
+                                extenstion_path,
+                                file,
+                            )
 
 
 class BotLogger:
@@ -351,7 +381,9 @@ class BotLogger:
 
 class Avatars:
     @staticmethod
-    def get_user_avatar(user: Optional[UserType]) -> str:
+    def get_user_avatar(
+        user: Optional[UserType],
+    ) -> str:
         """
         The get_user_avatar function takes a user object and returns the URL of their avatar.
         If they don't have an avatar, it will return the default Discord avatar.
@@ -371,7 +403,9 @@ class Avatars:
         return str(avatar)
 
     @staticmethod
-    def get_guild_icon(guild: Optional[Guild]) -> str:
+    def get_guild_icon(
+        guild: Optional[Guild],
+    ) -> str:
         """
         The get_guild_icon function takes in a Guild object and returns the URL of its icon.
         If the guild has no icon, it will return a default Discord server logo.
@@ -399,7 +433,12 @@ class Avatars:
 class CustomInteraction(Interaction["Smiffy"]):
     __slots__: tuple[str, ...] = ("avatars",)
 
-    def __init__(self, *, data: InteractionPayload, state: ConnectionState) -> None:
+    def __init__(
+        self,
+        *,
+        data: InteractionPayload,
+        state: ConnectionState,
+    ) -> None:
         """
         CustomInteraction adds some new functionality to the original interaction.
 
@@ -471,7 +510,7 @@ class CustomInteraction(Interaction["Smiffy"]):
         description: str,
         ephemeral: bool = False,
         delete_after: Optional[int] = None,
-    ) -> Union[WebhookMessage, PartialInteractionMessage, None]:
+    ) -> Union[WebhookMessage, PartialInteractionMessage, None,]:
         """
         The send_error_message function is used to send an error message to the chat.
 
@@ -488,14 +527,21 @@ class CustomInteraction(Interaction["Smiffy"]):
             timestamp=utils.utcnow(),
             description=f"<:reply:1129168370642718833> {description}",
         )
-        embed.set_author(name=self.user, icon_url=self.user_avatar_url)
+        embed.set_author(
+            name=self.user,
+            icon_url=self.user_avatar_url,
+        )
         embed.set_thumbnail(url=self.guild_icon_url)
         embed.set_footer(
             text=f"Smiffy v{self.bot.__version__}",
             icon_url=self.bot.avatar_url,
         )
 
-        return await self.send(embed=embed, ephemeral=ephemeral, delete_after=delete_after)
+        return await self.send(
+            embed=embed,
+            ephemeral=ephemeral,
+            delete_after=delete_after,
+        )
 
     async def send_success_message(
         self,
@@ -504,7 +550,7 @@ class CustomInteraction(Interaction["Smiffy"]):
         color: Color = Color.green(),
         ephemeral: bool = False,
         delete_after: Optional[int] = None,
-    ) -> Union[WebhookMessage, PartialInteractionMessage, None]:
+    ) -> Union[WebhookMessage, PartialInteractionMessage, None,]:
         """
         The send_success_message function is a helper function that sends a success message to the user.
 
@@ -516,15 +562,27 @@ class CustomInteraction(Interaction["Smiffy"]):
         :return: A message object or webhook object
         """
 
-        embed = Embed(title=title, description=description, timestamp=utils.utcnow(), colour=color)
-        embed.set_author(name=self.user, icon_url=self.user_avatar_url)
+        embed = Embed(
+            title=title,
+            description=description,
+            timestamp=utils.utcnow(),
+            colour=color,
+        )
+        embed.set_author(
+            name=self.user,
+            icon_url=self.user_avatar_url,
+        )
         embed.set_thumbnail(url=self.guild_icon_url)
         embed.set_footer(
             text=f"Smiffy v{self.bot.__version__}",
             icon_url=self.bot.avatar_url,
         )
 
-        return await self.send(embed=embed, ephemeral=ephemeral, delete_after=delete_after)
+        return await self.send(
+            embed=embed,
+            ephemeral=ephemeral,
+            delete_after=delete_after,
+        )
 
     def get_command_mention(
         self,
@@ -545,9 +603,14 @@ class CustomInteraction(Interaction["Smiffy"]):
         guild_id: Optional[int] = guild.id if guild else None
 
         command: Optional[
-            Union[BaseApplicationCommand, SlashApplicationCommand]
+            Union[
+                BaseApplicationCommand,
+                SlashApplicationCommand,
+            ]
         ] = self.bot.get_application_command_from_signature(
-            name=command_name, cmd_type=cmd_type, guild_id=guild_id
+            name=command_name,
+            cmd_type=cmd_type,
+            guild_id=guild_id,
         )
 
         if not command:
@@ -610,7 +673,8 @@ class CustomCog(Cog):
         """
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM server_logs WHERE guild_id = ?", (guild.id,)
+            "SELECT * FROM server_logs WHERE guild_id = ?",
+            (guild.id,),
         )
         if not response:
             return None
@@ -618,13 +682,17 @@ class CustomCog(Cog):
         channel: Optional[GuildChannel] = await self.bot.getch_channel(response[1])
 
         if not channel:
-            await self.bot.db.execute_fetchone("DELETE FROM servers_logs WHERE guild_id = ?", (guild.id,))
+            await self.bot.db.execute_fetchone(
+                "DELETE FROM servers_logs WHERE guild_id = ?",
+                (guild.id,),
+            )
 
         return channel
 
     async def get_guild_invites_data(self, guild: Guild) -> Optional[DB_RESPONSE]:
         invites_response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM server_invites WHERE guild_id = ?", (guild.id,)
+            "SELECT * FROM server_invites WHERE guild_id = ?",
+            (guild.id,),
         )
 
         if not invites_response or not invites_response[0]:
@@ -641,7 +709,12 @@ class CustomCog(Cog):
         if not user_response:
             normal, left, fake, bonus = 0, 0, 0, 0
         else:
-            normal, left, fake, bonus = user_response
+            (
+                normal,
+                left,
+                fake,
+                bonus,
+            ) = user_response
 
         return normal, left, fake, bonus
 
@@ -661,7 +734,11 @@ class Database:
         self.connection: Connection = connection
 
     @classmethod
-    def setup(cls, bot: Smiffy, db_path: str = "./Data/database.db") -> Database:
+    def setup(
+        cls,
+        bot: Smiffy,
+        db_path: str = "./Data/database.db",
+    ) -> Database:
         """
         The setup classmethod is used to create a connection to the database.
         It takes in two arguments:
@@ -682,7 +759,11 @@ class Database:
         connection: Connection = get_event_loop().run_until_complete(connect_db())
         return cls(connection)
 
-    async def execute_fetchall(self, expression: str, args: Optional[tuple] = None) -> Iterable[Row]:
+    async def execute_fetchall(
+        self,
+        expression: str,
+        args: Optional[tuple] = None,
+    ) -> Iterable[Row]:
         """
         The execute_fetchall function executes a SQL expression and returns the result of fetchall() method
 
@@ -701,7 +782,11 @@ class Database:
 
         return response
 
-    async def execute_fetchone(self, expression: str, args: Optional[tuple] = None) -> Optional[Row]:
+    async def execute_fetchone(
+        self,
+        expression: str,
+        args: Optional[tuple] = None,
+    ) -> Optional[Row]:
         """
         The execute_fetchone function executes a SQL expression and returns the first row of the result.
 
@@ -786,7 +871,11 @@ class BotSession(ClientSession):
         return await self.request("DELETE", url, **kwargs)
 
     async def request(  # pylint: disable=invalid-overridden-method
-        self, method: str, url: str, default_headers: bool = True, **kwargs: Any
+        self,
+        method: str,
+        url: str,
+        default_headers: bool = True,
+        **kwargs: Any,
     ) -> ClientResponse:
         """
         Overridden request function allows you to control the status of default header's
@@ -804,7 +893,10 @@ class BotSession(ClientSession):
         headers: dict[str, Any] = provided_headers
 
         if default_headers:
-            headers = self.merge_headers(self.get_default_headers, provided_headers)
+            headers = self.merge_headers(
+                self.get_default_headers,
+                provided_headers,
+            )
 
         kwargs["headers"] = headers
 
@@ -839,7 +931,12 @@ class BotSession(ClientSession):
         """
 
         try:
-            response: ClientResponse = await self.request(method, url, default_headers, **kwargs)
+            response: ClientResponse = await self.request(
+                method,
+                url,
+                default_headers,
+                **kwargs,
+            )
         except (
             client_exceptions.ClientConnectorError,
             client_exceptions.ServerTimeoutError,
@@ -920,7 +1017,12 @@ class BotBase(AutoShardedBot):
         self.load_extension(path)
         self.logger.debug(f"Extenstion: {name} loaded.")
 
-    async def on_error(self, event_method: str, *args: Any, **kwargs: Any) -> None:
+    async def on_error(
+        self,
+        event_method: str,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         """
         The on_error function is called whenever an exception occurs in the client.
 
@@ -937,7 +1039,9 @@ class BotBase(AutoShardedBot):
         self.dispatch("client_error", *args, **kwargs)
 
     @staticmethod
-    async def check_global_ban(interaction: InterT) -> bool:  # pyright: ignore
+    async def check_global_ban(
+        interaction: InterT,
+    ) -> bool:  # pyright: ignore
         """
         The check_global_ban function is a coroutine that checks if the user has been globally banned.
         If so, it sends them an error message and returns False. Otherwise, it returns True.
@@ -949,7 +1053,8 @@ class BotBase(AutoShardedBot):
         assert isinstance(interaction, CustomInteraction) and interaction.user
 
         response: Optional[DB_RESPONSE] = await interaction.bot.db.execute_fetchone(
-            "SELECT * FROM global_bans WHERE user_id = ?", (interaction.user.id,)
+            "SELECT * FROM global_bans WHERE user_id = ?",
+            (interaction.user.id,),
         )
 
         if not response:
@@ -964,7 +1069,12 @@ class BotBase(AutoShardedBot):
 
         return False
 
-    async def getch_role(self, guild: Guild, role_id: int, fetch: bool = False) -> Optional[Role]:
+    async def getch_role(
+        self,
+        guild: Guild,
+        role_id: int,
+        fetch: bool = False,
+    ) -> Optional[Role]:
         """
         The getch_role function is a helper function that attempts to retrieve a role from the guild's cache.
         If it fails, it will attempt to fetch the roles from Discord and then return the result of that search.
@@ -984,7 +1094,10 @@ class BotBase(AutoShardedBot):
         self.logger.warning(f"Role: {role_id} was not found in the cache. Sending HTTP Request.")
 
         roles: list[Role] = await guild.fetch_roles(cache=True)
-        result = filter(lambda _role: _role if _role.id == role_id else None, roles)
+        result = filter(
+            lambda _role: _role if _role.id == role_id else None,
+            roles,
+        )
 
         if not list(result):
             return None
@@ -1011,7 +1124,10 @@ class BotBase(AutoShardedBot):
             guild: Optional[Guild] = await self.fetch_guild(guild_id)
 
             return guild
-        except (nextcord_errors.Forbidden, nextcord_errors.HTTPException):
+        except (
+            nextcord_errors.Forbidden,
+            nextcord_errors.HTTPException,
+        ):
             return None
 
     async def getch_channel(self, channel_id: int) -> Optional[GuildChannel]:
@@ -1038,7 +1154,10 @@ class BotBase(AutoShardedBot):
                 return None
 
             return channel
-        except (nextcord_errors.Forbidden, nextcord_errors.HTTPException):
+        except (
+            nextcord_errors.Forbidden,
+            nextcord_errors.HTTPException,
+        ):
             return None
 
     async def getch_member(self, guild: Guild, member_id: int) -> Optional[Member]:
@@ -1061,7 +1180,10 @@ class BotBase(AutoShardedBot):
 
             member: Optional[Member] = await guild.fetch_member(member_id)
             return member
-        except (nextcord_errors.Forbidden, nextcord_errors.HTTPException):
+        except (
+            nextcord_errors.Forbidden,
+            nextcord_errors.HTTPException,
+        ):
             return None
 
     async def setup_session(self) -> None:
@@ -1125,7 +1247,13 @@ class DiscordSupportButton(ui.View):
         if guild_invite in (None, ""):
             raise InvalidServerData
 
-        self.add_item(ui.Button(label="Discord Bota", style=ButtonStyle.link, url=guild_invite))
+        self.add_item(
+            ui.Button(
+                label="Discord Bota",
+                style=ButtonStyle.link,
+                url=guild_invite,
+            )
+        )
 
 
 def PermissionHandler(**perms):
@@ -1157,7 +1285,12 @@ def PermissionHandler(**perms):
             app_cmd.add_check(func=self.user_has_permissions)  # pyright: ignore
             app_cmd.error(callback=self.app_error)  # pyright: ignore
 
-        async def app_error(self, cog: CustomCog, inter: CustomInteraction, error: Exception) -> None:
+        async def app_error(
+            self,
+            cog: CustomCog,
+            inter: CustomInteraction,
+            error: Exception,
+        ) -> None:
             """
             The app_error function is a function that will be called when an error occurs in the application command.
 
@@ -1181,7 +1314,10 @@ def PermissionHandler(**perms):
 
             await inter.response.defer()
 
-            if isinstance(error, ApplicationMissingPermissions):
+            if isinstance(
+                error,
+                ApplicationMissingPermissions,
+            ):
                 permission: str = error.missing_permissions[0].capitalize()
 
                 await inter.send_error_message(
@@ -1194,14 +1330,19 @@ def PermissionHandler(**perms):
                     description="Niestety, ale nie posiadasz wymaganej roli, aby użyć tej komendy."
                 )
                 return
-            if isinstance(error, ApplicationCommandIsGuildOnly):
+            if isinstance(
+                error,
+                ApplicationCommandIsGuildOnly,
+            ):
                 await inter.send_error_message(
                     description="Komendy bota działa tylko i wyłącznie na serwerach."
                 )
                 return
 
         @staticmethod
-        async def user_has_permissions(interaction: CustomInteraction) -> bool:
+        async def user_has_permissions(
+            interaction: CustomInteraction,
+        ) -> bool:
             """
             The user_has_permissions function checks if the user has the required permissions.
 
@@ -1264,7 +1405,10 @@ def PermissionHandler(**perms):
     return wrapper
 
 
-async def user_role_has_permission(command_name: str, interaction: CustomInteraction) -> bool:
+async def user_role_has_permission(
+    command_name: str,
+    interaction: CustomInteraction,
+) -> bool:
     if command_name == "music" and not await user_role_has_music_permissions(interaction):
         raise MissingMusicPermissions("You do not have the required role to run this command.")
 
@@ -1273,7 +1417,8 @@ async def user_role_has_permission(command_name: str, interaction: CustomInterac
 
     bot: Smiffy = interaction.bot
     response: Optional[Iterable[Row]] = await bot.db.execute_fetchall(
-        "SELECT * FROM permissions WHERE guild_id = ?", (interaction.guild.id,)
+        "SELECT * FROM permissions WHERE guild_id = ?",
+        (interaction.guild.id,),
     )
     if not response:
         return False
@@ -1288,7 +1433,9 @@ async def user_role_has_permission(command_name: str, interaction: CustomInterac
     return False
 
 
-async def user_role_has_music_permissions(interaction: CustomInteraction) -> bool:
+async def user_role_has_music_permissions(
+    interaction: CustomInteraction,
+) -> bool:
     """
     The user_role_has_music_permissions function is a coroutine that checks if the user has music permissions.
 
@@ -1322,7 +1469,9 @@ async def user_role_has_music_permissions(interaction: CustomInteraction) -> boo
 
 
 async def check_giveaway_requirement(
-    bot: Smiffy, member: Member, inter_or_message: Union[CustomInteraction, Message]
+    bot: Smiffy,
+    member: Member,
+    inter_or_message: Union[CustomInteraction, Message],
 ) -> bool:
     """
     The check_giveaway_requirement function checks if a member has met the requirements for a giveaway.
@@ -1384,7 +1533,8 @@ async def check_giveaway_requirement(
         elif requirement == "role":
             try:
                 role: Optional[Role] = await RoleConverter().convert(
-                    inter_or_message, str(value)  # pyright: ignore
+                    inter_or_message,
+                    str(value),  # pyright: ignore
                 )
                 if not role:
                     raise errors.RoleNotFound(str(value))
@@ -1406,7 +1556,11 @@ async def check_giveaway_requirement(
             if not user_response:
                 normal, left, bonus = 0, 0, 0
             else:
-                normal, left, bonus = user_response
+                (
+                    normal,
+                    left,
+                    bonus,
+                ) = user_response
 
             total: int = (normal - left) + bonus
 

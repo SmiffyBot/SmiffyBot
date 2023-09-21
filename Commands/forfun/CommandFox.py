@@ -30,9 +30,16 @@ class CommandFox(CustomCog):
 
         data: dict = await response.json()
 
-        embed = Embed(title="Oto Twój liseł.", timestamp=utils.utcnow(), color=Color.dark_theme())
+        embed = Embed(
+            title="Oto Twój liseł.",
+            timestamp=utils.utcnow(),
+            color=Color.dark_theme(),
+        )
         embed.set_image(url=data["link"])
-        embed.set_footer(text=f"{interaction.user}", icon_url=interaction.user_avatar_url)
+        embed.set_footer(
+            text=f"{interaction.user}",
+            icon_url=interaction.user_avatar_url,
+        )
         await interaction.send(embed=embed)
 
 

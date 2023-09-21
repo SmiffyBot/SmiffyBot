@@ -108,7 +108,12 @@ class EconomyManager:
             (guild.id, item_name),
         )
 
-    async def edit_guild_item(self, guild: Guild, item_name: str, data: dict) -> None:
+    async def edit_guild_item(
+        self,
+        guild: Guild,
+        item_name: str,
+        data: dict,
+    ) -> None:
         item_data: Optional[EconomyItemData] = await self.get_guild_item(guild, item_name=item_name)
 
         if not item_data:
@@ -118,7 +123,10 @@ class EconomyManager:
 
         sql: str = "UPDATE economy_shop SET {} = ? WHERE guild_id = ? AND name = ?"
         sql = sql.format(" = ?, ".join(x for x in item_data if x != "guild_id"))
-        values = tuple(item_data.values())[1:] + (guild.id, item_name)
+        values = tuple(item_data.values())[1:] + (
+            guild.id,
+            item_name,
+        )
 
         await self.bot.db.execute_fetchone(sql, values)
 
@@ -139,7 +147,8 @@ class EconomyManager:
 
     async def get_guild_shop(self, guild: Guild) -> list[EconomyItemData]:
         response: Optional[Iterable[DB_RESPONSE]] = await self.bot.db.execute_fetchall(
-            "SELECT * FROM economy_shop WHERE guild_id = ?", (guild.id,)
+            "SELECT * FROM economy_shop WHERE guild_id = ?",
+            (guild.id,),
         )
         items: list[EconomyItemData] = []
 
@@ -194,13 +203,29 @@ class EconomyManager:
         )
 
     async def remove_user_money(self, user: Member, amount: int) -> EconomyUserData:
-        money, bank_money = await self.get_user_balance(user)
+        (
+            money,
+            bank_money,
+        ) = await self.get_user_balance(user)
         money -= amount
 
-        return await self.update_user_account(user=user, data={"money": money, "bank_money": bank_money})
+        return await self.update_user_account(
+            user=user,
+            data={
+                "money": money,
+                "bank_money": bank_money,
+            },
+        )
 
-    async def add_user_money(self, user: Member, money_data: dict[str, int]) -> EconomyUserData:
-        money, bank_money = await self.get_user_balance(user)
+    async def add_user_money(
+        self,
+        user: Member,
+        money_data: dict[str, int],
+    ) -> EconomyUserData:
+        (
+            money,
+            bank_money,
+        ) = await self.get_user_balance(user)
         guild_settings: EconomyGuildSettings = await self.get_guild_settings(guild=user.guild)
 
         money_to_add: int = money_data.get("money", 0)
@@ -213,13 +238,20 @@ class EconomyManager:
             money += money_to_add
             bank_money += bank_money_to_add
 
-        return await self.update_user_account(user=user, data={"money": money, "bank_money": bank_money})
+        return await self.update_user_account(
+            user=user,
+            data={
+                "money": money,
+                "bank_money": bank_money,
+            },
+        )
 
     async def get_all_guild_accounts(self, guild: Guild) -> list[EconomyUserData]:
         accounts_data: list[EconomyUserData] = []
 
         response: Optional[Iterable[DB_RESPONSE]] = await self.bot.db.execute_fetchall(
-            "SELECT * FROM economy_users WHERE guild_id = ?", (guild.id,)
+            "SELECT * FROM economy_users WHERE guild_id = ?",
+            (guild.id,),
         )
         if not response:
             return accounts_data
@@ -236,7 +268,11 @@ class EconomyManager:
             )
         return accounts_data
 
-    async def update_user_account(self, user: Member, data: dict[str, int | list]) -> EconomyUserData:
+    async def update_user_account(
+        self,
+        user: Member,
+        data: dict[str, int | list],
+    ) -> EconomyUserData:
         user_data: EconomyUserData = await self.get_user_data(user)
         user_data.update(data)  # pyright: ignore
 
@@ -255,7 +291,10 @@ class EconomyManager:
 
     async def get_user_balance(self, user: Member) -> tuple[int, int]:
         user_data: EconomyUserData = await self.get_user_data(user)
-        return user_data["money"], user_data["bank_money"]
+        return (
+            user_data["money"],
+            user_data["bank_money"],
+        )
 
     async def get_user_data(self, user: Member) -> EconomyUserData:
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
@@ -282,7 +321,13 @@ class EconomyManager:
 
         await self.bot.db.execute_fetchone(
             "INSERT INTO economy_users(guild_id, user_id, money, bank_money, items) VALUES(?,?,?,?,?)",
-            (user.guild.id, user.id, start_balance, 0, "[]"),
+            (
+                user.guild.id,
+                user.id,
+                start_balance,
+                0,
+                "[]",
+            ),
         )
 
         user_data: EconomyUserData = EconomyUserData(
@@ -305,11 +350,15 @@ class EconomyManager:
         if status:
             await self.setup_guild_settings(guild)
         else:
-            await self.bot.db.execute_fetchone("DELETE FROM economy_settings WHERE guild_id = ?", (guild.id,))
+            await self.bot.db.execute_fetchone(
+                "DELETE FROM economy_settings WHERE guild_id = ?",
+                (guild.id,),
+            )
 
     async def get_guild_economy_status(self, guild: Guild) -> bool:
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM economy_settings WHERE guild_id = ?", (guild.id,)
+            "SELECT * FROM economy_settings WHERE guild_id = ?",
+            (guild.id,),
         )
         if not response:
             return False
@@ -337,7 +386,8 @@ class EconomyManager:
 
     async def get_guild_settings(self, guild: Guild) -> EconomyGuildSettings:
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM economy_settings WHERE guild_id = ?", (guild.id,)
+            "SELECT * FROM economy_settings WHERE guild_id = ?",
+            (guild.id,),
         )
         if not response:
             guild_settings: EconomyGuildSettings = await self.setup_guild_settings(guild)
@@ -360,7 +410,17 @@ class EconomyManager:
             "INSERT INTO economy_settings(guild_id, start_balance, max_balance, work_win_rate, "
             "work_cooldown, work_min_income, work_max_income, coin_flip_cooldown, income_roles) "
             "VALUES(?,?,?,?,?,?,?,?, ?)",
-            (guild.id, 100, 100000000, 70, 300, 50, 200, 30, "{}"),
+            (
+                guild.id,
+                100,
+                100000000,
+                70,
+                300,
+                50,
+                200,
+                30,
+                "{}",
+            ),
         )
         return EconomyGuildSettings(
             guild_id=guild.id,

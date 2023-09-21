@@ -30,18 +30,32 @@ if TYPE_CHECKING:
 
 
 class RequirementModal(ui.Modal):
-    def __init__(self, title: str, bot: Smiffy, requirement: str):
+    def __init__(
+        self,
+        title: str,
+        bot: Smiffy,
+        requirement: str,
+    ):
         super().__init__(title=title)
 
         self.requirement: str = requirement
         self.bot: Smiffy = bot
 
         if requirement == "lvl":
-            self.input_value = ui.TextInput(label="Podaj wymagany level.", min_length=1)
+            self.input_value = ui.TextInput(
+                label="Podaj wymagany level.",
+                min_length=1,
+            )
         elif requirement == "role":
-            self.input_value = ui.TextInput(label="Podaj nazwę roli lub jej ID.", min_length=1)
+            self.input_value = ui.TextInput(
+                label="Podaj nazwę roli lub jej ID.",
+                min_length=1,
+            )
         else:
-            self.input_value = ui.TextInput(label="Podaj ilość wymaganych zaproszeń.", min_length=1)
+            self.input_value = ui.TextInput(
+                label="Podaj ilość wymaganych zaproszeń.",
+                min_length=1,
+            )
 
         self.add_item(self.input_value)
 
@@ -74,7 +88,8 @@ class RequirementModal(ui.Modal):
                     raise IndexError
 
                 response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-                    "SELECT * FROM levels WHERE guild_id = ?", (interaction.guild.id,)
+                    "SELECT * FROM levels WHERE guild_id = ?",
+                    (interaction.guild.id,),
                 )
 
                 if not response:
@@ -93,7 +108,10 @@ class RequirementModal(ui.Modal):
 
         if self.requirement == "role":
             try:
-                role: Optional[Role] = await RoleConverter().convert(interaction, self.input_value.value)
+                role: Optional[Role] = await RoleConverter().convert(
+                    interaction,
+                    self.input_value.value,
+                )
                 if not role:
                     raise errors.RoleNotFound(self.input_value.value)
 
@@ -108,7 +126,10 @@ class RequirementModal(ui.Modal):
             except errors.RoleNotFound:  # pyright: ignore
                 return await interaction.send_error_message(description="**Nie odnalazłem wpisanej roli**")
 
-        await interaction.send("Pomyślnie utworzono konkurs!", ephemeral=True)
+        await interaction.send(
+            "Pomyślnie utworzono konkurs!",
+            ephemeral=True,
+        )
         self.stop()
 
 
@@ -132,7 +153,8 @@ class CommandGiveaway(CustomCog):
 
         for guild in self.bot.guilds:
             response: Optional[Iterable[DB_RESPONSE]] = await self.bot.db.execute_fetchall(
-                "SELECT * FROM giveaways WHERE guild_id = ?", (guild.id,)
+                "SELECT * FROM giveaways WHERE guild_id = ?",
+                (guild.id,),
             )
 
             if not response:
@@ -157,7 +179,11 @@ class CommandGiveaway(CustomCog):
                 ):
                     await self.bot.db.execute_fetchone(
                         "DELETE FROM giveaways WHERE guild_id = ? AND channel_id = ? AND message_id = ?",
-                        (guild.id, giveaway_data[1], giveaway_data[2]),
+                        (
+                            guild.id,
+                            giveaway_data[1],
+                            giveaway_data[2],
+                        ),
                     )
 
                     continue
@@ -168,7 +194,14 @@ class CommandGiveaway(CustomCog):
                 host: str = giveaway_data[6]
                 if _embed:
                     self.bot.loop.create_task(
-                        self.continue_the_giveaway(reward, duration, winners, _message, _embed, host)
+                        self.continue_the_giveaway(
+                            reward,
+                            duration,
+                            winners,
+                            _message,
+                            _embed,
+                            host,
+                        )
                     )
 
     async def continue_the_giveaway(
@@ -222,7 +255,11 @@ class CommandGiveaway(CustomCog):
 
                 async for user in u:
                     if isinstance(user, Member):
-                        if await check_giveaway_requirement(self.bot, user, message):
+                        if await check_giveaway_requirement(
+                            self.bot,
+                            user,
+                            message,
+                        ):
                             enters.append(user.mention)
                 try:
                     if self.bot.user:
@@ -236,10 +273,19 @@ class CommandGiveaway(CustomCog):
         embed.colour = Color.green()
         embed.clear_fields()
 
-        embed.add_field(name="`👥` Liczba wygranych", value=f"{reply_emoji} `{winners}`")
-        embed.add_field(name="`👤` Osób w konkursie", value=f"{reply_emoji} `{len(enters)}`")
+        embed.add_field(
+            name="`👥` Liczba wygranych",
+            value=f"{reply_emoji} `{winners}`",
+        )
+        embed.add_field(
+            name="`👤` Osób w konkursie",
+            value=f"{reply_emoji} `{len(enters)}`",
+        )
 
-        embed.add_field(name="`⭐` Host", value=f"{reply_emoji} `{host}`")
+        embed.add_field(
+            name="`⭐` Host",
+            value=f"{reply_emoji} `{host}`",
+        )
 
         if len(enters) == 0:
             result_message = await message.reply("Brak osób w konkursie. Nikt nie wygrywa :(")
@@ -249,7 +295,11 @@ class CommandGiveaway(CustomCog):
 
             return await self.bot.db.execute_fetchone(
                 "DELETE FROM giveaways WHERE guild_id = ? AND channel_id = ? AND message_id = ?",
-                (message.guild.id, message.channel.id, message.id),
+                (
+                    message.guild.id,
+                    message.channel.id,
+                    message.id,
+                ),
             )
 
         if len(enters) < winners:
@@ -274,7 +324,11 @@ class CommandGiveaway(CustomCog):
 
         await self.bot.db.execute_fetchone(
             "DELETE FROM giveaways WHERE guild_id = ? AND channel_id = ? AND message_id = ?",
-            (message.guild.id, message.channel.id, message.id),
+            (
+                message.guild.id,
+                message.channel.id,
+                message.id,
+            ),
         )
 
     async def start_giveaway(
@@ -327,13 +381,19 @@ class CommandGiveaway(CustomCog):
             description=f"{Emojis.REPLY.value} *Dołącz do konkursu zaznaczając reakcje pod wiadomością*",
         )
 
-        embed.add_field(name="`⏱️` Koniec", value=f"{reply_emoji} <t:{int(unix_timespan) + 7200}:R>")
+        embed.add_field(
+            name="`⏱️` Koniec",
+            value=f"{reply_emoji} <t:{int(unix_timespan) + 7200}:R>",
+        )
         embed.add_field(
             name="`👥` Liczba wygranych",
             value=f"{reply_emoji} `{winners}`",
             inline=False,
         )
-        embed.add_field(name="`⭐` Host", value=f"{reply_emoji} `{interaction.user}`")
+        embed.add_field(
+            name="`⭐` Host",
+            value=f"{reply_emoji} `{interaction.user}`",
+        )
 
         if requirement:
             req: str = requirement_format[requirement]
@@ -343,7 +403,10 @@ class CommandGiveaway(CustomCog):
                 inline=False,
             )
 
-        embed.set_author(name="Konkurs - Smiffy", icon_url=self.bot.avatar_url)
+        embed.set_author(
+            name="Konkurs - Smiffy",
+            icon_url=self.bot.avatar_url,
+        )
 
         if image:
             embed.set_thumbnail(url=image)
@@ -390,16 +453,29 @@ class CommandGiveaway(CustomCog):
     async def giveaway_main(self, interaction: CustomInteraction):
         pass
 
-    @giveaway_main.subcommand(name="rozpocznij", description="Rozpoczyna konkurs.")  # pyright: ignore
-    @PermissionHandler(manage_messages=True, user_role_has_permission="konkurs")
+    @giveaway_main.subcommand(
+        name="rozpocznij",
+        description="Rozpoczyna konkurs.",
+    )  # pyright: ignore
+    @PermissionHandler(
+        manage_messages=True,
+        user_role_has_permission="konkurs",
+    )
     async def giveaway_start(
         self,
         interaction: CustomInteraction,
-        reward: str = SlashOption(name="nagroda", description="Podaj nagrodę konkursu"),
-        giveway_winners: str = SlashOption(
-            name="liczba_wygranych", description="Podaj ile chcesz zwycięzców konkursu"
+        reward: str = SlashOption(
+            name="nagroda",
+            description="Podaj nagrodę konkursu",
         ),
-        time: str = SlashOption(name="czas", description="Podaj czas konkursu. np. 5m"),
+        giveway_winners: str = SlashOption(
+            name="liczba_wygranych",
+            description="Podaj ile chcesz zwycięzców konkursu",
+        ),
+        time: str = SlashOption(
+            name="czas",
+            description="Podaj czas konkursu. np. 5m",
+        ),
         requiement: str = SlashOption(
             name="wymaganie",
             description="Wybierz wymaganie, aby dołączyć do konkursu",
@@ -450,31 +526,65 @@ class CommandGiveaway(CustomCog):
             return await interaction.send_error_message(description="**Minimalna ilość wygranych, to: 1**")
 
         if not requiement:
-            await interaction.send("Pomyślnie utworzono konkurs!", ephemeral=True)
+            await interaction.send(
+                "Pomyślnie utworzono konkurs!",
+                ephemeral=True,
+            )
 
-            return await self.start_giveaway(reward, duration, winners, interaction, image)
+            return await self.start_giveaway(
+                reward,
+                duration,
+                winners,
+                interaction,
+                image,
+            )
 
-        modal: RequirementModal = RequirementModal(self._req_title[requiement], self.bot, requiement)
+        modal: RequirementModal = RequirementModal(
+            self._req_title[requiement],
+            self.bot,
+            requiement,
+        )
         await interaction.response.send_modal(modal)
 
         if not await modal.wait():
             value: Optional[str] = modal.input_value.value
             if value:
                 return await self.start_giveaway(
-                    reward, duration, winners, interaction, image, requiement, value
+                    reward,
+                    duration,
+                    winners,
+                    interaction,
+                    image,
+                    requiement,
+                    value,
                 )
 
-    @giveaway_main.subcommand(name="relosuj", description="Relosuje wygranych w konkursie")  # pyright: ignore
-    @PermissionHandler(manage_messages=True, user_role_has_permission="konkurs")
+    @giveaway_main.subcommand(
+        name="relosuj",
+        description="Relosuje wygranych w konkursie",
+    )  # pyright: ignore
+    @PermissionHandler(
+        manage_messages=True,
+        user_role_has_permission="konkurs",
+    )
     async def reroll(
         self,
         interaction: CustomInteraction,
-        message: str = SlashOption(name="wiadomość", description="Podaj ID wiadomości konkursu."),
-        winners: int = SlashOption(name="ilość_zwyciezcow", description="Podaj ilość nowych wygranych"),
+        message: str = SlashOption(
+            name="wiadomość",
+            description="Podaj ID wiadomości konkursu.",
+        ),
+        winners: int = SlashOption(
+            name="ilość_zwyciezcow",
+            description="Podaj ilość nowych wygranych",
+        ),
     ):
         try:
             if winners <= 0:
-                return await interaction.send_error_message("Nieprawidłowa ilość wygranych.", ephemeral=True)
+                return await interaction.send_error_message(
+                    "Nieprawidłowa ilość wygranych.",
+                    ephemeral=True,
+                )
 
             await interaction.response.defer()
 
@@ -511,7 +621,10 @@ class CommandGiveaway(CustomCog):
                             winners = len(enters)
 
                 if len(enters) == 0:
-                    return await interaction.send("Brak osób w konkursie", ephemeral=True)
+                    return await interaction.send(
+                        "Brak osób w konkursie",
+                        ephemeral=True,
+                    )
 
                 giveaway_winners: List[str] = []
                 for _ in range(winners):
@@ -530,12 +643,21 @@ class CommandGiveaway(CustomCog):
                 ephemeral=True,
             )
 
-    @giveaway_main.subcommand(name="zakończ", description="Kończy giveaway przed czasem")  # pyright: ignore
-    @PermissionHandler(manage_messages=True, user_role_has_permission="konkurs")
+    @giveaway_main.subcommand(
+        name="zakończ",
+        description="Kończy giveaway przed czasem",
+    )  # pyright: ignore
+    @PermissionHandler(
+        manage_messages=True,
+        user_role_has_permission="konkurs",
+    )
     async def giveaway_end_now(
         self,
         interaction: CustomInteraction,
-        giveaway_name: str = SlashOption(name="nazwa_nagrody", description="Podaj nazwe nagrody konkursu"),
+        giveaway_name: str = SlashOption(
+            name="nazwa_nagrody",
+            description="Podaj nazwe nagrody konkursu",
+        ),
     ):
         assert interaction.guild
 
@@ -568,7 +690,11 @@ class CommandGiveaway(CustomCog):
 
         await self.bot.db.execute_fetchone(
             "UPDATE giveaways SET end_time = ? WHERE guild_id = ? AND message_id = ?",
-            (int(unix_timespan_now), interaction.guild.id, message_id),
+            (
+                int(unix_timespan_now),
+                interaction.guild.id,
+                message_id,
+            ),
         )
 
         return await interaction.send_success_message(
@@ -578,7 +704,9 @@ class CommandGiveaway(CustomCog):
 
     @giveaway_end_now.on_autocomplete("giveaway_name")
     async def giveaway_end_now_autocomplete(
-        self, interaction: CustomInteraction, query: Optional[str]
+        self,
+        interaction: CustomInteraction,
+        query: Optional[str],
     ) -> Optional[dict[str, str]]:
         assert interaction.guild
 
@@ -593,7 +721,11 @@ class CommandGiveaway(CustomCog):
         if not query:
             giveaways_data: dict[str, str] = {}
             index: int = 0
-            for message_id, reward, end_time in response:
+            for (
+                message_id,
+                reward,
+                end_time,
+            ) in response:
                 reward = f"{reward} - ({datetime.fromtimestamp(int(end_time))})"
                 giveaways_data[reward] = str(message_id)
                 index += 1
@@ -603,7 +735,11 @@ class CommandGiveaway(CustomCog):
         else:
             giveaways_data: dict[str, str] = {}
             index: int = 0
-            for message_id, reward, end_time in response:
+            for (
+                message_id,
+                reward,
+                end_time,
+            ) in response:
                 if reward.lower().startswith(query.lower()):
                     giveaways_data[f"{reward} - ({datetime.fromtimestamp(int(end_time))})"] = str(message_id)
 

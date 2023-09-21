@@ -22,9 +22,13 @@ class CommandPay(CustomCog):
         self,
         interaction: CustomInteraction,
         member: Member = SlashOption(
-            name="osoba", description="Podaj osobę do której chcesz przelać pieniądze"
+            name="osoba",
+            description="Podaj osobę do której chcesz przelać pieniądze",
         ),
-        amount: int = SlashOption(name="kwota", description="Podaj kwotę, którą chcesz przelać"),
+        amount: int = SlashOption(
+            name="kwota",
+            description="Podaj kwotę, którą chcesz przelać",
+        ),
     ):
         assert isinstance(interaction.user, Member) and interaction.guild
         await interaction.response.defer()
@@ -58,7 +62,12 @@ class CommandPay(CustomCog):
         )
         await self.send_dm_message(interaction.user, member, amount)
 
-    async def send_dm_message(self, sender: Member, member: Member, amount: int) -> None:
+    async def send_dm_message(
+        self,
+        sender: Member,
+        member: Member,
+        amount: int,
+    ) -> None:
         embed = Embed(
             title="`💡` Otrzymano nowy przelew",
             colour=Color.dark_theme(),
@@ -75,7 +84,10 @@ class CommandPay(CustomCog):
             name="`👤` Kwota",
             value=f"{Emojis.REPLY.value} `{amount}$`",
         )
-        embed.set_author(name=self.bot.user, icon_url=self.bot.avatar_url)
+        embed.set_author(
+            name=self.bot.user,
+            icon_url=self.bot.avatar_url,
+        )
         embed.set_thumbnail(url=Avatars.get_guild_icon(member.guild))
 
         try:

@@ -12,7 +12,11 @@ if TYPE_CHECKING:
 
 
 class CommandCat(CustomCog):
-    @slash_command(name="kot", description="Wysyła randomowy obrazek kici.", dm_permission=False)
+    @slash_command(
+        name="kot",
+        description="Wysyła randomowy obrazek kici.",
+        dm_permission=False,
+    )
     async def cat(self, interaction: CustomInteraction):
         await interaction.response.defer()
 
@@ -26,8 +30,15 @@ class CommandCat(CustomCog):
 
         data = await response.json()
 
-        embed = Embed(title="Oto Twój kitku.", color=Color.dark_theme(), timestamp=utils.utcnow())
-        embed.set_footer(text=interaction.user, icon_url=interaction.user_avatar_url)
+        embed = Embed(
+            title="Oto Twój kitku.",
+            color=Color.dark_theme(),
+            timestamp=utils.utcnow(),
+        )
+        embed.set_footer(
+            text=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_image(url=data["image"])
 
         await interaction.send(embed=embed)

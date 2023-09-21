@@ -21,24 +21,47 @@ if TYPE_CHECKING:
 class MemberLeaveEvent(CustomCog):
     @staticmethod
     def format_text(
-        main_text: str, first_text: str, second_text: str, member: User, guild: Guild
+        main_text: str,
+        first_text: str,
+        second_text: str,
+        member: User,
+        guild: Guild,
     ) -> Iterable[str]:
-        for text in (main_text, first_text, second_text):
+        for text in (
+            main_text,
+            first_text,
+            second_text,
+        ):
             yield text.replace("{user}", str(member)).replace("{user_name}", member.name).replace(
-                "{user_discriminator}", "#" + member.discriminator
+                "{user_discriminator}",
+                "#" + member.discriminator,
             ).replace("{user_id}", str(member.id)).replace("{guild_name}", guild.name).replace(
-                "{guild_total_members}", str(guild.member_count)
+                "{guild_total_members}",
+                str(guild.member_count),
             ).replace(
                 "{guild_id}", str(guild.id)
             )
 
-    async def create_welcome_file(self, data: tuple[str, ...], member: User, guild: Guild) -> File:
+    async def create_welcome_file(
+        self,
+        data: tuple[str, ...],
+        member: User,
+        guild: Guild,
+    ) -> File:
         main_text: str = data[0]
         second_text: str = data[1]
         third_text: str = data[2]
 
-        main_text, second_text, third_text = self.format_text(
-            main_text, second_text, third_text, member, guild
+        (
+            main_text,
+            second_text,
+            third_text,
+        ) = self.format_text(
+            main_text,
+            second_text,
+            third_text,
+            member,
+            guild,
         )
 
         user_avatar = self.avatars.get_user_avatar(member)
@@ -53,9 +76,21 @@ class MemberLeaveEvent(CustomCog):
         poppins_small = Font.poppins(size=60, variant="light")
 
         background.paste(profile, (760, 170))
-        background.ellipse((760, 170), 400, 400, outline="#fff", stroke_width=4)
+        background.ellipse(
+            (760, 170),
+            400,
+            400,
+            outline="#fff",
+            stroke_width=4,
+        )
 
-        background.text((950, 610), f"{main_text}", color="#07f763", font=poppins, align="center")
+        background.text(
+            (950, 610),
+            f"{main_text}",
+            color="#07f763",
+            font=poppins,
+            align="center",
+        )
         background.text(
             (950, 730),
             f"{second_text}",
@@ -71,19 +106,29 @@ class MemberLeaveEvent(CustomCog):
             align="center",
         )
 
-        _file = File(fp=background.image_bytes, filename="welcomecard.jpg")
+        _file = File(
+            fp=background.image_bytes,
+            filename="welcomecard.jpg",
+        )
 
         return _file
 
     @staticmethod
-    async def handle_invites_notify(inviter: Optional[Member], channel: TextChannel, user: User):
+    async def handle_invites_notify(
+        inviter: Optional[Member],
+        channel: TextChannel,
+        user: User,
+    ):
         if not inviter:
             try:
                 await channel.send(
                     f"Użytkownik **{user}** Wyszedł z serwera. "
                     f"Nie jestem w stanie sprawdzić kto go zaprosił."
                 )
-            except (errors.Forbidden, errors.HTTPException):
+            except (
+                errors.Forbidden,
+                errors.HTTPException,
+            ):
                 pass
         else:
             try:
@@ -91,7 +136,10 @@ class MemberLeaveEvent(CustomCog):
                     f"Użytkownik **{user}** Wyszedł z serwera. "
                     f"Został on zaproszony przez: {inviter.mention}."
                 )
-            except (errors.Forbidden, errors.HTTPException):
+            except (
+                errors.Forbidden,
+                errors.HTTPException,
+            ):
                 pass
 
     async def update_invites(self, member: User, guild: Guild):
@@ -101,7 +149,8 @@ class MemberLeaveEvent(CustomCog):
             return
 
         users: Iterable[DB_RESPONSE] = await self.bot.db.execute_fetchall(
-            "SELECT * FROM user_invites WHERE guild_id = ?", (guild.id,)
+            "SELECT * FROM user_invites WHERE guild_id = ?",
+            (guild.id,),
         )
 
         inviter_id: Optional[int] = None
@@ -118,7 +167,11 @@ class MemberLeaveEvent(CustomCog):
 
                     await self.bot.db.execute_fetchone(
                         "UPDATE user_invites SET left = left + 1, invited = ? WHERE guild_id = ? AND user_id = ?",
-                        (str(invited_users), guild.id, inviter_id),
+                        (
+                            str(invited_users),
+                            guild.id,
+                            inviter_id,
+                        ),
                     )
 
         if guild_invites_data[3]:
@@ -175,11 +228,17 @@ class MemberLeaveEvent(CustomCog):
                 )
                 embed.set_thumbnail(url=self.avatars.get_guild_icon(guild))
 
-                embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+                embed.set_footer(
+                    text=f"Smiffy v{self.bot.__version__}",
+                    icon_url=self.bot.avatar_url,
+                )
 
                 try:
                     await logs_channel.send(embed=embed)
-                except (errors.HTTPException, errors.Forbidden):
+                except (
+                    errors.HTTPException,
+                    errors.Forbidden,
+                ):
                     pass
 
         lobby_response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
@@ -195,7 +254,10 @@ class MemberLeaveEvent(CustomCog):
 
                 try:
                     await lobby_channel.send(file=file)
-                except (errors.HTTPException, errors.Forbidden):
+                except (
+                    errors.HTTPException,
+                    errors.Forbidden,
+                ):
                     pass
 
 

@@ -19,13 +19,22 @@ class WarningsPunishmentsList(ui.Select):
         self.bot: Smiffy = bot
 
         if not response or response == "{}":
-            options = [SelectOption(label="Brak", description="Brak kar za ustalone warny.", emoji="❌")]
+            options = [
+                SelectOption(
+                    label="Brak",
+                    description="Brak kar za ustalone warny.",
+                    emoji="❌",
+                )
+            ]
 
         else:
             options: list[SelectOption] = []
             data: dict[str, tuple[str, str]] = literal_eval(response)
 
-            for warn_count, action_data in data.items():
+            for (
+                warn_count,
+                action_data,
+            ) in data.items():
                 action: str = action_data[0]
                 action_duration: str = str(action_data[1])
                 if action_duration == "0":
@@ -40,7 +49,10 @@ class WarningsPunishmentsList(ui.Select):
                     )
                 )
 
-        super().__init__(placeholder="Wybierz którą kare chcesz usunąć.", options=options)
+        super().__init__(
+            placeholder="Wybierz którą kare chcesz usunąć.",
+            options=options,
+        )
 
     async def callback(self, interaction: CustomInteraction):
         assert interaction.guild
@@ -56,7 +68,8 @@ class WarningsPunishmentsList(ui.Select):
         )
         if not response:
             return await interaction.send_error_message(
-                description="Wystąpił problem z bazą danych.", ephemeral=True
+                description="Wystąpił problem z bazą danych.",
+                ephemeral=True,
             )
 
         warn_data: dict = literal_eval(str(response[1]))
@@ -67,7 +80,10 @@ class WarningsPunishmentsList(ui.Select):
 
         await self.bot.db.execute_fetchone(
             "UPDATE warnings_punishments SET data = ? WHERE guild_id = ?",
-            (str(warn_data), interaction.guild.id),
+            (
+                str(warn_data),
+                interaction.guild.id,
+            ),
         )
 
         return await interaction.send_success_message(
@@ -89,10 +105,18 @@ class AddWarningPunishmentModal(ui.Modal):
         super().__init__(title="Dodawanie kary za ostrzeżenie")
 
         self.bot: Smiffy = bot
-        self.warn_count = ui.TextInput(label="Podaj ilość ostrzeżeń.", max_length=2, min_length=1)
+        self.warn_count = ui.TextInput(
+            label="Podaj ilość ostrzeżeń.",
+            max_length=2,
+            min_length=1,
+        )
 
         self.action = action
-        self.time = ui.TextInput(label="Podaj czas | np. 5m (5 minut)", max_length=10, min_length=1)
+        self.time = ui.TextInput(
+            label="Podaj czas | np. 5m (5 minut)",
+            max_length=10,
+            min_length=1,
+        )
 
         self.add_item(self.warn_count)
         if action in ["tempban", "mute"]:
@@ -125,7 +149,10 @@ class AddWarningPunishmentModal(ui.Modal):
             warnings_data: dict = {}
             await self.bot.db.execute_fetchone(
                 "INSERT INTO warnings_punishments(guild_id, data) VALUES(?,?)",
-                (interaction.guild.id, str(warnings_data)),
+                (
+                    interaction.guild.id,
+                    str(warnings_data),
+                ),
             )
         else:
             warnings_data: dict = literal_eval(response[1])
@@ -135,13 +162,22 @@ class AddWarningPunishmentModal(ui.Modal):
                 )
 
         if self.time.value and self.action.lower() in ["tempban", "mute"]:
-            warnings_data[warns_count] = (self.action, self.time.value)
+            warnings_data[warns_count] = (
+                self.action,
+                self.time.value,
+            )
         else:
-            warnings_data[warns_count] = (self.action, "0")
+            warnings_data[warns_count] = (
+                self.action,
+                "0",
+            )
 
         await self.bot.db.execute_fetchone(
             "UPDATE warnings_punishments SET data = ? WHERE guild_id = ?",
-            (str(warnings_data), interaction.guild.id),
+            (
+                str(warnings_data),
+                interaction.guild.id,
+            ),
         )
 
         return await interaction.send_success_message(
@@ -182,7 +218,10 @@ class SelectAction(ui.Select):
             ),
         ]
 
-        super().__init__(placeholder="Wybierz, którą akcje chcesz wykonać.", options=options)
+        super().__init__(
+            placeholder="Wybierz, którą akcje chcesz wykonać.",
+            options=options,
+        )
 
     async def callback(self, interaction: CustomInteraction):
         add_punishment_modal = AddWarningPunishmentModal(self.values[0], self.bot)
@@ -202,14 +241,21 @@ class CommandWarnsPunishments(CustomCog):
         description="Zarządzaj karami za otrzymanie konkretnej ilości ostrzeżeń.",
         dm_permission=False,
     )
-    @PermissionHandler(manage_guild=True, user_role_has_permission="karywarny")
+    @PermissionHandler(
+        manage_guild=True,
+        user_role_has_permission="karywarny",
+    )
     async def warnspunishments(
         self,
         interaction: CustomInteraction,
         option: str = SlashOption(
             name="opcja",
             description="Wybierz opcję, która cie interesuje.",
-            choices={"Lista": "list", "Dodaj": "add", "Usuń": "remove"},
+            choices={
+                "Lista": "list",
+                "Dodaj": "add",
+                "Usuń": "remove",
+            },
         ),
     ):
         assert interaction.guild
@@ -230,11 +276,20 @@ class CommandWarnsPunishments(CustomCog):
                     timestamp=utils.utcnow(),
                 )
                 embed.set_thumbnail(url=interaction.guild_icon_url)
-                embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+                embed.set_author(
+                    name=interaction.user,
+                    icon_url=interaction.user_avatar_url,
+                )
 
-                embed.set_footer(icon_url=self.bot.avatar_url, text=f"Smiffy v{self.bot.__version__}")
+                embed.set_footer(
+                    icon_url=self.bot.avatar_url,
+                    text=f"Smiffy v{self.bot.__version__}",
+                )
 
-                for warn_count, action_data in warnings_data.items():
+                for (
+                    warn_count,
+                    action_data,
+                ) in warnings_data.items():
                     action: str = action_data[0]
                     action_duration: str = action_data[1]
 
@@ -277,11 +332,21 @@ class CommandWarnsPunishments(CustomCog):
                 description=f"{Emojis.REPLY.value} Wybierz z listy, którą karę chcesz usunąć.",
                 timestamp=utils.utcnow(),
             )
-            embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{self.bot.__version__}",
+                icon_url=self.bot.avatar_url,
+            )
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
 
-            await interaction.send(embed=embed, view=punishments_list, ephemeral=True)
+            await interaction.send(
+                embed=embed,
+                view=punishments_list,
+                ephemeral=True,
+            )
 
         if option == "add":
             view: SelectActionView = SelectActionView(self.bot)
@@ -293,9 +358,16 @@ class CommandWarnsPunishments(CustomCog):
                 f"którą chcesz wykonywać po zdobyciu określonej ilości ostrzeżeń.",
                 timestamp=utils.utcnow(),
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            await interaction.send(embed=embed, view=view, ephemeral=True)
+            await interaction.send(
+                embed=embed,
+                view=view,
+                ephemeral=True,
+            )
 
 
 def setup(bot: Smiffy):

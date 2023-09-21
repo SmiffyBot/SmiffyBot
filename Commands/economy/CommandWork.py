@@ -18,7 +18,8 @@ if TYPE_CHECKING:
 
 class CommandWork(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
-        name="pracuj", description="Pracuj i zdobywaj pieniądze"
+        name="pracuj",
+        description="Pracuj i zdobywaj pieniądze",
     )
     @shared_cooldown("command_work")
     async def economy_work(self, interaction: CustomInteraction):
@@ -49,7 +50,10 @@ class CommandWork(CustomCog):
                 description=f"{Emojis.REPLY.value} Niestety, ale właśnie straciłeś/aś: `{income}$`",
             )
 
-        await manager.add_user_money(interaction.user, money_data={"money": income})
+        await manager.add_user_money(
+            interaction.user,
+            money_data={"money": income},
+        )
         await interaction.send_success_message(
             title="`💸` Otrzymano wypłatę.",
             description=f"{Emojis.REPLY.value} Właśnie otrzymałeś/aś wypłatę w wysokości: `{income}$`",
@@ -57,7 +61,11 @@ class CommandWork(CustomCog):
         )
 
     @economy_work.error  # pyright: ignore
-    async def economy_work_error(self, interaction: CustomInteraction, error):
+    async def economy_work_error(
+        self,
+        interaction: CustomInteraction,
+        error,
+    ):
         assert interaction.guild
 
         error = getattr(error, "original", error)

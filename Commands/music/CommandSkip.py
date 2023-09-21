@@ -18,7 +18,8 @@ if TYPE_CHECKING:
 
 class CommandSkip(CustomCog):
     @MusicCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
-        name="skip", description="Pomija aktualną graną piosenke"
+        name="skip",
+        description="Pomija aktualną graną piosenke",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_skip(self, interaction: CustomInteraction):

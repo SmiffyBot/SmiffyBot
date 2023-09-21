@@ -15,12 +15,16 @@ if TYPE_CHECKING:
 
 class CommandDeposit(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
-        name="wpłać", description="Wpłaca pieniądze do banku"
+        name="wpłać",
+        description="Wpłaca pieniądze do banku",
     )
     async def economy_deposit(
         self,
         interaction: CustomInteraction,
-        amount: int = SlashOption(name="kwota", description="Podaj kwotę do wpłacenia"),
+        amount: int = SlashOption(
+            name="kwota",
+            description="Podaj kwotę do wpłacenia",
+        ),
     ):
         await interaction.response.defer()
 
@@ -31,7 +35,10 @@ class CommandDeposit(CustomCog):
         if not await manager.get_guild_economy_status(interaction.guild):
             return await interaction.send_error_message(description="Ekonomia na serwerze jest wyłączona.")
 
-        money, bank_money = await manager.get_user_balance(user=interaction.user)
+        (
+            money,
+            bank_money,
+        ) = await manager.get_user_balance(user=interaction.user)
 
         if amount > money:
             return await interaction.send_error_message(
@@ -40,7 +47,10 @@ class CommandDeposit(CustomCog):
 
         await manager.update_user_account(
             interaction.user,
-            {"money": money - amount, "bank_money": bank_money + amount},
+            {
+                "money": money - amount,
+                "bank_money": bank_money + amount,
+            },
         )
 
         await interaction.send_success_message(

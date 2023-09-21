@@ -19,12 +19,20 @@ if TYPE_CHECKING:
 class CommandStats(CustomCog):
     @staticmethod
     def bytesto(_bytes: int, to: str, bsize=1024):
-        a = {"k": 1, "m": 2, "g": 3, "t": 4, "p": 5, "e": 6}
+        a = {
+            "k": 1,
+            "m": 2,
+            "g": 3,
+            "t": 4,
+            "p": 5,
+            "e": 6,
+        }
         float(_bytes)
         return _bytes / (bsize ** a[to])
 
     @MusicCog.main.subcommand(  # pylint: disable=no-member
-        name="statystyki", description="Statystyki muzyki Smiffiego"
+        name="statystyki",
+        description="Statystyki muzyki Smiffiego",
     )
     async def music_stats(self, interaction: CustomInteraction):
         await interaction.response.defer()
@@ -52,10 +60,16 @@ class CommandStats(CustomCog):
             colour=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
-        embed.add_field(name="`〽️` Zużycie Cpu", value=f"{Emojis.REPLY.value} `{cpu_usage}%`")
+        embed.add_field(
+            name="`〽️` Zużycie Cpu",
+            value=f"{Emojis.REPLY.value} `{cpu_usage}%`",
+        )
 
         embed.add_field(
             name="`🔎` Zużycie Ramu",
@@ -63,7 +77,11 @@ class CommandStats(CustomCog):
             inline=False,
         )
 
-        embed.add_field(name="`🔧` Wątki", value=f"{Emojis.REPLY.value} `{cpu_cores}`", inline=False)
+        embed.add_field(
+            name="`🔧` Wątki",
+            value=f"{Emojis.REPLY.value} `{cpu_cores}`",
+            inline=False,
+        )
 
         embed.add_field(
             name="`📌` Aktywne playery",

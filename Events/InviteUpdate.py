@@ -22,7 +22,10 @@ class InviteUpdate(CustomCog):
         timestamp: int = guild_data[2]
         notify_data: str = guild_data[3]
 
-        await self.bot.db.execute_fetchone("DELETE FROM server_invites WHERE guild_id = ?", (guild.id,))
+        await self.bot.db.execute_fetchone(
+            "DELETE FROM server_invites WHERE guild_id = ?",
+            (guild.id,),
+        )
 
         invite_codes: list[dict[str, str | int]] = []
 
@@ -38,7 +41,12 @@ class InviteUpdate(CustomCog):
 
         await self.bot.db.execute_fetchone(
             "INSERT INTO server_invites(guild_id, invites_data, enabled_at, notify_data) VALUES(?,?,?,?)",
-            (guild.id, str(invite_codes), timestamp, notify_data),
+            (
+                guild.id,
+                str(invite_codes),
+                timestamp,
+                notify_data,
+            ),
         )
 
     @CustomCog.listener()

@@ -19,7 +19,10 @@ class CommandSay(CustomCog):
     async def say(
         self,
         interaction: CustomInteraction,
-        text: str = SlashOption(name="tekst", description="Wpisz tekst"),
+        text: str = SlashOption(
+            name="tekst",
+            description="Wpisz tekst",
+        ),
     ):
         await interaction.send(text)
 

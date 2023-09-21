@@ -15,12 +15,22 @@ if TYPE_CHECKING:
 
 
 class CommandUnban(CustomCog):
-    @slash_command(name="unban", description="Odbanuj użytkownika!", dm_permission=False)  # pyright: ignore
-    @PermissionHandler(ban_members=True, user_role_has_permission="unban")
+    @slash_command(
+        name="unban",
+        description="Odbanuj użytkownika!",
+        dm_permission=False,
+    )  # pyright: ignore
+    @PermissionHandler(
+        ban_members=True,
+        user_role_has_permission="unban",
+    )
     async def unban(
         self,
         interaction: CustomInteraction,
-        member: str = SlashOption(name="osoba", description="Wybierz osobę którą chcesz odbanować."),
+        member: str = SlashOption(
+            name="osoba",
+            description="Wybierz osobę którą chcesz odbanować.",
+        ),
     ):
         assert interaction.guild and self.bot.user
 
@@ -28,7 +38,11 @@ class CommandUnban(CustomCog):
 
         try:
             banned_user: BanEntry = await interaction.guild.fetch_ban(Object(id=int(member)))
-        except (errors.Forbidden, errors.NotFound, errors.HTTPException):
+        except (
+            errors.Forbidden,
+            errors.NotFound,
+            errors.HTTPException,
+        ):
             return await interaction.send_error_message(
                 description="**Nie odnalazłem takiego użytkownika z banem.**",
             )
@@ -50,7 +64,10 @@ class CommandUnban(CustomCog):
             value=f"{Emojis.REPLY.value} `{banned_user.user}`",
         )
         embed.set_thumbnail(url=interaction.guild_icon_url)
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
 
         embed.set_footer(
             text=f"Smiffy v{self.bot.__version__}",
@@ -60,7 +77,11 @@ class CommandUnban(CustomCog):
         await interaction.send(embed=embed)
 
     @unban.on_autocomplete("member")
-    async def banned_members(self, interaction: CustomInteraction, query: Optional[str]) -> dict:
+    async def banned_members(
+        self,
+        interaction: CustomInteraction,
+        query: Optional[str],
+    ) -> dict:
         if not interaction.guild:
             return {}
 

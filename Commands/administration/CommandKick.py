@@ -12,13 +12,27 @@ if TYPE_CHECKING:
 
 
 class CommandKick(CustomCog):
-    @slash_command(name="kick", description="Wyrzuć użytkownika!", dm_permission=False)  # pyright: ignore
-    @PermissionHandler(ban_members=True, user_role_has_permission="kick")
+    @slash_command(
+        name="kick",
+        description="Wyrzuć użytkownika!",
+        dm_permission=False,
+    )  # pyright: ignore
+    @PermissionHandler(
+        ban_members=True,
+        user_role_has_permission="kick",
+    )
     async def kick(
         self,
         interaction: CustomInteraction,
-        member: Member = SlashOption(name="osoba", description="Podaj osobę, którą chcesz wyrzucić."),
-        reason: Optional[str] = SlashOption(name="powod", description="Podaj powód", max_length=256),
+        member: Member = SlashOption(
+            name="osoba",
+            description="Podaj osobę, którą chcesz wyrzucić.",
+        ),
+        reason: Optional[str] = SlashOption(
+            name="powod",
+            description="Podaj powód",
+            max_length=256,
+        ),
     ):
         if not isinstance(member, Member) or not isinstance(interaction.user, Member):
             # This should never happen, but discord sometimes messes things up - not sure why.
@@ -51,12 +65,22 @@ class CommandKick(CustomCog):
             color=Color.green(),
         )
 
-        embed.add_field(name="`👤` Użytkownik", value=f"{Emojis.REPLY.value} `{member}`")
+        embed.add_field(
+            name="`👤` Użytkownik",
+            value=f"{Emojis.REPLY.value} `{member}`",
+        )
 
-        embed.add_field(name="`🗨️` Powód", value=f"{Emojis.REPLY.value} `{reason}`", inline=False)
+        embed.add_field(
+            name="`🗨️` Powód",
+            value=f"{Emojis.REPLY.value} `{reason}`",
+            inline=False,
+        )
 
         embed.set_thumbnail(url=interaction.guild_icon_url)
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_footer(
             text=f"Smiffy v{self.bot.__version__}",
             icon_url=self.bot.user.display_avatar.url,
@@ -66,20 +90,41 @@ class CommandKick(CustomCog):
         await member.kick(reason=reason)
         await interaction.send(embed=embed)
 
-    async def send_dm_message(self, member: Member, root: Member, reason: str) -> None:
+    async def send_dm_message(
+        self,
+        member: Member,
+        root: Member,
+        reason: str,
+    ) -> None:
         embed = Embed(
             title=f"Zostałeś/aś wyrzucony/a {Emojis.REDBUTTON.value}",
             timestamp=utils.utcnow(),
             color=Color.red(),
         )
-        embed.set_author(name=root, icon_url=root.display_avatar.url)
+        embed.set_author(
+            name=root,
+            icon_url=root.display_avatar.url,
+        )
         embed.set_thumbnail(url=Avatars.get_guild_icon(root.guild))
 
-        embed.add_field(name="`👤` Administrator", value=f"{Emojis.REPLY.value} `{root}`")
-        embed.add_field(name="`🗨️` Powód", value=f"{Emojis.REPLY.value} `{reason}`", inline=False)
-        embed.add_field(name="`📌` Serwer", value=f"{Emojis.REPLY.value} `{root.guild.name}`")
+        embed.add_field(
+            name="`👤` Administrator",
+            value=f"{Emojis.REPLY.value} `{root}`",
+        )
+        embed.add_field(
+            name="`🗨️` Powód",
+            value=f"{Emojis.REPLY.value} `{reason}`",
+            inline=False,
+        )
+        embed.add_field(
+            name="`📌` Serwer",
+            value=f"{Emojis.REPLY.value} `{root.guild.name}`",
+        )
 
-        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{self.bot.__version__}",
+            icon_url=self.bot.avatar_url,
+        )
 
         try:
             await member.send(embed=embed)

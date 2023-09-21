@@ -18,13 +18,17 @@ class CommandAntyFlood(CustomCog):
     async def antyflood(self, interaction: CustomInteraction):  # pylint: disable=unused-argument
         ...
 
-    @antyflood.subcommand(name="włącz", description="Włącza system AntyFlood")  # pyright: ignore
+    @antyflood.subcommand(
+        name="włącz",
+        description="Włącza system AntyFlood",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def antyflood_on(self, interaction: CustomInteraction):
         assert interaction.guild
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM antyflood WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM antyflood WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         if response:
@@ -37,7 +41,10 @@ class CommandAntyFlood(CustomCog):
             description=f"{Emojis.REPLY.value} Podaj ilość takich samych wiadomości w ciągu 5 minut, "
             f"po których bot ma zacząć usuwać wiadomości.\n- **Zalecane:** `3`",
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_footer(text="Etap 1/1")
 
         await interaction.send(embed=embed)
@@ -96,24 +103,32 @@ class CommandAntyFlood(CustomCog):
             description=f"{Emojis.REPLY.value} *AntyFlood nie działa dla osób z permisją `Manage_Messages`!*",
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
         await interaction.edit_original_message(embed=embed)
 
-    @antyflood.subcommand(name="wyłącz", description="Wyłącza system AntyFlood")  # pyright: ignore
+    @antyflood.subcommand(
+        name="wyłącz",
+        description="Wyłącza system AntyFlood",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def antyflood_off(self, interaction: CustomInteraction):
         assert interaction.guild
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM antyflood WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM antyflood WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         if not response:
             return await interaction.send_error_message(description="AntyFlood już jest wyłączony.")
 
         await self.bot.db.execute_fetchone(
-            "DELETE FROM antyflood WHERE guild_id = ?", (interaction.guild.id,)
+            "DELETE FROM antyflood WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         await interaction.send_success_message(

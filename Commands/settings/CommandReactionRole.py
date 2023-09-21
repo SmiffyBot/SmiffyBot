@@ -27,8 +27,14 @@ class CommandReactionRole(CustomCog):
     async def reactionrole(
         self,
         interaction: CustomInteraction,
-        emoji: str = SlashOption(name="emotka", description="Podaj emoji której chcesz użyć do reactionrole"),
-        role: Role = SlashOption(name="rola", description="Wybierz rolę którą chcesz nadawać"),
+        emoji: str = SlashOption(
+            name="emotka",
+            description="Podaj emoji której chcesz użyć do reactionrole",
+        ),
+        role: Role = SlashOption(
+            name="rola",
+            description="Wybierz rolę którą chcesz nadawać",
+        ),
         message_id: str = SlashOption(
             name="id_wiadomości",
             description="Wpisz ID wiadomości do której chcesz dodać reactionrole",
@@ -54,7 +60,10 @@ class CommandReactionRole(CustomCog):
 
         try:
             await message.add_reaction(emoji)
-        except (nextcord_errors.HTTPException, nextcord_errors.InvalidArgument):
+        except (
+            nextcord_errors.HTTPException,
+            nextcord_errors.InvalidArgument,
+        ):
             return await interaction.send_error_message(description="Podane emoji nie może zostać użyte.")
 
         if interaction.user.id != interaction.guild.owner_id:
@@ -67,7 +76,12 @@ class CommandReactionRole(CustomCog):
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
             "SELECT * FROM reactionroles WHERE guild_id = ? AND message_id = ? AND role_id = ? AND emoji = ?",
-            (interaction.guild.id, message.id, role.id, emoji),
+            (
+                interaction.guild.id,
+                message.id,
+                role.id,
+                emoji,
+            ),
         )
         if response:
             return await interaction.send_error_message(
@@ -76,7 +90,13 @@ class CommandReactionRole(CustomCog):
 
         await self.bot.db.execute_fetchone(
             "INSERT INTO reactionroles(guild_id, channel_id, message_id, role_id, emoji) VALUES(?,?,?,?,?)",
-            (interaction.guild.id, message.channel.id, message.id, role.id, str(emoji)),
+            (
+                interaction.guild.id,
+                message.channel.id,
+                message.id,
+                role.id,
+                str(emoji),
+            ),
         )
 
         return await interaction.send_success_message(

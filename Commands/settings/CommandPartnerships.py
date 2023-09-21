@@ -60,16 +60,24 @@ class PartnershipAdText(ui.Modal):
             )
 
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-            "SELECT * FROM partnerships WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM partnerships WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if response:
             return await interaction.send_error_message(description="Na serwerze już są włączone partnerstwa")
 
         await bot.db.execute_fetchone(
             "INSERT INTO partnerships(guild_id, channel_id, ad_text) VALUES(?,?,?)",
-            (interaction.guild.id, self.channel.id, ad_content),
+            (
+                interaction.guild.id,
+                self.channel.id,
+                ad_content,
+            ),
         )
-        command_mention: str = interaction.get_command_mention(command_name="partnerstwa", sub_command="bump")
+        command_mention: str = interaction.get_command_mention(
+            command_name="partnerstwa",
+            sub_command="bump",
+        )
 
         return await interaction.send_success_message(
             title=f"Pomyślnie włączono partnerstwa {Emojis.GREENBUTTON.value}",
@@ -83,7 +91,11 @@ class CommandPartnerships(CustomCog):
     async def partnerships(self, interaction: CustomInteraction):  # pylint: disable=unused-argument
         ...
 
-    async def send_ad_to_all_servers(self, ad_message: str, inter: CustomInteraction):
+    async def send_ad_to_all_servers(
+        self,
+        ad_message: str,
+        inter: CustomInteraction,
+    ):
         assert inter.guild and self.bot.user
 
         response: Iterable[DB_RESPONSE] = await self.bot.db.execute_fetchall("SELECT * FROM partnerships")
@@ -130,24 +142,36 @@ class CommandPartnerships(CustomCog):
 
                     try:
                         await channel.send(ad_message)
-                    except (errors.HTTPException, errors.Forbidden):
+                    except (
+                        errors.HTTPException,
+                        errors.Forbidden,
+                    ):
                         self.bot.logger.warning(f"Failed to send PartnerShip AD: {channel} | {guild}")
 
-                except (errors.HTTPException, errors.Forbidden):
+                except (
+                    errors.HTTPException,
+                    errors.Forbidden,
+                ):
                     pass
 
     @partnerships.subcommand(
         name="bump",
         description="Wysyła reklame serwera na wszystkie serwery z partnerstwami",
     )
-    @cooldown(1, 86400, bucket=SlashBucket.guild, cooldown_id="partnership_bump")
+    @cooldown(
+        1,
+        86400,
+        bucket=SlashBucket.guild,
+        cooldown_id="partnership_bump",
+    )
     async def partnerships_bump(self, interaction: CustomInteraction):
         assert interaction.guild
 
         await interaction.response.defer()
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM partnerships WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM partnerships WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         if not response:
@@ -168,7 +192,11 @@ class CommandPartnerships(CustomCog):
             )
 
     @partnerships_bump.error  # pyright: ignore
-    async def partnership_bump_error(self, interaction: CustomInteraction, error):
+    async def partnership_bump_error(
+        self,
+        interaction: CustomInteraction,
+        error,
+    ):
         error = getattr(error, "original", error)
 
         if isinstance(error, CallableOnCooldown):
@@ -177,19 +205,24 @@ class CommandPartnerships(CustomCog):
             )
 
     @partnerships.subcommand(  # pyright: ignore
-        name="włącz", description="Włącza system partnerstw na serwerze"
+        name="włącz",
+        description="Włącza system partnerstw na serwerze",
     )
     @PermissionHandler(manage_guild=True)
     async def partnerships_on(
         self,
         interaction: CustomInteraction,
-        channel: TextChannel = SlashOption(name="kanał", description="Podaj kanał do partnerstw"),
+        channel: TextChannel = SlashOption(
+            name="kanał",
+            description="Podaj kanał do partnerstw",
+        ),
     ):
         modal = PartnershipAdText(channel)
         await interaction.response.send_modal(modal)
 
     @partnerships.subcommand(  # pyright: ignore
-        name="wyłącz", description="Wyłącza system partnerstw na serwerze"
+        name="wyłącz",
+        description="Wyłącza system partnerstw na serwerze",
     )
     @PermissionHandler(manage_guild=True)
     async def partnerships_off(self, interaction: CustomInteraction):
@@ -198,7 +231,8 @@ class CommandPartnerships(CustomCog):
         await interaction.response.defer()
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM partnerships WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM partnerships WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if not response:
             return await interaction.send_error_message(
@@ -206,7 +240,8 @@ class CommandPartnerships(CustomCog):
             )
 
         await self.bot.db.execute_fetchone(
-            "DELETE FROM partnerships WHERE guild_id = ?", (interaction.guild.id,)
+            "DELETE FROM partnerships WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         return await interaction.send_success_message(

@@ -30,19 +30,30 @@ class CommandEditItem(CustomCog):
         }
 
     @EconomyCog.main.subcommand(  # pylint: disable=no-member   # pyright: ignore
-        name="edytuj_przedmiot", description="Edytuje opcję przedmiotu"
+        name="edytuj_przedmiot",
+        description="Edytuje opcję przedmiotu",
     )
     @PermissionHandler(manage_guild=True)
     async def economy_edititem(
         self,
         interaction: CustomInteraction,
-        item_name: str = SlashOption(name="nazwa_przedmiotu", description="Podaj nazwę przedmiotu"),
-        new_name: Optional[str] = SlashOption(
-            name="nowa_nazwa", description="Podaj nową nazwę przedmiotu", max_length=64
+        item_name: str = SlashOption(
+            name="nazwa_przedmiotu",
+            description="Podaj nazwę przedmiotu",
         ),
-        price: Optional[int] = SlashOption(name="cena", description="Podaj nową cene przedmiotu"),
+        new_name: Optional[str] = SlashOption(
+            name="nowa_nazwa",
+            description="Podaj nową nazwę przedmiotu",
+            max_length=64,
+        ),
+        price: Optional[int] = SlashOption(
+            name="cena",
+            description="Podaj nową cene przedmiotu",
+        ),
         description: Optional[str] = SlashOption(
-            name="opis", description="Podaj nowy opis przedmiotu", max_length=256
+            name="opis",
+            description="Podaj nowy opis przedmiotu",
+            max_length=256,
         ),
         reply_message: Optional[str] = SlashOption(
             name="wiadomość_zwrotna",
@@ -68,7 +79,10 @@ class CommandEditItem(CustomCog):
         if not await manager.get_guild_economy_status(interaction.guild):
             return await interaction.send_error_message(description="Ekonomia na serwerze jest wyłączona.")
 
-        if not await manager.get_guild_item(guild=interaction.guild, item_name=item_name):
+        if not await manager.get_guild_item(
+            guild=interaction.guild,
+            item_name=item_name,
+        ):
             return await interaction.send_error_message(description="Podany przedmiot nie istnieje.")
 
         if given_role:
@@ -105,7 +119,11 @@ class CommandEditItem(CustomCog):
             if option_name not in new_item_data:
                 new_item_data[option_name] = option_data["value"]
 
-        await manager.edit_guild_item(interaction.guild, item_name, new_item_data)
+        await manager.edit_guild_item(
+            interaction.guild,
+            item_name,
+            new_item_data,
+        )
         await interaction.send_success_message(
             title=f"Pomyślnie zaktualizowano {Emojis.GREENBUTTON.value}",
             description=f"{Emojis.REPLY.value} Przedmiot o nazwie: `{item_name}` został zaktualizowany.",
@@ -114,7 +132,9 @@ class CommandEditItem(CustomCog):
 
     @economy_edititem.on_autocomplete("item_name")
     async def edititem_autocomplete(
-        self, interaction: CustomInteraction, query: Optional[str]
+        self,
+        interaction: CustomInteraction,
+        query: Optional[str],
     ) -> Optional[list[str]]:
         assert interaction.guild
         manager: EconomyManager = EconomyManager(bot=self.bot)

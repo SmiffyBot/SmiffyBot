@@ -35,7 +35,10 @@ class ItemsList(ui.Select):
                 )
             )
 
-        super().__init__(placeholder="Wybierz następną stronę przedmiotów", options=pages_list)
+        super().__init__(
+            placeholder="Wybierz następną stronę przedmiotów",
+            options=pages_list,
+        )
 
     async def callback(self, interaction: CustomInteraction) -> None:
         if not interaction.message:
@@ -72,7 +75,8 @@ class ItemsListView(ui.View):
 
 class CommandInventory(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
-        name="ekwipunek", description="Wyświetla Twój ekwipunek"
+        name="ekwipunek",
+        description="Wyświetla Twój ekwipunek",
     )
     async def economy_inventory(self, interaction: CustomInteraction):
         await interaction.response.defer()
@@ -104,7 +108,10 @@ class CommandInventory(CustomCog):
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
         index = 0

@@ -21,7 +21,10 @@ class CommandComment(CustomCog):
     async def comment(
         self,
         interaction: CustomInteraction,
-        title: str = SlashOption(name="treść", description="Podaj treść komentarza"),
+        title: str = SlashOption(
+            name="treść",
+            description="Podaj treść komentarza",
+        ),
     ):
         assert interaction.user
 
@@ -32,7 +35,9 @@ class CommandComment(CustomCog):
         )
 
         response: Optional[ClientResponse] = await self.bot.session.send_api_request(
-            interaction=interaction, url=api_url, method="GET"
+            interaction=interaction,
+            url=api_url,
+            method="GET",
         )
 
         if not response:

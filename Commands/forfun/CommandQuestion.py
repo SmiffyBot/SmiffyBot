@@ -31,7 +31,10 @@ class CommandQuestion(CustomCog):
     async def question(
         self,
         interaction: CustomInteraction,
-        question: str = SlashOption(name="treść", description="Wpisz treść pytania."),
+        question: str = SlashOption(
+            name="treść",
+            description="Wpisz treść pytania.",
+        ),
     ):
         embed = Embed(
             title="Odpowiedź na pytanie",
@@ -39,7 +42,10 @@ class CommandQuestion(CustomCog):
             timestamp=utils.utcnow(),
             description=f"Pytanie: **{question}**\n> Odpowiedź: **{choice(self.answers)}**",
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
         await interaction.send(embed=embed)
 

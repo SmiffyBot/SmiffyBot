@@ -16,7 +16,12 @@ if TYPE_CHECKING:
     from bot import Smiffy
     from utilities import CustomInteraction
 
-    PartialMessageableChannel = Union[TextChannel, Thread, DMChannel, PartialMessageable]
+    PartialMessageableChannel = Union[
+        TextChannel,
+        Thread,
+        DMChannel,
+        PartialMessageable,
+    ]
 
 CT = TypeVar("CT", bound=GuildChannel)
 
@@ -30,14 +35,17 @@ __all__: tuple[str, ...] = (
 
 class BaseConverter(OptionConverter, ABC):
     @staticmethod
-    def _get_id_match(argument: str) -> Optional[re.Match]:
+    def _get_id_match(
+        argument: str,
+    ) -> Optional[re.Match]:
         _ID_REGEX: re.Pattern = re.compile(r"([0-9]{15,20})$")
 
         return _ID_REGEX.match(argument)
 
     @staticmethod
     def _get_channel_id_matches(
-        interaction: CustomInteraction, argument: str
+        interaction: CustomInteraction,
+        argument: str,
     ) -> Optional[tuple[Optional[int], ...]]:
         assert interaction.guild
 
@@ -75,7 +83,9 @@ class BaseConverter(OptionConverter, ABC):
 
     @staticmethod
     async def _resolve_channel(
-        inter: CustomInteraction, guild_id: Optional[int], channel_id: Optional[int]
+        inter: CustomInteraction,
+        guild_id: Optional[int],
+        channel_id: Optional[int],
     ) -> Optional[PartialMessageableChannel]:
         if guild_id is not None:
             guild: Optional[Guild] = await inter.bot.getch_guild(guild_id)
@@ -95,7 +105,11 @@ class RoleConverter(BaseConverter):
     def __init__(self):
         super().__init__(Role)
 
-    async def convert(self, interaction: CustomInteraction, value: Any) -> Optional[Role]:
+    async def convert(
+        self,
+        interaction: CustomInteraction,
+        value: Any,
+    ) -> Optional[Role]:
         guild: Optional[Guild] = interaction.guild
 
         if not guild:
@@ -118,7 +132,11 @@ class MessageConverter(BaseConverter):
     def __init__(self):
         super().__init__(Message)
 
-    async def convert(self, interaction: CustomInteraction, value: Any) -> Optional[Message]:
+    async def convert(
+        self,
+        interaction: CustomInteraction,
+        value: Any,
+    ) -> Optional[Message]:
         data: Optional[tuple[Optional[int], ...]] = self._get_channel_id_matches(interaction, value)
 
         if not data:
@@ -132,7 +150,9 @@ class MessageConverter(BaseConverter):
             return message
 
         channel: Optional[PartialMessageableChannel] = await self._resolve_channel(
-            inter=interaction, guild_id=guild_id, channel_id=channel_id
+            inter=interaction,
+            guild_id=guild_id,
+            channel_id=channel_id,
         )
 
         if not channel or not message_id:
@@ -159,10 +179,18 @@ class MemberConverter(BaseConverter):
     @staticmethod
     async def query_member_named(guild: Guild, argument: str) -> Optional[Member]:
         if len(argument) > 5 and argument[-5] == "#":
-            username, _, discriminator = argument.rpartition("#")
+            (
+                username,
+                _,
+                discriminator,
+            ) = argument.rpartition("#")
             members: list[Member] = await guild.query_members(username, limit=10)
 
-            return utils.get(members, name=username, discriminator=discriminator)
+            return utils.get(
+                members,
+                name=username,
+                discriminator=discriminator,
+            )
 
         members: list[Member] = await guild.query_members(argument, limit=10)
 
@@ -195,7 +223,11 @@ class MemberConverter(BaseConverter):
 
         return members[0]
 
-    async def convert(self, interaction: CustomInteraction, value: Any) -> Optional[Member]:
+    async def convert(
+        self,
+        interaction: CustomInteraction,
+        value: Any,
+    ) -> Optional[Member]:
         bot: Smiffy = interaction.bot
         guild: Optional[Guild] = interaction.guild
 
@@ -212,7 +244,10 @@ class MemberConverter(BaseConverter):
 
         else:
             if interaction.message:
-                result = utils.get(interaction.message.mentions, id=user_id)  # pyright: ignore
+                result = utils.get(
+                    interaction.message.mentions,
+                    id=user_id,
+                )  # pyright: ignore
 
             if not result:
                 user_id = int(match.group(1))
@@ -240,12 +275,19 @@ class GuildChannelConverter(Generic[CT]):
 
         self.channel_type: Optional[GuildChannelTypes] = None
 
-    def convert(self, interaction: CustomInteraction, argument: str) -> Optional[CT]:
+    def convert(
+        self,
+        interaction: CustomInteraction,
+        argument: str,
+    ) -> Optional[CT]:
         if not self.channel_type:
             raise ValueError("Missing channel type.")
 
         return self._resolve_channel(
-            interaction, argument, self.channel_type.name, self.channel_type.value  # pyright: ignore
+            interaction,
+            argument,
+            self.channel_type.name,
+            self.channel_type.value,  # pyright: ignore
         )
 
     def _get_id_match(self, argument: str) -> Optional[re.Match]:
@@ -273,7 +315,9 @@ class GuildChannelConverter(Generic[CT]):
 
             else:
 
-                def check(channel: GuildChannel) -> bool:
+                def check(
+                    channel: GuildChannel,
+                ) -> bool:
                     return isinstance(channel, channel_type) and channel.name == argument
 
                 result = utils.find(check, bot.get_all_channels())  # pyright: ignore

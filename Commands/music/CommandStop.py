@@ -16,7 +16,8 @@ if TYPE_CHECKING:
 
 class CommandStop(CustomCog):
     @MusicCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
-        name="stop", description="Wyłącza wszystkie piosenki"
+        name="stop",
+        description="Wyłącza wszystkie piosenki",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_stop(self, interaction: CustomInteraction):

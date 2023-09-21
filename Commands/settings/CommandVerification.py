@@ -35,7 +35,11 @@ if TYPE_CHECKING:
 
 
 class CustomButton(ui.Button):
-    def __init__(self, custom_callback: Callable[[dict], Awaitable[None]], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        custom_callback: Callable[[dict], Awaitable[None]],
+        **kwargs: Any,
+    ) -> None:
         super().__init__(**kwargs)
 
         self.custom_callback: Callable[[dict], Awaitable[None]] = custom_callback  # pyright: ignore
@@ -87,7 +91,9 @@ class CaptchaButtons(ui.View):
         return role
 
     @staticmethod
-    def generate_random_codes(amount: int) -> list[str]:
+    def generate_random_codes(
+        amount: int,
+    ) -> list[str]:
         codes: list[str] = []
 
         for _ in range(amount):
@@ -99,7 +105,10 @@ class CaptchaButtons(ui.View):
 
         return codes
 
-    async def button_callback(self, args: dict[str, CustomInteraction | str]) -> None:
+    async def button_callback(
+        self,
+        args: dict[str, CustomInteraction | str],
+    ) -> None:
         interaction = args["interaction"]
         button_code = args["button_code"]
 
@@ -113,13 +122,23 @@ class CaptchaButtons(ui.View):
                 color=Color.red(),
                 timestamp=utils.utcnow(),
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            await interaction.response.edit_message(embed=embed, content="", attachments=[], view=None)
+            await interaction.response.edit_message(
+                embed=embed,
+                content="",
+                attachments=[],
+                view=None,
+            )
             return
 
         role: Optional[Role] = await self.get_verify_role(
-            bot=interaction.bot, guild=interaction.guild, message_id=self.message_id
+            bot=interaction.bot,
+            guild=interaction.guild,
+            message_id=self.message_id,
         )
         if not role:
             embed = Embed(
@@ -129,14 +148,25 @@ class CaptchaButtons(ui.View):
                 color=Color.red(),
                 timestamp=utils.utcnow(),
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            await interaction.response.edit_message(embed=embed, content="", attachments=[], view=None)
+            await interaction.response.edit_message(
+                embed=embed,
+                content="",
+                attachments=[],
+                view=None,
+            )
             return
 
         try:
             await interaction.user.add_roles(role)
-        except (errors.Forbidden, errors.HTTPException):
+        except (
+            errors.Forbidden,
+            errors.HTTPException,
+        ):
             embed = Embed(
                 title=f"{Emojis.REDBUTTON.value} Wystąpił błąd.",
                 description=f"{Emojis.REDBUTTON.value} Bot nie ma wystarczających uprawnień, aby nadać role "
@@ -144,9 +174,17 @@ class CaptchaButtons(ui.View):
                 color=Color.red(),
                 timestamp=utils.utcnow(),
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            await interaction.response.edit_message(embed=embed, content="", attachments=[], view=None)
+            await interaction.response.edit_message(
+                embed=embed,
+                content="",
+                attachments=[],
+                view=None,
+            )
             return
 
         embed = Embed(
@@ -156,9 +194,17 @@ class CaptchaButtons(ui.View):
             timestamp=utils.utcnow(),
         )
         embed.set_thumbnail(url=interaction.guild_icon_url)
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
 
-        await interaction.response.edit_message(embed=embed, content="", attachments=[], view=None)
+        await interaction.response.edit_message(
+            embed=embed,
+            content="",
+            attachments=[],
+            view=None,
+        )
 
 
 class ButtonVerifyView(ui.View):
@@ -167,19 +213,27 @@ class ButtonVerifyView(ui.View):
 
         class ButtonVerify(ui.Button):
             @staticmethod
-            async def get_verify_role(bot: Smiffy, guild: Guild, role_id: int) -> Optional[Role]:
+            async def get_verify_role(
+                bot: Smiffy,
+                guild: Guild,
+                role_id: int,
+            ) -> Optional[Role]:
                 role: Optional[Role] = await bot.getch_role(guild, role_id)
                 return role
 
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, **kwargs)
 
-            async def callback(self, interaction: CustomInteraction):
+            async def callback(
+                self,
+                interaction: CustomInteraction,
+            ):
                 assert interaction.guild and isinstance(interaction.user, Member)
 
                 if not interaction.message:
                     return await interaction.send_error_message(
-                        description="Wystąpił nieoczekiwany błąd.", ephemeral=True
+                        description="Wystąpił nieoczekiwany błąd.",
+                        ephemeral=True,
                     )
 
                 await interaction.response.defer(ephemeral=True)
@@ -187,7 +241,10 @@ class ButtonVerifyView(ui.View):
 
                 response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
                     "SELECT * FROM verifications WHERE guild_id = ? AND message_id = ?",
-                    (interaction.guild.id, interaction.message.id),
+                    (
+                        interaction.guild.id,
+                        interaction.message.id,
+                    ),
                 )
                 if not response:
                     return await interaction.send_error_message(
@@ -195,7 +252,10 @@ class ButtonVerifyView(ui.View):
                         ephemeral=True,
                     )
 
-                role: Optional[Role] = await bot.getch_role(guild=interaction.guild, role_id=response[2])
+                role: Optional[Role] = await bot.getch_role(
+                    guild=interaction.guild,
+                    role_id=response[2],
+                )
                 if not role:
                     return await interaction.send_error_message(
                         description="Rola po weryfikacji nie została odnaleziona. Być może została usunięta. "
@@ -206,7 +266,10 @@ class ButtonVerifyView(ui.View):
                 if response[3] == "button":
                     try:
                         await interaction.user.add_roles(role)
-                    except (errors.Forbidden, errors.HTTPException):
+                    except (
+                        errors.Forbidden,
+                        errors.HTTPException,
+                    ):
                         return await interaction.send_error_message(
                             description="Bot nie posiada wymaganych permisji, aby nadać role weryfikacji. "
                             "Skontaktuj się z administracją serwera."
@@ -234,9 +297,17 @@ class ButtonVerifyView(ui.View):
                     colour=Color.dark_theme(),
                 )
                 embed.set_image(url="attachment://captcha.png")
-                buttons = CaptchaButtons(captcha_text, interaction.message.id)
+                buttons = CaptchaButtons(
+                    captcha_text,
+                    interaction.message.id,
+                )
 
-                await interaction.send(embed=embed, file=file, ephemeral=True, view=buttons)
+                await interaction.send(
+                    embed=embed,
+                    file=file,
+                    ephemeral=True,
+                    view=buttons,
+                )
 
         self.add_item(
             ButtonVerify(
@@ -249,7 +320,11 @@ class ButtonVerifyView(ui.View):
 
 
 class ChoiceColorEmbed(ui.Select):
-    def __init__(self, original_message: Message, embed: Embed) -> None:
+    def __init__(
+        self,
+        original_message: Message,
+        embed: Embed,
+    ) -> None:
         self.original_messaage: Message = original_message
         self.embed: Embed = embed
 
@@ -308,7 +383,10 @@ class ChoiceColorEmbed(ui.Select):
             ),
         ]
 
-        super().__init__(placeholder="Wybierz kolor", options=options)
+        super().__init__(
+            placeholder="Wybierz kolor",
+            options=options,
+        )
 
     async def callback(self, interaction: CustomInteraction):
         new_color: Color = self.colors[self.values[0]]
@@ -411,12 +489,18 @@ class ConfigureButtonsView(ui.View):
 
         if self.author_id != interaction.user.id:
             await interaction.send_error_message(
-                description="Tylko autor użytej komendy może tego użyć.", ephemeral=True
+                description="Tylko autor użytej komendy może tego użyć.",
+                ephemeral=True,
             )
             return False
         return True
 
-    @ui.button(label="Tytuł", style=ButtonStyle.gray, emoji="✏️", row=1)  # pyright: ignore
+    @ui.button(
+        label="Tytuł",
+        style=ButtonStyle.gray,
+        emoji="✏️",
+        row=1,
+    )  # pyright: ignore
     async def title(
         self,
         button: ui.Button,  # pylint: disable=unused-argument
@@ -429,7 +513,12 @@ class ConfigureButtonsView(ui.View):
         )
         await interaction.response.send_modal(modal)
 
-    @ui.button(label="Opis", style=ButtonStyle.gray, emoji="📃", row=1)  # pyright: ignore
+    @ui.button(
+        label="Opis",
+        style=ButtonStyle.gray,
+        emoji="📃",
+        row=1,
+    )  # pyright: ignore
     async def description(
         self,
         button: ui.Button,  # pylint: disable=unused-argument
@@ -442,13 +531,21 @@ class ConfigureButtonsView(ui.View):
         )
         await interaction.response.send_modal(modal)
 
-    @ui.button(label="Kolor", style=ButtonStyle.gray, emoji="🌀", row=1)  # pyright: ignore
+    @ui.button(
+        label="Kolor",
+        style=ButtonStyle.gray,
+        emoji="🌀",
+        row=1,
+    )  # pyright: ignore
     async def color(
         self,
         button: ui.Button,  # pylint: disable=unused-argument
         interaction: CustomInteraction,
     ) -> None:
-        view = ChoiceColorEmbedView(self.preview_message, self.preview_embed)
+        view = ChoiceColorEmbedView(
+            self.preview_message,
+            self.preview_embed,
+        )
 
         embed = Embed(
             title="`🔶` Wybierz kolor, który chcesz ustawić",
@@ -456,11 +553,19 @@ class ConfigureButtonsView(ui.View):
             timestamp=utils.utcnow(),
             description=f"{Emojis.REPLY.value} Wybierz kolor wiadomości.",
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
         await interaction.send(embed=embed, view=view, ephemeral=True)
 
-    @ui.button(label="Obraz serwera (on/off)", style=ButtonStyle.gray, emoji="📷", row=1)  # pyright: ignore
+    @ui.button(
+        label="Obraz serwera (on/off)",
+        style=ButtonStyle.gray,
+        emoji="📷",
+        row=1,
+    )  # pyright: ignore
     async def picture(
         self,
         button: ui.Button,  # pylint: disable=unused-argument
@@ -472,7 +577,12 @@ class ConfigureButtonsView(ui.View):
             self.preview_embed.set_thumbnail(url=None)
         await self.preview_message.edit(embed=self.preview_embed)
 
-    @ui.button(label="Przycisk", style=ButtonStyle.gray, emoji="🔗", row=1)  # pyright: ignore
+    @ui.button(
+        label="Przycisk",
+        style=ButtonStyle.gray,
+        emoji="🔗",
+        row=1,
+    )  # pyright: ignore
     async def button(
         self,
         button: ui.Button,  # pylint: disable=unused-argument
@@ -489,7 +599,10 @@ class ConfigureButtonsView(ui.View):
             self.button_title = modal.input.value
 
     @ui.button(  # pyright: ignore
-        label="Zakończ", style=ButtonStyle.green, emoji=Emojis.GREENBUTTON.value, row=2
+        label="Zakończ",
+        style=ButtonStyle.green,
+        emoji=Emojis.GREENBUTTON.value,
+        row=2,
     )
     async def end(
         self,
@@ -509,7 +622,10 @@ class ConfigureButtonsView(ui.View):
                 str(self.option),
             ),
         )
-        new_view = ButtonVerifyView(title=self.button_title, disabled=False)
+        new_view = ButtonVerifyView(
+            title=self.button_title,
+            disabled=False,
+        )
 
         embed = Embed(
             title=f"Instalacja zakończona {Emojis.GREENBUTTON.value}",
@@ -517,13 +633,19 @@ class ConfigureButtonsView(ui.View):
             timestamp=utils.utcnow(),
             description=f"{Emojis.REPLY.value} Instalacja przebiegła pomyślnie.",
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
         if interaction.message:
             await interaction.message.edit(embed=embed, view=None)
 
-        await self.preview_message.edit(embed=self.preview_embed, view=new_view)
+        await self.preview_message.edit(
+            embed=self.preview_embed,
+            view=new_view,
+        )
 
 
 class CommandVerification(CustomCog):
@@ -533,26 +655,43 @@ class CommandVerification(CustomCog):
         self.bot.loop.create_task(self.update_views())
 
     async def update_views(self):
-        self.bot.add_view(ButtonVerifyView(title="Weryfikacja!", disabled=False))
+        self.bot.add_view(
+            ButtonVerifyView(
+                title="Weryfikacja!",
+                disabled=False,
+            )
+        )
 
     @slash_command(name="weryfikacja", dm_permission=False)
     async def verify(self, interaction: CustomInteraction):
         pass
 
-    @verify.subcommand(name="instalacja", description="Ustaw weryfikacje na serwerze!")  # pyright: ignore
+    @verify.subcommand(
+        name="instalacja",
+        description="Ustaw weryfikacje na serwerze!",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def verify_setup(
         self,
         interaction: CustomInteraction,
-        role: Role = SlashOption(name="rola", description="Podaj rolę która ma być nadawana po weryfikacji."),
+        role: Role = SlashOption(
+            name="rola",
+            description="Podaj rolę która ma być nadawana po weryfikacji.",
+        ),
         option: str = SlashOption(
             name="typ_weryfikacji",
             description="Wybierz typ weryfikacji",
-            choices={"Tylko przycisk": "button", "Przycisk + Kod Captcha": "captcha"},
+            choices={
+                "Tylko przycisk": "button",
+                "Przycisk + Kod Captcha": "captcha",
+            },
         ),
     ):
         assert interaction.user and interaction.guild
-        assert isinstance(interaction.channel, (TextChannel, Thread))
+        assert isinstance(
+            interaction.channel,
+            (TextChannel, Thread),
+        )
 
         if not role.is_assignable() or role.is_premium_subscriber():
             return await interaction.send_error_message(
@@ -569,12 +708,21 @@ class CommandVerification(CustomCog):
             description=f"{Emojis.REPLY.value} Naciśnij przycisk poniżej, aby się zweryfikować.",
         )
         preview_embed.set_footer(text="Made by SmiffyBot!")
-        preview_embed.set_author(name=interaction.guild.name, icon_url=interaction.guild_icon_url)
+        preview_embed.set_author(
+            name=interaction.guild.name,
+            icon_url=interaction.guild_icon_url,
+        )
         verifybutton = ButtonVerifyView(title="Zweryfikuj")
 
-        preview_message: Message = await interaction.channel.send(embed=preview_embed, view=verifybutton)
+        preview_message: Message = await interaction.channel.send(
+            embed=preview_embed,
+            view=verifybutton,
+        )
 
-        await interaction.channel.send(f"{interaction.user.mention}", delete_after=1)
+        await interaction.channel.send(
+            f"{interaction.user.mention}",
+            delete_after=1,
+        )
 
         embed = Embed(
             title="<a:utility:1008513934233444372> Konfigurowanie wiadomości weryfikacji",
@@ -584,7 +732,9 @@ class CommandVerification(CustomCog):
         )
         embed.set_thumbnail(url=interaction.guild_icon_url)
         configure_buttons = ConfigureButtonsView(
-            preview_embed, preview_message, (role, option, interaction.user.id)
+            preview_embed,
+            preview_message,
+            (role, option, interaction.user.id),
         )
         await interaction.send(embed=embed, view=configure_buttons)
 

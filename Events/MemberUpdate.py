@@ -56,13 +56,22 @@ class MemberUpdate(CustomCog):
                     inline=False,
                 )
 
-            embed.set_author(name=after, icon_url=self.avatars.get_user_avatar(after))
+            embed.set_author(
+                name=after,
+                icon_url=self.avatars.get_user_avatar(after),
+            )
             embed.set_thumbnail(url=self.avatars.get_guild_icon(after.guild))
-            embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{self.bot.__version__}",
+                icon_url=self.bot.avatar_url,
+            )
 
             try:
                 await logs_channel.send(embed=embed)
-            except (errors.Forbidden, errors.HTTPException):
+            except (
+                errors.Forbidden,
+                errors.HTTPException,
+            ):
                 pass
 
 

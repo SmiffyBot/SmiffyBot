@@ -16,17 +16,27 @@ if TYPE_CHECKING:
 
 class CommandCreateItem(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member   # pyright: ignore
-        name="stwórz_przedmiot", description="Tworzy nowy przedmiot do sklepu"
+        name="stwórz_przedmiot",
+        description="Tworzy nowy przedmiot do sklepu",
     )
     @PermissionHandler(manage_guild=True)
     async def economy_createitem(
         self,
         interaction: CustomInteraction,
         item_name: str = SlashOption(
-            name="nazwa_predmiotu", description="Podaj nazwę przedmiotu", max_length=32
+            name="nazwa_predmiotu",
+            description="Podaj nazwę przedmiotu",
+            max_length=32,
         ),
-        item_description: str = SlashOption(name="opis", description="Podaj opis przedmiotu", max_length=64),
-        item_price: int = SlashOption(name="cena", description="Podaj cenę przedmiotu"),
+        item_description: str = SlashOption(
+            name="opis",
+            description="Podaj opis przedmiotu",
+            max_length=64,
+        ),
+        item_price: int = SlashOption(
+            name="cena",
+            description="Podaj cenę przedmiotu",
+        ),
     ):
         assert interaction.guild
 
@@ -36,7 +46,10 @@ class CommandCreateItem(CustomCog):
         if not await manager.get_guild_economy_status(interaction.guild):
             return await interaction.send_error_message(description="Ekonomia na serwerze jest wyłączona.")
 
-        if await manager.get_guild_item(guild=interaction.guild, item_name=item_name):
+        if await manager.get_guild_item(
+            guild=interaction.guild,
+            item_name=item_name,
+        ):
             return await interaction.send_error_message(description="Podany przedmiot już istnieje.")
 
         if len(await manager.get_guild_shop(guild=interaction.guild)) >= 25:
@@ -62,7 +75,8 @@ class CommandCreateItem(CustomCog):
         await manager.create_guild_item(item_data=item_data)
 
         command_mention: str = interaction.get_command_mention(
-            command_name="ekonomia", sub_command="edytuj_przedmiot"
+            command_name="ekonomia",
+            sub_command="edytuj_przedmiot",
         )
 
         await interaction.send_success_message(

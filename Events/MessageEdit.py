@@ -32,18 +32,36 @@ class MessageEdit(CustomCog):
                 timestamp=utils.utcnow(),
             )
 
-            embed.set_author(name=after.author, icon_url=self.avatars.get_user_avatar(after.author))
+            embed.set_author(
+                name=after.author,
+                icon_url=self.avatars.get_user_avatar(after.author),
+            )
             embed.set_thumbnail(url=self.avatars.get_guild_icon(after.guild))
 
-            before_content, after_content = before.content.replace("`", ""), after.content.replace("`", "")
+            (
+                before_content,
+                after_content,
+            ) = before.content.replace(
+                "`", ""
+            ), after.content.replace("`", "")
 
-            embed.add_field(name="`🔴` Wcześniej", value=f"- ```{before_content}```", inline=False)
+            embed.add_field(
+                name="`🔴` Wcześniej",
+                value=f"- ```{before_content}```",
+                inline=False,
+            )
 
-            embed.add_field(name="`🟢` Aktualnie", value=f"- ```{after_content}```")
+            embed.add_field(
+                name="`🟢` Aktualnie",
+                value=f"- ```{after_content}```",
+            )
 
             try:
                 await logs_channel.send(embed=embed)
-            except (errors.Forbidden, errors.HTTPException):
+            except (
+                errors.Forbidden,
+                errors.HTTPException,
+            ):
                 pass
 
 

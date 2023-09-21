@@ -15,7 +15,8 @@ if TYPE_CHECKING:
 
 class CommandStatus(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
-        name="status", description="Włącz lub wyłącz ekonomie na serwerze"
+        name="status",
+        description="Włącz lub wyłącz ekonomie na serwerze",
     )
     @PermissionHandler(manage_guild=True)
     async def economy_status(
@@ -24,7 +25,10 @@ class CommandStatus(CustomCog):
         status: str = SlashOption(
             name="status",
             description="Wybierz status ekonomii",
-            choices={"Włącz": "on", "Wyłącz": "off"},
+            choices={
+                "Włącz": "on",
+                "Wyłącz": "off",
+            },
         ),
     ):
         assert interaction.guild

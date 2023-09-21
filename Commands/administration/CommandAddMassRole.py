@@ -21,7 +21,10 @@ class CommandAddMassRole(CustomCog):
     async def addmassrole(
         self,
         interaction: CustomInteraction,
-        role: Role = SlashOption(name="rola", description="Podaj kanał rolę, którą chcesz nadać"),
+        role: Role = SlashOption(
+            name="rola",
+            description="Podaj kanał rolę, którą chcesz nadać",
+        ),
     ):
         assert interaction.guild and interaction.user
 
@@ -44,8 +47,14 @@ class CommandAddMassRole(CustomCog):
         for member in interaction.guild.members:
             try:
                 if role not in member.roles:
-                    await member.add_roles(role, reason="Smiffy - AddMassRole")
-            except (errors.Forbidden, errors.HTTPException):
+                    await member.add_roles(
+                        role,
+                        reason="Smiffy - AddMassRole",
+                    )
+            except (
+                errors.Forbidden,
+                errors.HTTPException,
+            ):
                 pass
 
         return await interaction.send_success_message(

@@ -16,7 +16,8 @@ if TYPE_CHECKING:
 
 class CommandLoop(CustomCog):
     @MusicCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
-        name="zapętlanie", description="Wyłącza lub włącza zapętlanie piosenki"
+        name="zapętlanie",
+        description="Wyłącza lub włącza zapętlanie piosenki",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_loop(self, interaction: CustomInteraction):

@@ -18,11 +18,17 @@ class CommandSlowmode(CustomCog):
         description="Zmień prędkość wysyłania wiadomości na kanale",
         dm_permission=False,
     )
-    @PermissionHandler(manage_messages=True, user_role_has_permission="slowmode")
+    @PermissionHandler(
+        manage_messages=True,
+        user_role_has_permission="slowmode",
+    )
     async def slowmode(
         self,
         interaction: CustomInteraction,
-        time: str = SlashOption(name="prędkość", description="Wpisz prędkość np. 5m (5 minut)."),
+        time: str = SlashOption(
+            name="prędkość",
+            description="Wpisz prędkość np. 5m (5 minut).",
+        ),
     ):
         try:
             seconds: int = int(parse_timespan(time))

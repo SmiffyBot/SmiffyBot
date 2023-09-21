@@ -66,7 +66,8 @@ class MusicManagerView(ui.View):
         return True
 
     @ui.button(
-        emoji="<:stop:1141100669193965768>", style=ButtonStyle.grey
+        emoji="<:stop:1141100669193965768>",
+        style=ButtonStyle.grey,
     )  # pyright: ignore[reportGeneralTypeIssues]
     async def button_stop(
         self,
@@ -109,7 +110,8 @@ class MusicManagerView(ui.View):
         )
 
     @ui.button(
-        emoji="<:pause:1141102297414385684>", style=ButtonStyle.grey
+        emoji="<:pause:1141102297414385684>",
+        style=ButtonStyle.grey,
     )  # pyright: ignore[reportGeneralTypeIssues]
     async def button_pause(
         self,
@@ -140,12 +142,16 @@ class MusicManagerView(ui.View):
             return
 
         if not self.player.current:
-            await interaction.send_error_message(description="Aktualnie bot nic nie gra.", ephemeral=True)
+            await interaction.send_error_message(
+                description="Aktualnie bot nic nie gra.",
+                ephemeral=True,
+            )
             return
 
         if self.player.paused:
             await interaction.send_error_message(
-                description="Aktualna muzyka już jest zatrzymana.", ephemeral=True
+                description="Aktualna muzyka już jest zatrzymana.",
+                ephemeral=True,
             )
             return
 
@@ -160,7 +166,8 @@ class MusicManagerView(ui.View):
         )
 
     @ui.button(
-        emoji="<:play:1141100670490005635>", style=ButtonStyle.grey
+        emoji="<:play:1141100670490005635>",
+        style=ButtonStyle.grey,
     )  # pyright: ignore[reportGeneralTypeIssues]
     async def button_resume(
         self,
@@ -191,12 +198,16 @@ class MusicManagerView(ui.View):
             return
 
         if not self.player.current:
-            await interaction.send_error_message(description="Aktualnie bot nic nie gra.", ephemeral=True)
+            await interaction.send_error_message(
+                description="Aktualnie bot nic nie gra.",
+                ephemeral=True,
+            )
             return
 
         if not self.player.paused:
             await interaction.send_error_message(
-                description="Aktualna muzyka nie jest zatrzymana.", ephemeral=True
+                description="Aktualna muzyka nie jest zatrzymana.",
+                ephemeral=True,
             )
             return
 
@@ -211,7 +222,8 @@ class MusicManagerView(ui.View):
         await self.player.resume()
 
     @ui.button(
-        emoji="<:skip:1141100666610257971>", style=ButtonStyle.grey
+        emoji="<:skip:1141100666610257971>",
+        style=ButtonStyle.grey,
     )  # pyright: ignore[reportGeneralTypeIssues]
     async def button_skip(
         self,
@@ -247,7 +259,10 @@ class MusicManagerView(ui.View):
             return
 
         if not self.player.current:
-            await interaction.send_error_message(description="Aktualnie bot nic nie gra.", ephemeral=True)
+            await interaction.send_error_message(
+                description="Aktualnie bot nic nie gra.",
+                ephemeral=True,
+            )
             return
 
         current_track: Optional[Track] = self.player.current
@@ -268,7 +283,9 @@ class MusicManagerView(ui.View):
         )
 
     @ui.button(
-        emoji="<:music_loop:1141102281467629689>", style=ButtonStyle.grey, row=2
+        emoji="<:music_loop:1141102281467629689>",
+        style=ButtonStyle.grey,
+        row=2,
     )  # pyright: ignore[reportGeneralTypeIssues]
     async def button_loop(
         self,
@@ -352,14 +369,20 @@ class MusicManagerView(ui.View):
             )
             return
 
-        command_mention: str = interaction.get_command_mention(command_name="muzyka", sub_command="kolejka")
+        command_mention: str = interaction.get_command_mention(
+            command_name="muzyka",
+            sub_command="kolejka",
+        )
         embed = Embed(
             title="`📃` Kolejka piosenek na serwerze",
             color=Color.dark_theme(),
             description=f"{Emojis.REPLY.value} **Aby uzyskać pełną kolejke użyj:** {command_mention}",
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
         embed.set_footer(
@@ -460,7 +483,10 @@ class MusicManagerView(ui.View):
 
                 await bot.db.execute_fetchone(
                     "UPDATE music_users SET favorite_songs = ? WHERE user_id = ?",
-                    (str(data), interaction.user.id),
+                    (
+                        str(data),
+                        interaction.user.id,
+                    ),
                 )
                 return
 
@@ -502,19 +528,30 @@ class MusicManagerView(ui.View):
             colour=Color.yellow(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
-        embed.set_footer(text="Made with ❤️", icon_url=interaction.bot.avatar_url)
+        embed.set_footer(
+            text="Made with ❤️",
+            icon_url=interaction.bot.avatar_url,
+        )
 
         button_discord: ui.View = DiscordSupportButton()
 
-        await interaction.send(embed=embed, ephemeral=True, view=button_discord)
+        await interaction.send(
+            embed=embed,
+            ephemeral=True,
+            view=button_discord,
+        )
 
 
 class CommandPlay(CustomCog):
     async def alerts_enabled(self, guild: Guild) -> bool:
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT notify FROM music_settings WHERE guild_id = ?", (guild.id,)
+            "SELECT notify FROM music_settings WHERE guild_id = ?",
+            (guild.id,),
         )
         if not response or not response[0]:
             return True
@@ -522,13 +559,17 @@ class CommandPlay(CustomCog):
         return False
 
     @MusicCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
-        name="play", description="uruchamia muzykę"
+        name="play",
+        description="uruchamia muzykę",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_play(
         self,
         interaction: CustomInteraction,
-        query: str = SlashOption(name="piosenka", description="Podaj nazwę piosenki lub link do niej."),
+        query: str = SlashOption(
+            name="piosenka",
+            description="Podaj nazwę piosenki lub link do niej.",
+        ),
     ):
         assert interaction.guild and isinstance(interaction.user, Member)
 
@@ -547,8 +588,8 @@ class CommandPlay(CustomCog):
 
         if not interaction.guild.voice_client:
             try:
-                player: PlayerT = (  # pyright: ignore
-                    await interaction.user.voice.channel.connect(  # pyright: ignore
+                player: PlayerT = (
+                    await interaction.user.voice.channel.connect(  # pyright: ignore  # pyright: ignore
                         cls=MusicPlayer  # pyright: ignore
                     )
                 )
@@ -573,7 +614,10 @@ class CommandPlay(CustomCog):
         if not tracks:
             return await interaction.send_error_message(description="Nie odnalazłem żadnej podanej piosenki.")
 
-        buttons_view: MusicManagerView = MusicManagerView(player=player, author_id=interaction.user.id)
+        buttons_view: MusicManagerView = MusicManagerView(
+            player=player,
+            author_id=interaction.user.id,
+        )
 
         if not isinstance(tracks, Playlist):
             track: Track = tracks[0]
@@ -588,13 +632,19 @@ class CommandPlay(CustomCog):
                     timestamp=utils.utcnow(),
                 )
 
-                embed.add_field(name="`⏰` Długość", value=f"{Emojis.REPLY.value} `{track_lenght}`")
+                embed.add_field(
+                    name="`⏰` Długość",
+                    value=f"{Emojis.REPLY.value} `{track_lenght}`",
+                )
                 embed.add_field(
                     name="`👤` Autor",
                     value=f"{Emojis.REPLY.value} `{track.author}`",
                     inline=False,
                 )
-                embed.add_field(name="`📌` Numer w kolejce", value=f"{Emojis.REPLY.value} `#1`")
+                embed.add_field(
+                    name="`📌` Numer w kolejce",
+                    value=f"{Emojis.REPLY.value} `#1`",
+                )
 
                 embed.set_footer(
                     text=f"Smiffy v{self.bot.__version__} | Mafic v{__version__}",
@@ -619,7 +669,10 @@ class CommandPlay(CustomCog):
                     colour=Color.green(),
                     timestamp=utils.utcnow(),
                 )
-                embed.add_field(name="`⏰` Długość", value=f"{Emojis.REPLY.value} `{track_lenght}`")
+                embed.add_field(
+                    name="`⏰` Długość",
+                    value=f"{Emojis.REPLY.value} `{track_lenght}`",
+                )
                 embed.add_field(
                     name="`👤` Autor",
                     value=f"{Emojis.REPLY.value} `{track.author}`",
@@ -687,7 +740,11 @@ class CommandPlay(CustomCog):
             )
 
             embed.set_thumbnail(url=tracks_list[0].artwork_url)
-            embed.set_author(name=tracks.name, icon_url=interaction.user_avatar_url, url=query)
+            embed.set_author(
+                name=tracks.name,
+                icon_url=interaction.user_avatar_url,
+                url=query,
+            )
 
             await interaction.followup.send(embed=embed, view=buttons_view)
 
@@ -700,7 +757,10 @@ class CommandPlay(CustomCog):
                     timestamp=utils.utcnow(),
                 )
 
-                embed.add_field(name="`⏰` Długość", value=f"{Emojis.REPLY.value} `{track_lenght}`")
+                embed.add_field(
+                    name="`⏰` Długość",
+                    value=f"{Emojis.REPLY.value} `{track_lenght}`",
+                )
                 embed.add_field(
                     name="`👤` Autor",
                     value=f"{Emojis.REPLY.value} `{__track.author}`",
@@ -723,11 +783,18 @@ class CommandPlay(CustomCog):
                     icon_url=interaction.user_avatar_url,
                 )
 
-                if isinstance(interaction.channel, (TextChannel, Thread)):
+                if isinstance(
+                    interaction.channel,
+                    (TextChannel, Thread),
+                ):
                     await interaction.channel.send(embed=embed)
 
     @music_play.on_autocomplete("query")
-    async def search_songs(self, interaction: CustomInteraction, search: str) -> Optional[dict[str, str]]:
+    async def search_songs(
+        self,
+        interaction: CustomInteraction,
+        search: str,
+    ) -> Optional[dict[str, str]]:
         assert interaction.user
 
         bot: Smiffy = interaction.bot
@@ -742,7 +809,10 @@ class CommandPlay(CustomCog):
                 songs_dict: dict[str, str] = {}
 
                 for song in songs:
-                    songs_dict = {**songs_dict, **{song["title"]: song["url"]}}
+                    songs_dict = {
+                        **songs_dict,
+                        **{song["title"]: song["url"]},
+                    }
 
                 return songs_dict
 
@@ -752,7 +822,8 @@ class CommandPlay(CustomCog):
             return
 
         tracks: Union[Playlist, list[Track], None] = await node.fetch_tracks(
-            query=search, search_type=SearchType.YOUTUBE.value
+            query=search,
+            search_type=SearchType.YOUTUBE.value,
         )
 
         if not tracks:

@@ -38,7 +38,11 @@ class IncomeHandler:
 
         self.economy_manager: EconomyManager = EconomyManager(bot)
 
-    def add_income_data(self, guild_id: int, income_data: dict[int, tuple]):
+    def add_income_data(
+        self,
+        guild_id: int,
+        income_data: dict[int, tuple],
+    ):
         """
         The add_income_data function adds income data to the guild's income_data dictionary.
 
@@ -93,18 +97,30 @@ class IncomeHandler:
             if data is None:
                 break
 
-            for role_id, income_data in data.items():
+            for (
+                role_id,
+                income_data,
+            ) in data.items():
                 frequency: int = income_data[0]
 
                 self.bot.loop.call_later(
                     frequency,
                     self.bot.loop.create_task,
-                    self.add_income(guild_id, role_id, income_data),
+                    self.add_income(
+                        guild_id,
+                        role_id,
+                        income_data,
+                    ),
                 )
 
             self.income_data[guild_id] = {}
 
-    async def add_income(self, guild_id: int, role_id: int, role_income_data: tuple):
+    async def add_income(
+        self,
+        guild_id: int,
+        role_id: int,
+        role_income_data: tuple,
+    ):
         """
         The add_income function is a coroutine that adds income to all members of a role.
 
@@ -170,7 +186,8 @@ class IncomeHandler:
         """
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT income_roles from economy_settings WHERE guild_id = ?", (guild_id,)
+            "SELECT income_roles from economy_settings WHERE guild_id = ?",
+            (guild_id,),
         )
         if not response or not response[0]:
             return False
@@ -266,7 +283,10 @@ class IncomeAddModal(ui.Modal):
             f"dla roli: {self.role.mention}",
         )
 
-        self.handler.add_income_data(guild_id=interaction.guild.id, income_data=data)
+        self.handler.add_income_data(
+            guild_id=interaction.guild.id,
+            income_data=data,
+        )
 
 
 class CommandIncome(CustomCog):
@@ -279,13 +299,22 @@ class CommandIncome(CustomCog):
     async def economy_income(self, interaction: CustomInteraction):  # pylint: disable=unused-argument
         ...
 
-    @economy_income.subcommand(name="dodaj", description="Dodaj przychód dla roli")  # pyright: ignore
+    @economy_income.subcommand(
+        name="dodaj",
+        description="Dodaj przychód dla roli",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def income_add(
         self,
         interaction: CustomInteraction,
-        role: Role = SlashOption(name="rola", description="Podaj rolę której chcesz przypisać przychód"),
-        income: int = SlashOption(name="przychód_pieniędzy", description="Podaj ilość pieniędzy"),
+        role: Role = SlashOption(
+            name="rola",
+            description="Podaj rolę której chcesz przypisać przychód",
+        ),
+        income: int = SlashOption(
+            name="przychód_pieniędzy",
+            description="Podaj ilość pieniędzy",
+        ),
         frequency: int = SlashOption(
             name="częstotliwość_przychodu",
             description="Podaj częstotliwość przychodu pieniędzy w sekundach",
@@ -316,7 +345,13 @@ class CommandIncome(CustomCog):
                 description="Przychód za role nie może być większy od maksymalnego balansu na serwerze."
             )
 
-        modal: IncomeAddModal = IncomeAddModal(self.income_handler, role, income, frequency, channel)
+        modal: IncomeAddModal = IncomeAddModal(
+            self.income_handler,
+            role,
+            income,
+            frequency,
+            channel,
+        )
 
         if channel:
             await interaction.response.send_modal(modal)
@@ -324,13 +359,17 @@ class CommandIncome(CustomCog):
             await modal.callback(interaction)
 
     @economy_income.subcommand(  # pyright: ignore
-        name="usuń", description="Usuwa przychód przypisany do roli"
+        name="usuń",
+        description="Usuwa przychód przypisany do roli",
     )
     @PermissionHandler(manage_guild=True)
     async def income_delete(
         self,
         interaction: CustomInteraction,
-        role: Role = SlashOption(name="rola", description="Podaj rolę której chcesz usunać przychód"),
+        role: Role = SlashOption(
+            name="rola",
+            description="Podaj rolę której chcesz usunać przychód",
+        ),
     ):
         assert interaction.guild
 
@@ -373,7 +412,8 @@ class CommandIncome(CustomCog):
         )
 
     @economy_income.subcommand(  # pyright: ignore
-        name="lista", description="Lista ról z przypisanymi dochodami"
+        name="lista",
+        description="Lista ról z przypisanymi dochodami",
     )
     @PermissionHandler(manage_guild=True)
     async def income_list(self, interaction: CustomInteraction):
@@ -402,11 +442,17 @@ class CommandIncome(CustomCog):
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
         for role_id, data in income_roles.items():
-            role: Optional[Role] = await self.bot.getch_role(guild=interaction.guild, role_id=role_id)
+            role: Optional[Role] = await self.bot.getch_role(
+                guild=interaction.guild,
+                role_id=role_id,
+            )
             if role:
                 interval: int = data[0]
                 income: int = data[1]

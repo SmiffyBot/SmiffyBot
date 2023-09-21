@@ -45,21 +45,34 @@ class ConfirmReset(ui.View):
             return True
 
         await interaction.send_error_message(
-            description="Tylko autor użytej komendy może tego użyć.", ephemeral=True
+            description="Tylko autor użytej komendy może tego użyć.",
+            ephemeral=True,
         )
         return False
 
-    @ui.button(label="Potwierdź", style=ButtonStyle.green, emoji=Emojis.GREENBUTTON.value)  # pyright: ignore
+    @ui.button(
+        label="Potwierdź",
+        style=ButtonStyle.green,
+        emoji=Emojis.GREENBUTTON.value,
+    )  # pyright: ignore
     async def confirm(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         assert interaction.guild
 
         bot: Smiffy = interaction.bot
 
-        await bot.db.execute_fetchone("DELETE FROM levels WHERE guild_id = ?", (interaction.guild.id,))
+        await bot.db.execute_fetchone(
+            "DELETE FROM levels WHERE guild_id = ?",
+            (interaction.guild.id,),
+        )
 
-        await bot.db.execute_fetchone("DELETE FROM levels_users WHERE guild_id = ?", (interaction.guild.id,))
+        await bot.db.execute_fetchone(
+            "DELETE FROM levels_users WHERE guild_id = ?",
+            (interaction.guild.id,),
+        )
 
         await interaction.send_success_message(
             title=f"Pomyślnie zresetowano {Emojis.GREENBUTTON.value}",
@@ -70,16 +83,26 @@ class ConfirmReset(ui.View):
         if interaction.message:
             await interaction.message.delete()
 
-    @ui.button(label="Anuluj", style=ButtonStyle.red, emoji=Emojis.REDBUTTON.value)  # pyright: ignore
+    @ui.button(
+        label="Anuluj",
+        style=ButtonStyle.red,
+        emoji=Emojis.REDBUTTON.value,
+    )  # pyright: ignore
     async def cancel(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         if interaction.message:
             await interaction.message.delete()
 
 
 class RemoveRoleRewardSelect(ui.Select):
-    def __init__(self, roles_data: dict[int, int], guild: Guild) -> None:
+    def __init__(
+        self,
+        roles_data: dict[int, int],
+        guild: Guild,
+    ) -> None:
         self.guild: Guild = guild
 
         options: list[SelectOption] = []
@@ -99,7 +122,10 @@ class RemoveRoleRewardSelect(ui.Select):
                 )
             )
 
-        super().__init__(placeholder="Wybierz rolę", options=options)
+        super().__init__(
+            placeholder="Wybierz rolę",
+            options=options,
+        )
 
     async def callback(self, interaction: CustomInteraction):
         assert interaction.guild
@@ -109,7 +135,8 @@ class RemoveRoleRewardSelect(ui.Select):
         bot: Smiffy = interaction.bot
 
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-            "SELECT * FROM levels WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM levels WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if not response:
             return await interaction.send_error_message(description="Levelowanie jest wyłączone.")
@@ -142,7 +169,11 @@ class RemoveRoleRewardSelect(ui.Select):
 
 
 class RemoveRoleRewardView(ui.View):
-    def __init__(self, roles_data: dict[int, int], guild: Guild):
+    def __init__(
+        self,
+        roles_data: dict[int, int],
+        guild: Guild,
+    ):
         super().__init__(timeout=None)
 
         self.add_item(RemoveRoleRewardSelect(roles_data, guild))
@@ -156,7 +187,11 @@ class SelectRolesMenus(ui.Select):
                 description="Dodaj rolę za level.",
                 emoji=Emojis.GREENBUTTON.value,
             ),
-            SelectOption(label="Lista", description="Lista roli z nagrodami za level.", emoji="📃"),
+            SelectOption(
+                label="Lista",
+                description="Lista roli z nagrodami za level.",
+                emoji="📃",
+            ),
             SelectOption(
                 label="Usuń",
                 description="Usuń rolę za level.",
@@ -164,7 +199,10 @@ class SelectRolesMenus(ui.Select):
             ),
         ]
 
-        super().__init__(placeholder="Wybierz opcję", options=options)
+        super().__init__(
+            placeholder="Wybierz opcję",
+            options=options,
+        )
 
     async def callback(self, interaction: CustomInteraction):
         option: str = self.values[0]
@@ -176,13 +214,16 @@ class SelectRolesMenus(ui.Select):
             return await self.remove_role_for_level(interaction)
 
     @staticmethod
-    async def add_role_for_level(inter: CustomInteraction):
+    async def add_role_for_level(
+        inter: CustomInteraction,
+    ):
         assert inter.guild and isinstance(inter.user, Member)
 
         bot: Smiffy = inter.bot
 
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-            "SELECT * FROM levels WHERE guild_id = ?", (inter.guild.id,)
+            "SELECT * FROM levels WHERE guild_id = ?",
+            (inter.guild.id,),
         )
 
         if not response:
@@ -193,7 +234,10 @@ class SelectRolesMenus(ui.Select):
                 description=f"{Emojis.REPLY.value} Levelowanie jest wyłączone.",
             )
             embed.set_thumbnail(url=inter.guild_icon_url)
-            embed.set_author(name=inter.user, icon_url=inter.user_avatar_url)
+            embed.set_author(
+                name=inter.user,
+                icon_url=inter.user_avatar_url,
+            )
             return await inter.send(embed=embed)
 
         embed = Embed(
@@ -205,7 +249,10 @@ class SelectRolesMenus(ui.Select):
             "**Aby przerwać ją teraz, wpisz `stop`.**",
         )
         embed.set_footer(text="Etap 1/2")
-        embed.set_author(name=inter.user, icon_url=inter.user_avatar_url)
+        embed.set_author(
+            name=inter.user,
+            icon_url=inter.user_avatar_url,
+        )
         embed.set_thumbnail(url=inter.guild_icon_url)
         await inter.send(embed=embed)
 
@@ -223,7 +270,10 @@ class SelectRolesMenus(ui.Select):
                 f"Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await inter.edit_original_message(embed=embed)
             return await inter.delete_original_message(delay=20)
@@ -235,7 +285,10 @@ class SelectRolesMenus(ui.Select):
                 f"Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await inter.edit_original_message(embed=embed)
             return await inter.delete_original_message(delay=20)
@@ -249,7 +302,10 @@ class SelectRolesMenus(ui.Select):
                 f"Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await inter.edit_original_message(embed=embed)
             return await inter.delete_original_message(delay=20)
@@ -261,7 +317,10 @@ class SelectRolesMenus(ui.Select):
                 f"Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await inter.edit_original_message(embed=embed)
             return await inter.delete_original_message(delay=20)
@@ -273,7 +332,10 @@ class SelectRolesMenus(ui.Select):
                 f"Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await inter.edit_original_message(embed=embed)
             return await inter.delete_original_message(delay=20)
@@ -338,7 +400,10 @@ class SelectRolesMenus(ui.Select):
         if not response[1]:
             await bot.db.execute_fetchone(
                 "UPDATE levels SET roles_data = ? WHERE guild_id = ?",
-                (str({level: role.id}), inter.guild.id),
+                (
+                    str({level: role.id}),
+                    inter.guild.id,
+                ),
             )
         else:
             roles_data: dict[int, int] = literal_eval(response[1])
@@ -349,7 +414,10 @@ class SelectRolesMenus(ui.Select):
                     timestamp=utils.utcnow(),
                     description=f"{Emojis.REPLY.value} Osiągnięto limit 20 ról za level.",
                 )
-                embed.set_author(name=inter.user, icon_url=inter.user_avatar_url)
+                embed.set_author(
+                    name=inter.user,
+                    icon_url=inter.user_avatar_url,
+                )
                 return await inter.edit_original_message(embed=embed)
 
             roles_data[level] = role.id
@@ -366,17 +434,23 @@ class SelectRolesMenus(ui.Select):
             f"momencie zdobycia `{level}` levelu."
         )
 
-        embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{bot.__version__}",
+            icon_url=bot.avatar_url,
+        )
         await inter.edit_original_message(embed=embed)
 
     @staticmethod
-    async def list_roles_for_levels(inter: CustomInteraction):
+    async def list_roles_for_levels(
+        inter: CustomInteraction,
+    ):
         assert inter.guild
 
         bot: Smiffy = inter.bot
 
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-            "SELECT * FROM levels WHERE guild_id = ?", (inter.guild.id,)
+            "SELECT * FROM levels WHERE guild_id = ?",
+            (inter.guild.id,),
         )
         if not response or not response[1]:
             return await inter.send_error_message(
@@ -391,7 +465,10 @@ class SelectRolesMenus(ui.Select):
             timestamp=utils.utcnow(),
         )
         embed.set_thumbnail(url=inter.guild_icon_url)
-        embed.set_author(name=inter.user, icon_url=inter.user_avatar_url)
+        embed.set_author(
+            name=inter.user,
+            icon_url=inter.user_avatar_url,
+        )
 
         for level, role_id in roles_data.items():
             role: Optional[Role] = await bot.getch_role(inter.guild, int(role_id))
@@ -401,18 +478,24 @@ class SelectRolesMenus(ui.Select):
             else:
                 role_mention: str = "Deleted Role"
 
-            embed.add_field(name=f"`🔖` Level: {level}", value=f"{Emojis.REPLY.value} {role_mention}")
+            embed.add_field(
+                name=f"`🔖` Level: {level}",
+                value=f"{Emojis.REPLY.value} {role_mention}",
+            )
 
         await inter.send(embed=embed)
 
     @staticmethod
-    async def remove_role_for_level(inter: CustomInteraction):
+    async def remove_role_for_level(
+        inter: CustomInteraction,
+    ):
         assert inter.guild
 
         bot: Smiffy = inter.bot
 
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-            "SELECT * FROM levels WHERE guild_id = ?", (inter.guild.id,)
+            "SELECT * FROM levels WHERE guild_id = ?",
+            (inter.guild.id,),
         )
         if not response or not response[1]:
             return await inter.send_error_message(
@@ -428,8 +511,14 @@ class SelectRolesMenus(ui.Select):
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
-        embed.set_author(name=inter.user, icon_url=inter.user_avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{bot.__version__}",
+            icon_url=bot.avatar_url,
+        )
+        embed.set_author(
+            name=inter.user,
+            icon_url=inter.user_avatar_url,
+        )
         embed.set_thumbnail(url=inter.guild_icon_url)
         await inter.response.edit_message(embed=embed, view=new_view)
 
@@ -457,7 +546,10 @@ class SelectNotifyMenus(ui.Select):
             ),
         ]
 
-        super().__init__(placeholder="Wybierz sposób informowania o levelach", options=options)
+        super().__init__(
+            placeholder="Wybierz sposób informowania o levelach",
+            options=options,
+        )
 
     async def callback(self, interaction: CustomInteraction):
         notify: str = self.values[0]
@@ -488,7 +580,10 @@ class SelectNotifyMenus(ui.Select):
                 "Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__} | Etap 1/1", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__} | Etap 1/1",
+                icon_url=bot.avatar_url,
+            )
             await inter.edit_original_message(embed=embed)
             await inter.delete_original_message(delay=20)
             return None
@@ -500,7 +595,10 @@ class SelectNotifyMenus(ui.Select):
                 "Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__} | Etap 1/1", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__} | Etap 1/1",
+                icon_url=bot.avatar_url,
+            )
             await inter.edit_original_message(embed=embed)
             await inter.delete_original_message(delay=20)
             return None
@@ -512,7 +610,10 @@ class SelectNotifyMenus(ui.Select):
                 "\n\nWiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__} | Etap 1/1", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__} | Etap 1/1",
+                icon_url=bot.avatar_url,
+            )
 
             await inter.edit_original_message(embed=embed)
             await inter.delete_original_message(delay=20)
@@ -541,7 +642,10 @@ class SelectNotifyMenus(ui.Select):
                 "Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
             await inter.edit_original_message(embed=embed)
             await inter.delete_original_message(delay=20)
             return None
@@ -553,7 +657,10 @@ class SelectNotifyMenus(ui.Select):
                 "Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
             await inter.edit_original_message(embed=embed)
             await inter.delete_original_message(delay=20)
             return None
@@ -570,7 +677,10 @@ class SelectNotifyMenus(ui.Select):
                 "Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
             await inter.edit_original_message(embed=embed)
             await inter.delete_original_message(delay=20)
             return None
@@ -583,7 +693,8 @@ class SelectNotifyMenus(ui.Select):
         bot: Smiffy = inter.bot
 
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-            "SELECT * FROM levels WHERE guild_id = ?", (inter.guild.id,)
+            "SELECT * FROM levels WHERE guild_id = ?",
+            (inter.guild.id,),
         )
 
         if not response:
@@ -594,7 +705,10 @@ class SelectNotifyMenus(ui.Select):
                 description=f"{Emojis.REPLY.value} Levelowanie jest wyłączone.",
             )
             embed.set_thumbnail(url=inter.guild_icon_url)
-            embed.set_author(name=inter.user, icon_url=inter.user_avatar_url)
+            embed.set_author(
+                name=inter.user,
+                icon_url=inter.user_avatar_url,
+            )
             return await inter.send(embed=embed)
 
         embed = Embed(
@@ -607,7 +721,10 @@ class SelectNotifyMenus(ui.Select):
         )
         embed.set_footer(text="Etap 1/2")
         embed.set_thumbnail(url=inter.guild_icon_url)
-        embed.set_author(name=inter.user, icon_url=inter.user_avatar_url)
+        embed.set_author(
+            name=inter.user,
+            icon_url=inter.user_avatar_url,
+        )
         await inter.send(embed=embed)
 
         notify_channel: Optional[TextChannel] = await self.get_notify_channel(embed, inter)
@@ -630,8 +747,14 @@ Możesz też użyć domyślnego komunikatu bota, wpisując: `domyślny`.\n
             "Inaczej konfiguracja zostanie przerwana. Aby przerwać ją teraz, wpisz `stop`."
         )
 
-        embed.set_footer(text=f"Smiffy v{bot.__version__} | Etap 2/2", icon_url=bot.avatar_url)
-        embed.set_author(name=inter.user, icon_url=inter.user_avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{bot.__version__} | Etap 2/2",
+            icon_url=bot.avatar_url,
+        )
+        embed.set_author(
+            name=inter.user,
+            icon_url=inter.user_avatar_url,
+        )
 
         embed.description = (
             f"{Emojis.REPLY.value} Podaj treść powiadomienia.\n"
@@ -665,7 +788,10 @@ Możesz też użyć domyślnego komunikatu bota, wpisując: `domyślny`.\n
             f"{Emojis.REPLY.value} Na kanale: {notify_channel.mention} będą "
             f"wysyłane powiadomienia o nowych levelach."
         )
-        embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{bot.__version__}",
+            icon_url=bot.avatar_url,
+        )
 
         await inter.edit_original_message(embed=embed)
 
@@ -675,7 +801,8 @@ Możesz też użyć domyślnego komunikatu bota, wpisując: `domyślny`.\n
         bot: Smiffy = inter.bot
 
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-            "SELECT * FROM levels WHERE guild_id = ?", (inter.guild.id,)
+            "SELECT * FROM levels WHERE guild_id = ?",
+            (inter.guild.id,),
         )
 
         if not response:
@@ -686,7 +813,10 @@ Możesz też użyć domyślnego komunikatu bota, wpisując: `domyślny`.\n
                 description=f"{Emojis.REPLY.value} Levelowanie jest wyłączone.",
             )
             embed.set_thumbnail(url=inter.guild_icon_url)
-            embed.set_author(name=inter.user, icon_url=inter.user_avatar_url)
+            embed.set_author(
+                name=inter.user,
+                icon_url=inter.user_avatar_url,
+            )
             return await inter.send(embed=embed)
 
         notify_attributes: str = """## Dostępne atrybuty:
@@ -703,8 +833,14 @@ Możesz też użyć domyślnego komunikatu bota, wpisując: `domyślny`.\n
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_footer(text=f"Smiffy v{bot.__version__} | Etap 1/1", icon_url=bot.avatar_url)
-        embed.set_author(name=inter.user, icon_url=inter.user_avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{bot.__version__} | Etap 1/1",
+            icon_url=bot.avatar_url,
+        )
+        embed.set_author(
+            name=inter.user,
+            icon_url=inter.user_avatar_url,
+        )
 
         embed.description = (
             f"{Emojis.REPLY.value} Podaj treść powiadomienia.\n"
@@ -720,7 +856,10 @@ Możesz też użyć domyślnego komunikatu bota, wpisując: `domyślny`.\n
         if not notify_content:
             return
 
-        alerts_data: dict[str, str] = {"type": "dm", "notify_content": notify_content}
+        alerts_data: dict[str, str] = {
+            "type": "dm",
+            "notify_content": notify_content,
+        }
 
         await bot.db.execute_fetchone(
             "UPDATE levels SET alerts_data = ? WHERE guild_id = ?",
@@ -735,7 +874,10 @@ Możesz też użyć domyślnego komunikatu bota, wpisując: `domyślny`.\n
             f"wysyłane w prywatnych wiadomościach."
         )
 
-        embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{bot.__version__}",
+            icon_url=bot.avatar_url,
+        )
 
         await inter.edit_original_message(embed=embed)
 
@@ -745,7 +887,8 @@ Możesz też użyć domyślnego komunikatu bota, wpisując: `domyślny`.\n
         bot: Smiffy = inter.bot
 
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-            "SELECT * FROM levels WHERE guild_id = ?", (inter.guild.id,)
+            "SELECT * FROM levels WHERE guild_id = ?",
+            (inter.guild.id,),
         )
 
         if not response:
@@ -756,7 +899,10 @@ Możesz też użyć domyślnego komunikatu bota, wpisując: `domyślny`.\n
                 description=f"{Emojis.REPLY.value} Levelowanie jest wyłączone.",
             )
             embed.set_thumbnail(url=inter.guild_icon_url)
-            embed.set_author(name=inter.user, icon_url=inter.user_avatar_url)
+            embed.set_author(
+                name=inter.user,
+                icon_url=inter.user_avatar_url,
+            )
             return await inter.send(embed=embed)
 
         embed = Embed(
@@ -767,9 +913,15 @@ Możesz też użyć domyślnego komunikatu bota, wpisując: `domyślny`.\n
             f"Na odpowiedź masz **60** sekund. Inaczej konfiguracja zostanie przerwana. "
             f"Aby przerwać ją teraz, wpisz `stop`.",
         )
-        embed.set_footer(text=f"Smiffy v{bot.__version__} | Etap 1/2", icon_url=bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{bot.__version__} | Etap 1/2",
+            icon_url=bot.avatar_url,
+        )
         embed.set_thumbnail(url=inter.guild_icon_url)
-        embed.set_author(name=inter.user, icon_url=inter.user_avatar_url)
+        embed.set_author(
+            name=inter.user,
+            icon_url=inter.user_avatar_url,
+        )
         await inter.send(embed=embed)
 
         notify_channel: Optional[TextChannel] = await self.get_notify_channel(embed, inter)
@@ -785,8 +937,14 @@ Możesz też użyć domyślnego komunikatu bota, wpisując: `domyślny`.\n
 Możesz też użyć domyślnego komunikatu bota, wpisując: `domyślny`.\n
 """
 
-        embed.set_footer(text=f"Smiffy v{bot.__version__} | Etap 2/2", icon_url=bot.avatar_url)
-        embed.set_author(name=inter.user, icon_url=inter.user_avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{bot.__version__} | Etap 2/2",
+            icon_url=bot.avatar_url,
+        )
+        embed.set_author(
+            name=inter.user,
+            icon_url=inter.user_avatar_url,
+        )
 
         embed.description = (
             f"{Emojis.REPLY.value} Podaj treść powiadomienia.\n"
@@ -810,7 +968,10 @@ Możesz też użyć domyślnego komunikatu bota, wpisując: `domyślny`.\n
             f"oraz w prywatnych wiadomościach będą wysyłane powiadomienia o nowych levelach."
         )
 
-        embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{bot.__version__}",
+            icon_url=bot.avatar_url,
+        )
         await inter.edit_original_message(embed=embed)
 
         alerts_data: dict[str, int | str] = {
@@ -828,7 +989,11 @@ Możesz też użyć domyślnego komunikatu bota, wpisując: `domyślny`.\n
 class SelectMultiplierMenus(ui.Select):
     def __init__(self) -> None:
         options = [
-            SelectOption(label="Ustaw", description="Przypisz mnożnik expa dla roli", emoji="📌"),
+            SelectOption(
+                label="Ustaw",
+                description="Przypisz mnożnik expa dla roli",
+                emoji="📌",
+            ),
             SelectOption(
                 label="Usuń",
                 description="Usuń mnożnik expa dla roli",
@@ -841,7 +1006,10 @@ class SelectMultiplierMenus(ui.Select):
             ),
         ]
 
-        super().__init__(placeholder="Wybierz opcje", options=options)
+        super().__init__(
+            placeholder="Wybierz opcje",
+            options=options,
+        )
 
     async def callback(self, interaction: CustomInteraction):
         assert interaction.guild
@@ -849,7 +1017,8 @@ class SelectMultiplierMenus(ui.Select):
         bot: Smiffy = interaction.bot
 
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-            "SELECT * FROM levels WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM levels WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if not response:
             return await interaction.send_error_message(description="Levelowanie jest wyłączone na serwerze.")
@@ -883,7 +1052,10 @@ class SelectMultiplierMenus(ui.Select):
                 "Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await inter.edit_original_message(embed=embed)
             await inter.delete_original_message(delay=20)
@@ -898,7 +1070,10 @@ class SelectMultiplierMenus(ui.Select):
                 "Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await inter.edit_original_message(embed=embed)
             await inter.delete_original_message(delay=20)
@@ -912,7 +1087,10 @@ class SelectMultiplierMenus(ui.Select):
                 f"\n\nWiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await inter.edit_original_message(embed=embed)
             await inter.delete_original_message(delay=20)
@@ -925,7 +1103,10 @@ class SelectMultiplierMenus(ui.Select):
                 "\n\nWiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await inter.edit_original_message(embed=embed)
             await inter.delete_original_message(delay=20)
@@ -947,7 +1128,10 @@ class SelectMultiplierMenus(ui.Select):
             "Aby przerwać ją teraz, wpisz `stop`.",
         )
         embed.set_footer(text="Etap 1/2")
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
 
         await interaction.send(embed=embed)
 
@@ -981,7 +1165,10 @@ class SelectMultiplierMenus(ui.Select):
                 "Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await interaction.edit_original_message(embed=embed)
             return await interaction.delete_original_message(delay=20)
@@ -993,7 +1180,10 @@ class SelectMultiplierMenus(ui.Select):
                 "Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await interaction.edit_original_message(embed=embed)
             return await interaction.delete_original_message(delay=20)
@@ -1005,7 +1195,10 @@ class SelectMultiplierMenus(ui.Select):
                 "Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await interaction.edit_original_message(embed=embed)
             return await interaction.delete_original_message(delay=20)
@@ -1022,7 +1215,10 @@ class SelectMultiplierMenus(ui.Select):
                 "Wiadomość zostanie usunięta automatycznie za **20s.**"
             )
             embed.colour = Color.red()
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await interaction.edit_original_message(embed=embed)
             return await interaction.delete_original_message(delay=20)
@@ -1040,8 +1236,14 @@ class SelectMultiplierMenus(ui.Select):
                     description=f"{Emojis.REPLY.value} Rola już ma przypisany mnożnik",
                 )
                 embed.set_thumbnail(url=interaction.guild_icon_url)
-                embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
-                embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+                embed.set_author(
+                    name=interaction.user,
+                    icon_url=interaction.user_avatar_url,
+                )
+                embed.set_footer(
+                    text=f"Smiffy v{bot.__version__}",
+                    icon_url=bot.avatar_url,
+                )
 
                 await interaction.edit_original_message(embed=embed)
                 return
@@ -1054,8 +1256,14 @@ class SelectMultiplierMenus(ui.Select):
                     description=f"{Emojis.REPLY.value} Osiągnięto limit `25` przypisanych mnożników do ról.",
                 )
                 embed.set_thumbnail(url=interaction.guild_icon_url)
-                embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
-                embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+                embed.set_author(
+                    name=interaction.user,
+                    icon_url=interaction.user_avatar_url,
+                )
+                embed.set_footer(
+                    text=f"Smiffy v{bot.__version__}",
+                    icon_url=bot.avatar_url,
+                )
 
                 await interaction.edit_original_message(embed=embed)
                 return
@@ -1073,7 +1281,10 @@ class SelectMultiplierMenus(ui.Select):
             f"{Emojis.REPLY.value} Przypisano mnożnik `{multiplier}` dla roli: {role.mention}."
         )
         embed.set_thumbnail(url=interaction.guild_icon_url)
-        embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{bot.__version__}",
+            icon_url=bot.avatar_url,
+        )
 
         await interaction.edit_original_message(embed=embed)
 
@@ -1091,7 +1302,10 @@ class SelectMultiplierMenus(ui.Select):
             "Aby przerwać ją teraz, wpisz `stop`.",
         )
         embed.set_footer(text="Etap 1/1")
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
 
         await interaction.send(embed=embed)
 
@@ -1112,8 +1326,14 @@ class SelectMultiplierMenus(ui.Select):
                 description=f"{Emojis.REPLY.value} Podana rola nie ma przypisanego mnożniku.",
             )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await interaction.edit_original_message(embed=embed)
             return
@@ -1127,8 +1347,14 @@ class SelectMultiplierMenus(ui.Select):
                 description=f"{Emojis.REPLY.value} Podana rola nie ma przypisanego mnożniku.",
             )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await interaction.edit_original_message(embed=embed)
             return
@@ -1147,7 +1373,10 @@ class SelectMultiplierMenus(ui.Select):
         embed.description = f"{Emojis.REPLY.value} Usunięto mnożnik dla roli: {role.mention}."
 
         embed.set_thumbnail(url=interaction.guild_icon_url)
-        embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{bot.__version__}",
+            icon_url=bot.avatar_url,
+        )
 
         await interaction.edit_original_message(embed=embed)
 
@@ -1165,7 +1394,10 @@ class SelectMultiplierMenus(ui.Select):
             "Aby przerwać ją teraz, wpisz `stop`. ",
         )
         embed.set_footer(text="Etap 1/1")
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         await interaction.send(embed=embed)
 
         role: Optional[Role] = await self.get_multiplier_role(embed, interaction)
@@ -1184,9 +1416,15 @@ class SelectMultiplierMenus(ui.Select):
                 timestamp=utils.utcnow(),
                 description=f"{Emojis.REPLY.value} Podana rola nie ma przypisanego mnożniku.",
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await interaction.edit_original_message(embed=embed)
             return
@@ -1201,9 +1439,15 @@ class SelectMultiplierMenus(ui.Select):
                 timestamp=utils.utcnow(),
                 description=f"{Emojis.REPLY.value} Podana rola nie ma przypisanego mnożniku.",
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{bot.__version__}",
+                icon_url=bot.avatar_url,
+            )
 
             await interaction.edit_original_message(embed=embed)
             return
@@ -1215,7 +1459,10 @@ class SelectMultiplierMenus(ui.Select):
             f"{Emojis.REPLY.value} Rola: {role.mention} posiada przypisany mnożnik: `{multiplier}`."
             f"\n\n- Domyślny: `5`"
         )
-        embed.set_footer(text=f"Smiffy v{bot.__version__}", icon_url=bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{bot.__version__}",
+            icon_url=bot.avatar_url,
+        )
 
         await interaction.edit_original_message(embed=embed)
 
@@ -1243,7 +1490,10 @@ class CommandLevels(CustomCog):
     async def levels(self, interaction: CustomInteraction) -> None:
         pass
 
-    @levels.subcommand(name="włącz", description="Włącza levelowanie na serwerze")  # pyright: ignore
+    @levels.subcommand(
+        name="włącz",
+        description="Włącza levelowanie na serwerze",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def levels_on(self, interaction: CustomInteraction) -> None:
         assert interaction.guild
@@ -1251,20 +1501,27 @@ class CommandLevels(CustomCog):
         await interaction.response.defer()
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM levels WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM levels WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if response:
             await interaction.send_error_message(description="Levelowanie już jest włączone.")
             return
 
-        await self.bot.db.execute_fetchone("INSERT INTO levels(guild_id) VALUES(?)", (interaction.guild.id,))
+        await self.bot.db.execute_fetchone(
+            "INSERT INTO levels(guild_id) VALUES(?)",
+            (interaction.guild.id,),
+        )
 
         await interaction.send_success_message(
             title=f"Pomyślnie włączono {Emojis.GREENBUTTON.value}",
             description=f"{Emojis.REPLY.value} Levewalonie zostało włączone.",
         )
 
-    @levels.subcommand(name="wyłącz", description="Wyłącza levelowanie na serwerze")  # pyright: ignore
+    @levels.subcommand(
+        name="wyłącz",
+        description="Wyłącza levelowanie na serwerze",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def levels_off(self, interaction: CustomInteraction) -> None:
         assert interaction.guild
@@ -1272,26 +1529,34 @@ class CommandLevels(CustomCog):
         await interaction.response.defer()
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM levels WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM levels WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if not response:
             await interaction.send_error_message(description="Levelowanie już jest wyłączone.")
             return
 
-        await self.bot.db.execute_fetchone("DELETE FROM levels WHERE guild_id = ?", (interaction.guild.id,))
+        await self.bot.db.execute_fetchone(
+            "DELETE FROM levels WHERE guild_id = ?",
+            (interaction.guild.id,),
+        )
 
         await interaction.send_success_message(
             title=f"Pomyślnie wyłączono {Emojis.GREENBUTTON.value}",
             description=f"{Emojis.REPLY.value} Levelowanie zostało wyłączone.",
         )
 
-    @levels.subcommand(name="reset", description="Totalny reset levelowania na serwerze")  # pyright: ignore
+    @levels.subcommand(
+        name="reset",
+        description="Totalny reset levelowania na serwerze",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def reset(self, interaction: CustomInteraction):
         assert interaction.guild and interaction.user
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM levels WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM levels WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         if not response:
@@ -1302,7 +1567,10 @@ class CommandLevels(CustomCog):
                 description=f"{Emojis.REPLY.value} Levelowanie jest wyłączone.",
             )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             return await interaction.send(embed=embed)
 
         embed = Embed(
@@ -1313,13 +1581,17 @@ class CommandLevels(CustomCog):
             timestamp=utils.utcnow(),
         )
         embed.set_thumbnail(url=interaction.guild_icon_url)
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         buttons = ConfirmReset(interaction.user.id)
 
         await interaction.send(embed=embed, view=buttons)
 
     @levels.subcommand(  # pyright: ignore
-        name="ustawienia", description="Ustawienia dotyczące levelowania na serwerze"
+        name="ustawienia",
+        description="Ustawienia dotyczące levelowania na serwerze",
     )
     @PermissionHandler(manage_guild=True)
     async def levels_settings(
@@ -1337,7 +1609,10 @@ class CommandLevels(CustomCog):
         status: str = SlashOption(
             name="status",
             description="Wyłącz lub włącz opcje",
-            choices={"Włącz": "on", "Wyłącz": "off"},
+            choices={
+                "Włącz": "on",
+                "Wyłącz": "off",
+            },
         ),
     ) -> None:
         assert interaction.guild
@@ -1351,9 +1626,15 @@ class CommandLevels(CustomCog):
                 description=f"{Emojis.REPLY.value} Wybierz opcję poniżej, aby przejść do konfiguracji.",
                 timestamp=utils.utcnow(),
             )
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{self.bot.__version__}",
+                icon_url=self.bot.avatar_url,
+            )
 
             if option == "multiplier":
                 view = SelectMultiplierView()
@@ -1373,7 +1654,8 @@ class CommandLevels(CustomCog):
 
         else:
             response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-                "SELECT * FROM levels WHERE guild_id = ?", (interaction.guild.id,)
+                "SELECT * FROM levels WHERE guild_id = ?",
+                (interaction.guild.id,),
             )
 
             if not response:
@@ -1433,7 +1715,9 @@ class CommandLevels(CustomCog):
                 return
 
     @staticmethod
-    async def get_card(user_data: UserlevelingData) -> BytesIO:
+    async def get_card(
+        user_data: UserlevelingData,
+    ) -> BytesIO:
         background: Editor = Editor(Canvas((900, 300), color="#23272A"))
         profile_image = await load_image_async(user_data["avatar_url"])
         profile: Editor = Editor(profile_image).resize((150, 150)).circle_image()
@@ -1456,7 +1740,13 @@ class CommandLevels(CustomCog):
         background.polygon(card_right_shape, "#2C2F33")
         background.paste(profile, (30, 30))
 
-        background.rectangle((30, 220), width=650, height=40, fill="#494b4f", radius=20)
+        background.rectangle(
+            (30, 220),
+            width=650,
+            height=40,
+            fill="#494b4f",
+            radius=20,
+        )
 
         if user_data["percentage"] > 0:
             if user_data["percentage"] <= 2:
@@ -1473,14 +1763,39 @@ class CommandLevels(CustomCog):
         rank: int = user_data["rank"]
 
         if 10 <= rank < 100:
-            background.text((680, 40), f"Rank: {rank}", font=montserrat, color="white")
+            background.text(
+                (680, 40),
+                f"Rank: {rank}",
+                font=montserrat,
+                color="white",
+            )
         elif rank >= 100:
-            background.text((670, 40), f"Rank: {rank}", font=montserrat, color="white")
+            background.text(
+                (670, 40),
+                f"Rank: {rank}",
+                font=montserrat,
+                color="white",
+            )
         else:
-            background.text((700, 40), f"Rank: {rank}", font=montserrat, color="white")
+            background.text(
+                (700, 40),
+                f"Rank: {rank}",
+                font=montserrat,
+                color="white",
+            )
 
-        background.text((200, 40), user_data["name"], font=poppins, color="white")
-        background.rectangle((200, 100), width=350, height=2, fill="#17F3F6")
+        background.text(
+            (200, 40),
+            user_data["name"],
+            font=poppins,
+            color="white",
+        )
+        background.rectangle(
+            (200, 100),
+            width=350,
+            height=2,
+            fill="#17F3F6",
+        )
 
         background.text(
             (200, 130),
@@ -1491,9 +1806,14 @@ class CommandLevels(CustomCog):
 
         return background.image_bytes
 
-    async def get_leaderboard(self, guild: Guild, first_ten: bool = False) -> Optional[dict[Member, int]]:
+    async def get_leaderboard(
+        self,
+        guild: Guild,
+        first_ten: bool = False,
+    ) -> Optional[dict[Member, int]]:
         response: Iterable[DB_RESPONSE] = await self.bot.db.execute_fetchall(
-            "SELECT * FROM levels_users WHERE guild_id = ?", (guild.id,)
+            "SELECT * FROM levels_users WHERE guild_id = ?",
+            (guild.id,),
         )
 
         if not response:
@@ -1515,7 +1835,13 @@ class CommandLevels(CustomCog):
 
             total_xp_lb[member] = totalxp
 
-        sorted_lb: dict = dict(sorted(total_xp_lb.items(), key=lambda item: item[1], reverse=True))
+        sorted_lb: dict = dict(
+            sorted(
+                total_xp_lb.items(),
+                key=lambda item: item[1],
+                reverse=True,
+            )
+        )
         if first_ten:
             return dict(islice(sorted_lb.items(), 10))
 
@@ -1533,12 +1859,16 @@ class CommandLevels(CustomCog):
 
         return 0
 
-    @levels.subcommand(name="rank", description="Pokazuje level użytkownika")
+    @levels.subcommand(
+        name="rank",
+        description="Pokazuje level użytkownika",
+    )
     async def rank(
         self,
         interaction: CustomInteraction,
         member: Optional[Member] = SlashOption(
-            name="osoba", description="Podaj osobę której chcesz sprawdzić level"
+            name="osoba",
+            description="Podaj osobę której chcesz sprawdzić level",
         ),
     ):
         assert isinstance(interaction.user, Member) and interaction.guild
@@ -1548,7 +1878,8 @@ class CommandLevels(CustomCog):
         await interaction.response.defer()
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM levels_users WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM levels_users WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         if not response:
@@ -1580,17 +1911,24 @@ class CommandLevels(CustomCog):
             rank=await self.get_rank(user),
         )
 
-        card: File = File(fp=await self.get_card(user_data), filename="rank.png")
+        card: File = File(
+            fp=await self.get_card(user_data),
+            filename="rank.png",
+        )
         await interaction.send(file=card)
 
-    @levels.subcommand(name="topka", description="Tabela Top 10 użytkowników w levelach")
+    @levels.subcommand(
+        name="topka",
+        description="Tabela Top 10 użytkowników w levelach",
+    )
     async def leaderboard(self, interaction: CustomInteraction):
         assert interaction.guild
 
         await interaction.response.defer()
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM levels WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM levels WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         if not response:
@@ -1607,7 +1945,10 @@ class CommandLevels(CustomCog):
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
         rank = 1

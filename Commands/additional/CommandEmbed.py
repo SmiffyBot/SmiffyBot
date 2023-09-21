@@ -21,11 +21,19 @@ supported_colors: dict = {
 
 
 class CommandEmbed(CustomCog):
-    @slash_command(name="embed", description="Twórzy specjalny embed", dm_permission=False)
+    @slash_command(
+        name="embed",
+        description="Twórzy specjalny embed",
+        dm_permission=False,
+    )
     async def embed(
         self,
         interaction: CustomInteraction,
-        title: str = SlashOption(name="tytuł", description="Podaj tytuł embedu", max_length=256),
+        title: str = SlashOption(
+            name="tytuł",
+            description="Podaj tytuł embedu",
+            max_length=256,
+        ),
         color: str = SlashOption(
             name="kolor",
             description="Wybierz kolor embedu",
@@ -37,9 +45,17 @@ class CommandEmbed(CustomCog):
             required=False,
             max_length=4000,
         ),
-        image: Attachment = SlashOption(name="obraz", description="Podaj obraz embedu", required=False),
+        image: Attachment = SlashOption(
+            name="obraz",
+            description="Podaj obraz embedu",
+            required=False,
+        ),
     ):
-        embed = Embed(title=title, description=description, color=supported_colors[color])
+        embed = Embed(
+            title=title,
+            description=description,
+            color=supported_colors[color],
+        )
         if image:
             embed.set_thumbnail(url=image.url)
 

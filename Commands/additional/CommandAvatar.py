@@ -20,14 +20,26 @@ if TYPE_CHECKING:
 
 class CommandAvatar(CustomCog):
     @user_command(name="avatar")
-    async def avatar_application(self, interaction: CustomInteraction, member: Member) -> None:
+    async def avatar_application(
+        self,
+        interaction: CustomInteraction,
+        member: Member,
+    ) -> None:
         await self.avatar(interaction, member)
 
-    @slash_command(name="avatar", description="Wyświetli avatar użytkownika", dm_permission=False)
+    @slash_command(
+        name="avatar",
+        description="Wyświetli avatar użytkownika",
+        dm_permission=False,
+    )
     async def avatar(
         self,
         interaction: CustomInteraction,
-        member: Member = SlashOption(name="osoba", description="Podaj użytkownika", required=False),
+        member: Member = SlashOption(
+            name="osoba",
+            description="Podaj użytkownika",
+            required=False,
+        ),
     ):
         assert interaction.guild
 
@@ -40,7 +52,10 @@ class CommandAvatar(CustomCog):
             timestamp=utils.utcnow(),
         )
         embed.set_image(url=user.display_avatar.url)
-        embed.set_author(name=interaction.guild.name, icon_url=interaction.guild_icon_url)
+        embed.set_author(
+            name=interaction.guild.name,
+            icon_url=interaction.guild_icon_url,
+        )
         await interaction.send(embed=embed)
 
 

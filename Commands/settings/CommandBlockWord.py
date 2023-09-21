@@ -28,7 +28,10 @@ class CommandBlockWord(CustomCog):
     async def blockword(self, interaction: CustomInteraction):  # pylint: disable=unused-argument
         ...
 
-    @blockword.subcommand(name="dodaj", description="Dodaj słowo do zablokowania")  # pyright: ignore
+    @blockword.subcommand(
+        name="dodaj",
+        description="Dodaj słowo do zablokowania",
+    )  # pyright: ignore
     @PermissionHandler(manage_messages=True)
     async def blockword_add(
         self,
@@ -80,12 +83,19 @@ class CommandBlockWord(CustomCog):
             color=Color.green(),
         )
 
-    @blockword.subcommand(name="usuń", description="Usuwa słowo z zablokowanych słów")  # pyright: ignore
+    @blockword.subcommand(
+        name="usuń",
+        description="Usuwa słowo z zablokowanych słów",
+    )  # pyright: ignore
     @PermissionHandler(manage_messages=True)
     async def blockword_remove(
         self,
         interaction: CustomInteraction,
-        word: str = SlashOption(name="słowo", description="Podaj słowo, które chcesz usunąć", max_length=128),
+        word: str = SlashOption(
+            name="słowo",
+            description="Podaj słowo, które chcesz usunąć",
+            max_length=128,
+        ),
     ):
         assert self.bot.user and interaction.guild
 
@@ -118,7 +128,10 @@ class CommandBlockWord(CustomCog):
             color=Color.green(),
         )
 
-    @blockword.subcommand(name="lista", description="Wyświetla listę zablokowanych słów")  # pyright: ignore
+    @blockword.subcommand(
+        name="lista",
+        description="Wyświetla listę zablokowanych słów",
+    )  # pyright: ignore
     @PermissionHandler(manage_messages=True)
     async def blockword_list(self, interaction: CustomInteraction):
         assert self.bot.user and interaction.guild
@@ -158,7 +171,10 @@ class CommandBlockWord(CustomCog):
             description=f"{Emojis.REPLY.value} System blokowania słów Smiffiego bazuje na "
             f"[Discord AutoMod]({automod_link})\n\n{blocked_words_text[0:-2]}",
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
         await interaction.send(embed=embed)

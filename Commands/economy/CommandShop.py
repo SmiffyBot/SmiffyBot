@@ -36,7 +36,10 @@ class ItemsList(ui.Select):
                 )
             )
 
-        super().__init__(placeholder="Wybierz następną stronę przedmiotów", options=pages_list)
+        super().__init__(
+            placeholder="Wybierz następną stronę przedmiotów",
+            options=pages_list,
+        )
 
     async def callback(self, interaction: CustomInteraction) -> None:
         if not interaction.message:
@@ -69,7 +72,11 @@ class ItemsList(ui.Select):
 
 
 class ItemsListView(ui.View):
-    def __init__(self, author_id: int, items_data: list[EconomyItemData]):
+    def __init__(
+        self,
+        author_id: int,
+        items_data: list[EconomyItemData],
+    ):
         super().__init__(timeout=None)
 
         self.add_item(ItemsList(items_data))
@@ -81,7 +88,10 @@ class ItemsListView(ui.View):
         if interaction.user.id == self.author_id:
             return True  # Checking if the user who pressed the button has permission manage_messages
 
-        command_mention: str = interaction.get_command_mention(command_name="ekonomia", sub_command="sklep")
+        command_mention: str = interaction.get_command_mention(
+            command_name="ekonomia",
+            sub_command="sklep",
+        )
         await interaction.send_error_message(
             description=f"Użyj komendy {command_mention}, aby móc korzystać z stron.",
             ephemeral=True,
@@ -91,7 +101,8 @@ class ItemsListView(ui.View):
 
 class CommandShop(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
-        name="sklep", description="Wyświetla sklep na serwerze"
+        name="sklep",
+        description="Wyświetla sklep na serwerze",
     )
     async def economy_shop(self, interaction: CustomInteraction):
         assert isinstance(interaction.user, Member) and interaction.guild
@@ -107,9 +118,15 @@ class CommandShop(CustomCog):
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
-        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{self.bot.__version__}",
+            icon_url=self.bot.avatar_url,
+        )
 
         items: list[EconomyItemData] = await manager.get_guild_shop(interaction.guild)
         if len(items) == 0:
@@ -129,10 +146,16 @@ class CommandShop(CustomCog):
             if index == 4:
                 break
 
-        command_mention: str = interaction.get_command_mention(command_name="ekonomia", sub_command="kup")
+        command_mention: str = interaction.get_command_mention(
+            command_name="ekonomia",
+            sub_command="kup",
+        )
         embed.description = f"> Zakup przedmiot używając {command_mention}"
 
-        pages: ItemsListView = ItemsListView(author_id=interaction.user.id, items_data=items)
+        pages: ItemsListView = ItemsListView(
+            author_id=interaction.user.id,
+            items_data=items,
+        )
         await interaction.send(embed=embed, view=pages)
 
 

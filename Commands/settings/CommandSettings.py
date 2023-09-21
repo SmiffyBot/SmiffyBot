@@ -58,14 +58,21 @@ class CommandSettings(CustomCog):
         )
         embed.set_thumbnail(url=interaction.guild_icon_url)
         embed.set_footer(text="Ładowanie...")
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
 
         await interaction.followup.send(embed=embed)
         seconds: float = 0
 
-        for name, raw_name in self.settings_dict.items():
+        for (
+            name,
+            raw_name,
+        ) in self.settings_dict.items():
             response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-                f"SELECT * FROM {raw_name} WHERE guild_id = ?", (interaction.guild_id,)
+                f"SELECT * FROM {raw_name} WHERE guild_id = ?",
+                (interaction.guild_id,),
             )
 
             if response:

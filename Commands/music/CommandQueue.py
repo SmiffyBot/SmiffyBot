@@ -35,7 +35,10 @@ class QueueList(ui.Select):
                 )
             )
 
-        super().__init__(placeholder="Wybierz następną stronę kolejki", options=pages_list)
+        super().__init__(
+            placeholder="Wybierz następną stronę kolejki",
+            options=pages_list,
+        )
 
     async def callback(self, interaction: CustomInteraction) -> None:
         if not interaction.message:
@@ -74,7 +77,8 @@ class QuqueListView(ui.View):
 
 class CommandQueue(CustomCog):
     @MusicCog.main.subcommand(  # pylint: disable=no-member
-        name="kolejka", description="Pomija aktualną graną piosenke"
+        name="kolejka",
+        description="Pomija aktualną graną piosenke",
     )
     async def music_queue(self, interaction: CustomInteraction):
         assert interaction.guild
@@ -100,10 +104,16 @@ class CommandQueue(CustomCog):
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
-        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{self.bot.__version__}",
+            icon_url=self.bot.avatar_url,
+        )
 
         for index, track in enumerate(player.queue[0:5]):
             track_lenght: str = str(timedelta(seconds=track.length / 1000))
@@ -114,7 +124,10 @@ class CommandQueue(CustomCog):
                 inline=False,
             )
 
-        await interaction.send(embed=embed, view=QuqueListView(queue_data=player.queue))
+        await interaction.send(
+            embed=embed,
+            view=QuqueListView(queue_data=player.queue),
+        )
 
 
 def setup(bot: Smiffy):

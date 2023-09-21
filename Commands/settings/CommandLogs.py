@@ -17,29 +17,40 @@ class CommandLogs(CustomCog):
     async def logs(self, interaction: CustomInteraction):  # pylint: disable=unused-argument
         ...
 
-    @logs.subcommand(name="włącz", description="Włącza logi na serwerze")  # pyright: ignore
+    @logs.subcommand(
+        name="włącz",
+        description="Włącza logi na serwerze",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def logs_on(
         self,
         interaction: CustomInteraction,
         channel: TextChannel = SlashOption(
-            name="kanal", description="Podaj kanał na którym mają przychodzić logi."
+            name="kanal",
+            description="Podaj kanał na którym mają przychodzić logi.",
         ),
     ):
         assert interaction.guild
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM server_logs WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM server_logs WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if response:
             await self.bot.db.execute_fetchone(
                 "UPDATE server_logs SET channel_id = ? WHERE guild_id = ?",
-                (channel.id, interaction.guild.id),
+                (
+                    channel.id,
+                    interaction.guild.id,
+                ),
             )
         else:
             await self.bot.db.execute_fetchone(
                 "INSERT INTO server_logs(guild_id, channel_id) VALUES(?,?)",
-                (interaction.guild.id, channel.id),
+                (
+                    interaction.guild.id,
+                    channel.id,
+                ),
             )
 
         return await interaction.send_success_message(
@@ -48,20 +59,25 @@ class CommandLogs(CustomCog):
             color=Color.green(),
         )
 
-    @logs.subcommand(name="wyłącz", description="Wyłącza logi na serwerze")  # pyright: ignore
+    @logs.subcommand(
+        name="wyłącz",
+        description="Wyłącza logi na serwerze",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def logs_off(self, interaction: CustomInteraction):
         assert interaction.guild
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM server_logs WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM server_logs WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         if not response:
             return await interaction.send_error_message(description="Logi na serwerze już są wyłączone.")
 
         await self.bot.db.execute_fetchone(
-            "DELETE FROM server_logs WHERE guild_id = ?", (interaction.guild.id,)
+            "DELETE FROM server_logs WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         await interaction.send_success_message(

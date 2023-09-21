@@ -21,14 +21,20 @@ class CommandAchievement(CustomCog):
     async def achievement(
         self,
         interaction: CustomInteraction,
-        text: str = SlashOption(name="tekst", description="Podaj treść osiągnięcia.", max_length=32),
+        text: str = SlashOption(
+            name="tekst",
+            description="Podaj treść osiągnięcia.",
+            max_length=32,
+        ),
     ):
         await interaction.response.defer()
 
         api_url: str = f"https://api.alexflipnote.dev/achievement?text={text}&icon=1"
 
         response: Optional[ClientResponse] = await self.bot.session.send_api_request(
-            interaction=interaction, url=api_url, method="GET"
+            interaction=interaction,
+            url=api_url,
+            method="GET",
         )
 
         if not response:

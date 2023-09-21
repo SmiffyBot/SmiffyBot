@@ -19,13 +19,17 @@ if TYPE_CHECKING:
 
 class CommandCoinflip(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
-        name="rzut_moneta", description="Rzut monetą o pieniądze"
+        name="rzut_moneta",
+        description="Rzut monetą o pieniądze",
     )
     @shared_cooldown("command_coinflip")
     async def economy_coinflip(
         self,
         interaction: CustomInteraction,
-        bet: int = SlashOption(name="stawka", description="Podaj stawkę"),
+        bet: int = SlashOption(
+            name="stawka",
+            description="Podaj stawkę",
+        ),
         option: str = SlashOption(
             name="wybór",
             description="Wybierz orzeł czy reszka",
@@ -56,13 +60,19 @@ class CommandCoinflip(CustomCog):
             color=Color.light_grey(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         await interaction.send(embed=embed)
 
         await sleep(randint(2, 4))
 
         result: str = choice(["orzeł", "reszka"])
-        image = File(f"./Data/images/{result.lower()}.png", filename="image.png")
+        image = File(
+            f"./Data/images/{result.lower()}.png",
+            filename="image.png",
+        )
 
         if result == option:
             embed = Embed(
@@ -71,7 +81,10 @@ class CommandCoinflip(CustomCog):
                 timestamp=utils.utcnow(),
                 description=f"{Emojis.REPLY.value} Twoja wygrana to: **{int(bet * 1.5)}$**",
             )
-            await manager.add_user_money(interaction.user, {"money": int(bet * 1.5)})
+            await manager.add_user_money(
+                interaction.user,
+                {"money": int(bet * 1.5)},
+            )
         else:
             embed = Embed(
                 title="`💢` Niestety, przegrałeś/aś!",
@@ -81,12 +94,19 @@ class CommandCoinflip(CustomCog):
             )
             await manager.remove_user_money(interaction.user, int(bet * 2))
 
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_image(url="attachment://image.png")
         await interaction.edit_original_message(embed=embed, file=image)
 
     @economy_coinflip.error  # pyright: ignore
-    async def economy_coinflip_error(self, interaction: CustomInteraction, error):
+    async def economy_coinflip_error(
+        self,
+        interaction: CustomInteraction,
+        error,
+    ):
         assert interaction.guild
 
         error = getattr(error, "original", error)

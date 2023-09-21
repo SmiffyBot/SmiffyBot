@@ -15,7 +15,11 @@ if TYPE_CHECKING:
 
 
 class NotifyStatusView(ui.View):
-    def __init__(self, author_id: int, org_inter: CustomInteraction):
+    def __init__(
+        self,
+        author_id: int,
+        org_inter: CustomInteraction,
+    ):
         super().__init__(timeout=None)
 
         self.author_id: int = author_id
@@ -26,17 +30,23 @@ class NotifyStatusView(ui.View):
 
         if interaction.user.id != self.author_id:
             await interaction.send_error_message(
-                description="Tylko autor tej wiadomości może tego użyć.", ephemeral=True
+                description="Tylko autor tej wiadomości może tego użyć.",
+                ephemeral=True,
             )
 
             return False
         return True
 
     @ui.button(  # pyright: ignore[reportGeneralTypeIssues]
-        label="Włącz", style=ButtonStyle.green, row=2, emoji=Emojis.GREENBUTTON.value
+        label="Włącz",
+        style=ButtonStyle.green,
+        row=2,
+        emoji=Emojis.GREENBUTTON.value,
     )
     async def button_on(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         assert interaction.guild
 
@@ -44,13 +54,18 @@ class NotifyStatusView(ui.View):
 
         bot: Smiffy = interaction.bot
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-            "SELECT * FROM music_settings WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM music_settings WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         if not response:
             await bot.db.execute_fetchone(
                 "INSERT INTO music_settings(guild_id, permission_roles, notify) VALUES(?,?,?)",
-                (interaction.guild.id, None, None),
+                (
+                    interaction.guild.id,
+                    None,
+                    None,
+                ),
             )
         else:
             await bot.db.execute_fetchone(
@@ -66,10 +81,15 @@ class NotifyStatusView(ui.View):
         await self.org_inter.delete_original_message()
 
     @ui.button(  # pyright: ignore[reportGeneralTypeIssues]
-        label="Wyłącz", style=ButtonStyle.red, row=2, emoji=Emojis.REDBUTTON.value
+        label="Wyłącz",
+        style=ButtonStyle.red,
+        row=2,
+        emoji=Emojis.REDBUTTON.value,
     )
     async def button_off(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         assert interaction.guild
 
@@ -77,13 +97,18 @@ class NotifyStatusView(ui.View):
 
         bot: Smiffy = interaction.bot
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-            "SELECT * FROM music_settings WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM music_settings WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         if not response:
             await bot.db.execute_fetchone(
                 "INSERT INTO music_settings(guild_id, permission_roles, notify) VALUES(?,?,?)",
-                (interaction.guild.id, None, "off"),
+                (
+                    interaction.guild.id,
+                    None,
+                    "off",
+                ),
             )
         else:
             await bot.db.execute_fetchone(
@@ -105,7 +130,9 @@ class SelectView(ui.View):
         self.author_id: int = author_id
 
         self.roles_select: ui.RoleSelect = ui.RoleSelect(
-            placeholder="Wybierz role z uprawnieniami", max_values=5, min_values=0
+            placeholder="Wybierz role z uprawnieniami",
+            max_values=5,
+            min_values=0,
         )
 
         self.add_item(self.roles_select)
@@ -115,17 +142,23 @@ class SelectView(ui.View):
 
         if interaction.user.id != self.author_id:
             await interaction.send_error_message(
-                description="Tylko autor tej wiadomości może tego użyć.", ephemeral=True
+                description="Tylko autor tej wiadomości może tego użyć.",
+                ephemeral=True,
             )
 
             return False
         return True
 
     @ui.button(  # pyright: ignore[reportGeneralTypeIssues]
-        label="Ustaw", style=ButtonStyle.green, row=2, emoji=Emojis.GREENBUTTON.value
+        label="Ustaw",
+        style=ButtonStyle.green,
+        row=2,
+        emoji=Emojis.GREENBUTTON.value,
     )
     async def button_callback(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         assert interaction.guild
 
@@ -133,7 +166,8 @@ class SelectView(ui.View):
 
         bot: Smiffy = interaction.bot
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-            "SELECT * FROM music_settings WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM music_settings WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if len(self.roles_select.values) != 0:
             for role in self.roles_select.values:
@@ -149,7 +183,11 @@ class SelectView(ui.View):
         if not response:
             await bot.db.execute_fetchone(
                 "INSERT INTO music_settings(guild_id, permission_roles, notify) VALUES(?,?,?)",
-                (interaction.guild.id, data, None),
+                (
+                    interaction.guild.id,
+                    data,
+                    None,
+                ),
             )
         else:
             await bot.db.execute_fetchone(
@@ -168,7 +206,8 @@ class SelectView(ui.View):
 
 class CommandMusicSettings(CustomCog):
     @MusicCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
-        name="ustawienia", description="Zmień ustawienia muzyki na serwerze"
+        name="ustawienia",
+        description="Zmień ustawienia muzyki na serwerze",
     )
     @PermissionHandler(manage_guild=True)
     async def music_settings(
@@ -177,7 +216,10 @@ class CommandMusicSettings(CustomCog):
         option: str = SlashOption(
             name="opcja",
             description="Wybierz opcję do ustawienia",
-            choices={"Uprawnienia komend": "permissions", "Powiadomienia": "alerts"},
+            choices={
+                "Uprawnienia komend": "permissions",
+                "Powiadomienia": "alerts",
+            },
         ),
     ):
         assert isinstance(interaction.user, Member)
@@ -192,8 +234,14 @@ class CommandMusicSettings(CustomCog):
                 f"aby każdy mógł używać komend, zostaw listę pustą.**",
             )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
-            embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
+            embed.set_footer(
+                text=f"Smiffy v{self.bot.__version__}",
+                icon_url=self.bot.avatar_url,
+            )
             roleselect = SelectView(interaction.user.id)
 
             await interaction.send(embed=embed, view=roleselect)
@@ -207,8 +255,14 @@ class CommandMusicSettings(CustomCog):
                 f"Przykład poniżej.",
             )
             embed.set_thumbnail(url=interaction.guild_icon_url)
-            embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
-            embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+            embed.set_author(
+                name=interaction.user,
+                icon_url=interaction.user_avatar_url,
+            )
+            embed.set_footer(
+                text=f"Smiffy v{self.bot.__version__}",
+                icon_url=self.bot.avatar_url,
+            )
             embed.set_image(
                 url="https://cdn.discordapp.com/attachments/1015919889720037396/1143255193492922428/Bez_tytuu.png"
             )

@@ -12,12 +12,22 @@ if TYPE_CHECKING:
 
 
 class CommandShip(CustomCog):
-    @slash_command(name="ship", description="Wskaznik shipu w %", dm_permission=False)
+    @slash_command(
+        name="ship",
+        description="Wskaznik shipu w %",
+        dm_permission=False,
+    )
     async def ship(
         self,
         interaction: CustomInteraction,
-        member: Member = SlashOption(name="osoba", description="Podaj pierwszą osobę"),
-        second_member: Member = SlashOption(name="druga_osoba", description="Podaj drugą osobe"),
+        member: Member = SlashOption(
+            name="osoba",
+            description="Podaj pierwszą osobę",
+        ),
+        second_member: Member = SlashOption(
+            name="druga_osoba",
+            description="Podaj drugą osobe",
+        ),
     ):
         await interaction.response.defer()
 

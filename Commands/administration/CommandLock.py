@@ -13,7 +13,9 @@ if TYPE_CHECKING:
 
 class CommandLock(CustomCog):
     @slash_command(
-        name="zablokujkanal", description="Blokuje wybrany kanał", dm_permission=False
+        name="zablokujkanal",
+        description="Blokuje wybrany kanał",
+        dm_permission=False,
     )  # pyright: ignore
     @PermissionHandler(manage_channels=True)
     async def lock(
@@ -32,7 +34,10 @@ class CommandLock(CustomCog):
         if not channel:
             channel = interaction.channel  # pyright: ignore
 
-        await channel.set_permissions(interaction.guild.default_role, send_messages=False)
+        await channel.set_permissions(
+            interaction.guild.default_role,
+            send_messages=False,
+        )
 
         unlock_command_mention: str = interaction.get_command_mention(command_name="odblokujkanal")
 
@@ -63,7 +68,10 @@ class CommandLock(CustomCog):
         if not channel:
             channel = interaction.channel  # pyright: ignore
 
-        await channel.set_permissions(interaction.guild.default_role, send_messages=True)
+        await channel.set_permissions(
+            interaction.guild.default_role,
+            send_messages=True,
+        )
 
         await interaction.send_success_message(
             title=f"Pomyślnie odblokowano kanał {Emojis.GREENBUTTON.value}"

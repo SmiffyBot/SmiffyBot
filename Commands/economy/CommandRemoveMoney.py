@@ -22,8 +22,14 @@ class CommandRemoveMoney(CustomCog):
     async def economy_removemoney(
         self,
         interaction: CustomInteraction,
-        member: Member = SlashOption(name="osoba", description="Podaj osobę której chcesz usunąć balans"),
-        amount: int = SlashOption(name="kwota", description="Podaj kwotę, którą chcesz usunąć"),
+        member: Member = SlashOption(
+            name="osoba",
+            description="Podaj osobę której chcesz usunąć balans",
+        ),
+        amount: int = SlashOption(
+            name="kwota",
+            description="Podaj kwotę, którą chcesz usunąć",
+        ),
     ):
         assert interaction.guild
 
@@ -64,7 +70,10 @@ class CommandRemoveMoney(CustomCog):
             name="`👤` Kwota",
             value=f"{Emojis.REPLY.value} `{amount}$`",
         )
-        embed.set_author(name=self.bot.user, icon_url=self.bot.avatar_url)
+        embed.set_author(
+            name=self.bot.user,
+            icon_url=self.bot.avatar_url,
+        )
         embed.set_thumbnail(url=Avatars.get_guild_icon(member.guild))
 
         try:

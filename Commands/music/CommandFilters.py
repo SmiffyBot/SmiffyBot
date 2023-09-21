@@ -21,7 +21,8 @@ class CommandFilters(CustomCog):
         pass
 
     @music_filters.subcommand(  # pyright: ignore
-        name="bassboost", description="Włącza lub wyłącza efekt bassboost"
+        name="bassboost",
+        description="Włącza lub wyłącza efekt bassboost",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_bassboost(
@@ -30,7 +31,10 @@ class CommandFilters(CustomCog):
         status: str = SlashOption(
             name="status",
             description="Włącz lub wyłącz efekt bassboost",
-            choices={"Włącz": "on", "Wyłącz": "off"},
+            choices={
+                "Włącz": "on",
+                "Wyłącz": "off",
+            },
         ),
     ):
         assert interaction.guild
@@ -70,7 +74,11 @@ class CommandFilters(CustomCog):
             )
 
             filter_equalizer = Filter(equalizer=equalizer)
-            await player.add_filter(filter_equalizer, label="bassboost", fast_apply=True)
+            await player.add_filter(
+                filter_equalizer,
+                label="bassboost",
+                fast_apply=True,
+            )
             await interaction.send_success_message(
                 title=f"Pomyślnie zaktualizowano {Emojis.GREENBUTTON.value}",
                 description=f"{Emojis.REPLY.value} Włączono efekt bassboost.",
@@ -78,7 +86,10 @@ class CommandFilters(CustomCog):
 
         else:
             try:
-                await player.remove_filter(label="bassboost", fast_apply=True)
+                await player.remove_filter(
+                    label="bassboost",
+                    fast_apply=True,
+                )
             except KeyError:
                 return await interaction.send_error_message(
                     description="Filtr bassboost nie jest aktualnie włączony.",
@@ -89,7 +100,10 @@ class CommandFilters(CustomCog):
                 description=f"{Emojis.REPLY.value} Wyłączono efekt bassboost.",
             )
 
-    @music_filters.subcommand(name="8d", description="Włącza lub wyłącza efekt 8D")  # pyright: ignore
+    @music_filters.subcommand(
+        name="8d",
+        description="Włącza lub wyłącza efekt 8D",
+    )  # pyright: ignore
     @PermissionHandler(user_role_has_permission="music")
     async def music_8d(
         self,
@@ -97,7 +111,10 @@ class CommandFilters(CustomCog):
         status: str = SlashOption(
             name="status",
             description="Włącz lub wyłącz efekt 8D",
-            choices={"Włącz": "on", "Wyłącz": "off"},
+            choices={
+                "Włącz": "on",
+                "Wyłącz": "off",
+            },
         ),
     ):
         assert interaction.guild
@@ -118,7 +135,11 @@ class CommandFilters(CustomCog):
             rotation = Rotation(rotation_hz=0.15)
             filter_rotation = Filter(rotation=rotation)
 
-            await player.add_filter(filter_rotation, label="8d", fast_apply=True)
+            await player.add_filter(
+                filter_rotation,
+                label="8d",
+                fast_apply=True,
+            )
             await interaction.send_success_message(
                 title=f"Pomyślnie zaktualizowano {Emojis.GREENBUTTON.value}",
                 description=f"{Emojis.REPLY.value} Włączono efekt 8D.",
@@ -138,7 +159,8 @@ class CommandFilters(CustomCog):
             )
 
     @music_filters.subcommand(  # pyright: ignore
-        name="nightcore", description="Włącza lub wyłącza efekt nightcore"
+        name="nightcore",
+        description="Włącza lub wyłącza efekt nightcore",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_nightcore(
@@ -147,7 +169,10 @@ class CommandFilters(CustomCog):
         status: str = SlashOption(
             name="status",
             description="Włącz lub wyłącz efekt bassboost",
-            choices={"Włącz": "on", "Wyłącz": "off"},
+            choices={
+                "Włącz": "on",
+                "Wyłącz": "off",
+            },
         ),
     ):
         assert interaction.guild
@@ -168,7 +193,11 @@ class CommandFilters(CustomCog):
             timescale = Timescale(speed=1.1, pitch=1.2, rate=1.2)
 
             filter_timescale = Filter(timescale=timescale)
-            await player.add_filter(filter_timescale, label="nightcore", fast_apply=True)
+            await player.add_filter(
+                filter_timescale,
+                label="nightcore",
+                fast_apply=True,
+            )
 
             await interaction.send_success_message(
                 title=f"Pomyślnie zaktualizowano {Emojis.GREENBUTTON.value}",
@@ -177,7 +206,10 @@ class CommandFilters(CustomCog):
 
         else:
             try:
-                await player.remove_filter(label="nightcore", fast_apply=True)
+                await player.remove_filter(
+                    label="nightcore",
+                    fast_apply=True,
+                )
             except KeyError:
                 return await interaction.send_error_message(
                     description="Filtr nightcore nie jest aktualnie włączony.",

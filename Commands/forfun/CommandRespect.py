@@ -21,7 +21,10 @@ class CommandRespect(CustomCog):
     async def respect(
         self,
         interaction: CustomInteraction,
-        member: Member = SlashOption(name="osoba", description="Podaj osobę"),
+        member: Member = SlashOption(
+            name="osoba",
+            description="Podaj osobę",
+        ),
     ):
         await interaction.response.defer()
 
@@ -30,7 +33,9 @@ class CommandRespect(CustomCog):
         )
 
         response: Optional[ClientResponse] = await self.bot.session.send_api_request(
-            interaction=interaction, url=api_url, method="GET"
+            interaction=interaction,
+            url=api_url,
+            method="GET",
         )
 
         if not response:

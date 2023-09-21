@@ -45,7 +45,9 @@ class DeleteMessageView(ui.View):
         custom_id="antylink-deletemessage",
     )
     async def cancel(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         await interaction.response.defer()
 
@@ -81,7 +83,12 @@ class Punishments:
 
         self.view_message: DeleteMessageView = DeleteMessageView()
 
-    async def unban_member(self, guild: Guild, member: Member, duration: float) -> None:
+    async def unban_member(
+        self,
+        guild: Guild,
+        member: Member,
+        duration: float,
+    ) -> None:
         ban_duration: int = int(now() + duration) + 7200
 
         await self.bot.db.execute_fetchone(
@@ -93,7 +100,10 @@ class Punishments:
 
         try:
             await guild.unban(user=member)
-        except (errors.HTTPException, errors.Forbidden):
+        except (
+            errors.HTTPException,
+            errors.Forbidden,
+        ):
             pass
 
         await self.bot.db.execute_fetchone(
@@ -102,17 +112,25 @@ class Punishments:
         )
 
     async def handle_warning_punishment(
-        self, punishment_data: dict[str, tuple[str, str]], member_warns: dict
+        self,
+        punishment_data: dict[str, tuple[str, str]],
+        member_warns: dict,
     ):
         embed = Embed(
             title="`🛠️` Kary za ostrzeżenia",
             timestamp=utils.utcnow(),
             color=Color.dark_theme(),
         )
-        embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+        embed.set_author(
+            name=self.user,
+            icon_url=Avatars.get_user_avatar(self.user),
+        )
         embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
-        for warn_count, action_data in punishment_data.items():
+        for (
+            warn_count,
+            action_data,
+        ) in punishment_data.items():
             if int(warn_count) == len(member_warns):
                 action, time = action_data
 
@@ -143,10 +161,16 @@ class Punishments:
                             inline=False,
                         )
 
-                        pv_embed.add_field(name="`⏱️` Czas", value=f"{Emojis.REPLY.value} `{time}`")
+                        pv_embed.add_field(
+                            name="`⏱️` Czas",
+                            value=f"{Emojis.REPLY.value} `{time}`",
+                        )
 
                         pv_embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
-                        pv_embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+                        pv_embed.set_author(
+                            name=self.user,
+                            icon_url=Avatars.get_user_avatar(self.user),
+                        )
 
                         embed.set_footer(
                             text=f"Smiffy v{self.bot.__version__}",
@@ -164,7 +188,10 @@ class Punishments:
                         )
 
                         try:
-                            await self.message.channel.send(embed=embed, view=self.view_message)
+                            await self.message.channel.send(
+                                embed=embed,
+                                view=self.view_message,
+                            )
                         except errors.Forbidden:
                             pass
 
@@ -176,12 +203,21 @@ class Punishments:
                             description=f"{Emojis.REPLY.value} Bot nie mógł nadać kary: `Mute` za `{warn_count}` "
                             f"warny. \n\n*Użytkownik posiada większe uprawnienia od bota.*",
                         )
-                        embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+                        embed.set_author(
+                            name=self.user,
+                            icon_url=Avatars.get_user_avatar(self.user),
+                        )
                         embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
                         try:
-                            await self.message.channel.send(embed=embed, view=self.view_message)
-                        except (errors.Forbidden, errors.HTTPException):
+                            await self.message.channel.send(
+                                embed=embed,
+                                view=self.view_message,
+                            )
+                        except (
+                            errors.Forbidden,
+                            errors.HTTPException,
+                        ):
                             pass
 
                     return
@@ -201,7 +237,10 @@ class Punishments:
                             timestamp=utils.utcnow(),
                             color=Color.red(),
                         )
-                        pv_embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+                        pv_embed.set_author(
+                            name=self.user,
+                            icon_url=Avatars.get_user_avatar(self.user),
+                        )
                         pv_embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
                         pv_embed.add_field(
@@ -220,7 +259,10 @@ class Punishments:
                             inline=False,
                         )
 
-                        pv_embed.add_field(name="`⏱️` Czas", value=f"{Emojis.REPLY.value} `{time}`")
+                        pv_embed.add_field(
+                            name="`⏱️` Czas",
+                            value=f"{Emojis.REPLY.value} `{time}`",
+                        )
 
                         pv_embed.set_footer(
                             text=f"Smiffy v{self.bot.__version__}",
@@ -234,7 +276,11 @@ class Punishments:
 
                         await self.user.ban(reason="KaryWarny - Smiffy")
 
-                        await self.unban_member(self.guild, self.user, duration)
+                        await self.unban_member(
+                            self.guild,
+                            self.user,
+                            duration,
+                        )
 
                         embed.description = (
                             f"{Emojis.REPLY.value} {self.user.mention} otrzymał karę: `TempBan` za "
@@ -242,11 +288,17 @@ class Punishments:
                         )
 
                         try:
-                            await self.message.channel.send(embed=embed, view=self.view_message)
+                            await self.message.channel.send(
+                                embed=embed,
+                                view=self.view_message,
+                            )
                         except errors.Forbidden:
                             pass
 
-                    except (errors.Forbidden, KeyError):
+                    except (
+                        errors.Forbidden,
+                        KeyError,
+                    ):
                         embed = Embed(
                             title=f"{Emojis.REDBUTTON.value} Wystąpił błąd.",
                             colour=Color.red(),
@@ -254,12 +306,21 @@ class Punishments:
                             description=f"{Emojis.REPLY.value} Bot nie mógł nadać kary: `TempBan` za `{warn_count}`"
                             f" warny. \n\n*Użytkownik posiada większe uprawnienia od bota.*",
                         )
-                        embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+                        embed.set_author(
+                            name=self.user,
+                            icon_url=Avatars.get_user_avatar(self.user),
+                        )
                         embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
                         try:
-                            await self.message.channel.send(embed=embed, view=self.view_message)
-                        except (errors.Forbidden, errors.HTTPException):
+                            await self.message.channel.send(
+                                embed=embed,
+                                view=self.view_message,
+                            )
+                        except (
+                            errors.Forbidden,
+                            errors.HTTPException,
+                        ):
                             pass
 
                     return
@@ -277,7 +338,10 @@ class Punishments:
                             timestamp=utils.utcnow(),
                             color=Color.red(),
                         )
-                        pv_embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+                        pv_embed.set_author(
+                            name=self.user,
+                            icon_url=Avatars.get_user_avatar(self.user),
+                        )
                         pv_embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
                         pv_embed.add_field(
@@ -314,11 +378,17 @@ class Punishments:
                         )
 
                         try:
-                            await self.message.channel.send(embed=embed, view=self.view_message)
+                            await self.message.channel.send(
+                                embed=embed,
+                                view=self.view_message,
+                            )
                         except errors.Forbidden:
                             pass
 
-                    except (errors.Forbidden, KeyError):
+                    except (
+                        errors.Forbidden,
+                        KeyError,
+                    ):
                         embed = Embed(
                             title=f"{Emojis.REDBUTTON.value} Wystąpił błąd.",
                             colour=Color.red(),
@@ -326,12 +396,21 @@ class Punishments:
                             description=f"{Emojis.REPLY.value} Bot nie mógł nadać kary: `Kick` za `{warn_count}`"
                             f" warny. \n\n*Użytkownik posiada większe uprawnienia od bota.*",
                         )
-                        embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+                        embed.set_author(
+                            name=self.user,
+                            icon_url=Avatars.get_user_avatar(self.user),
+                        )
                         embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
                         try:
-                            await self.message.channel.send(embed=embed, view=self.view_message)
-                        except (errors.Forbidden, errors.HTTPException):
+                            await self.message.channel.send(
+                                embed=embed,
+                                view=self.view_message,
+                            )
+                        except (
+                            errors.Forbidden,
+                            errors.HTTPException,
+                        ):
                             pass
 
                     return
@@ -349,7 +428,10 @@ class Punishments:
                             timestamp=utils.utcnow(),
                             color=Color.red(),
                         )
-                        pv_embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+                        pv_embed.set_author(
+                            name=self.user,
+                            icon_url=Avatars.get_user_avatar(self.user),
+                        )
                         pv_embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
                         pv_embed.add_field(
@@ -386,11 +468,17 @@ class Punishments:
                         )
 
                         try:
-                            await self.message.channel.send(embed=embed, view=self.view_message)
+                            await self.message.channel.send(
+                                embed=embed,
+                                view=self.view_message,
+                            )
                         except errors.Forbidden:
                             pass
 
-                    except (errors.Forbidden, KeyError):
+                    except (
+                        errors.Forbidden,
+                        KeyError,
+                    ):
                         embed = Embed(
                             title=f"{Emojis.REDBUTTON.value} Wystąpił błąd.",
                             colour=Color.red(),
@@ -398,12 +486,21 @@ class Punishments:
                             description=f"{Emojis.REPLY.value} Bot nie mógł nadać kary: `Ban` za `{warn_count}`"
                             f" warny. \n\n*Użytkownik posiada większe uprawnienia od bota.*",
                         )
-                        embed.set_author(name=self.user, icon_url=self.user.display_avatar.url)
+                        embed.set_author(
+                            name=self.user,
+                            icon_url=self.user.display_avatar.url,
+                        )
                         embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
                         try:
-                            await self.message.channel.send(embed=embed, view=self.view_message)
-                        except (errors.Forbidden, errors.HTTPException):
+                            await self.message.channel.send(
+                                embed=embed,
+                                view=self.view_message,
+                            )
+                        except (
+                            errors.Forbidden,
+                            errors.HTTPException,
+                        ):
                             pass
 
                     return
@@ -421,18 +518,30 @@ class Punishments:
                 timestamp=utils.utcnow(),
                 color=Color.red(),
             )
-            embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+            embed.set_author(
+                name=self.user,
+                icon_url=Avatars.get_user_avatar(self.user),
+            )
             embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
-            embed.add_field(name="`👤` Administrator", value=f"{Emojis.REPLY.value} `Smiffy`")
+            embed.add_field(
+                name="`👤` Administrator",
+                value=f"{Emojis.REPLY.value} `Smiffy`",
+            )
             embed.add_field(
                 name="`🗨️` Powód",
                 value=f"{Emojis.REPLY.value} `System Antylink`",
                 inline=False,
             )
-            embed.add_field(name="`📌` Serwer", value=f"{Emojis.REPLY.value} `{self.guild.name}`")
+            embed.add_field(
+                name="`📌` Serwer",
+                value=f"{Emojis.REPLY.value} `{self.guild.name}`",
+            )
 
-            embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{self.bot.__version__}",
+                icon_url=self.bot.avatar_url,
+            )
 
             try:
                 await self.user.send(embed=embed)
@@ -449,12 +558,21 @@ class Punishments:
                 description=f"{Emojis.REPLY.value} Bot nie mógł nadać kary: `Kick` osobie: {self.user.mention}."
                 f"\n\n*Użytkownik posiada większe uprawnienia od bota.*",
             )
-            embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+            embed.set_author(
+                name=self.user,
+                icon_url=Avatars.get_user_avatar(self.user),
+            )
             embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
             try:
-                await self.message.channel.send(embed=embed, view=self.view_message)
-            except (errors.Forbidden, errors.HTTPException):
+                await self.message.channel.send(
+                    embed=embed,
+                    view=self.view_message,
+                )
+            except (
+                errors.Forbidden,
+                errors.HTTPException,
+            ):
                 pass
             return
 
@@ -464,12 +582,21 @@ class Punishments:
             timestamp=utils.utcnow(),
             color=Color.dark_theme(),
         )
-        embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+        embed.set_author(
+            name=self.user,
+            icon_url=Avatars.get_user_avatar(self.user),
+        )
         embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
         try:
-            await self.message.channel.send(embed=embed, view=self.view_message)
-        except (errors.Forbidden, errors.HTTPException):
+            await self.message.channel.send(
+                embed=embed,
+                view=self.view_message,
+            )
+        except (
+            errors.Forbidden,
+            errors.HTTPException,
+        ):
             pass
 
     async def ban(self):
@@ -485,18 +612,30 @@ class Punishments:
                 timestamp=utils.utcnow(),
                 color=Color.red(),
             )
-            embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+            embed.set_author(
+                name=self.user,
+                icon_url=Avatars.get_user_avatar(self.user),
+            )
             embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
-            embed.add_field(name="`👤` Administrator", value=f"{Emojis.REPLY.value} `Smiffy`")
+            embed.add_field(
+                name="`👤` Administrator",
+                value=f"{Emojis.REPLY.value} `Smiffy`",
+            )
             embed.add_field(
                 name="`🗨️` Powód",
                 value=f"{Emojis.REPLY.value} `System Antylink`",
                 inline=False,
             )
-            embed.add_field(name="`📌` Serwer", value=f"{Emojis.REPLY.value} `{self.guild.name}`")
+            embed.add_field(
+                name="`📌` Serwer",
+                value=f"{Emojis.REPLY.value} `{self.guild.name}`",
+            )
 
-            embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+            embed.set_footer(
+                text=f"Smiffy v{self.bot.__version__}",
+                icon_url=self.bot.avatar_url,
+            )
 
             try:
                 await self.user.send(embed=embed)
@@ -513,12 +652,21 @@ class Punishments:
                 description=f"{Emojis.REPLY.value} Bot nie mógł nadać kary: `Ban` osobie: {self.user.mention}."
                 f"\n\n*Użytkownik posiada większe uprawnienia od bota.*",
             )
-            embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+            embed.set_author(
+                name=self.user,
+                icon_url=Avatars.get_user_avatar(self.user),
+            )
             embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
             try:
-                await self.message.channel.send(embed=embed, view=self.view_message)
-            except (errors.Forbidden, errors.HTTPException):
+                await self.message.channel.send(
+                    embed=embed,
+                    view=self.view_message,
+                )
+            except (
+                errors.Forbidden,
+                errors.HTTPException,
+            ):
                 pass
 
             return
@@ -529,12 +677,21 @@ class Punishments:
             timestamp=utils.utcnow(),
             color=Color.dark_theme(),
         )
-        embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+        embed.set_author(
+            name=self.user,
+            icon_url=Avatars.get_user_avatar(self.user),
+        )
         embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
         try:
-            await self.message.channel.send(embed=embed, view=self.view_message)
-        except (errors.Forbidden, errors.HTTPException):
+            await self.message.channel.send(
+                embed=embed,
+                view=self.view_message,
+            )
+        except (
+            errors.Forbidden,
+            errors.HTTPException,
+        ):
             pass
 
     async def add_warn(self):
@@ -553,12 +710,21 @@ class Punishments:
                 description=f"{Emojis.REPLY.value} Bot nie mógł nadać kary: `Warn` osobie: {self.user.mention}."
                 f"\n\n*Użytkownik posiada większe uprawnienia od bota.*",
             )
-            embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+            embed.set_author(
+                name=self.user,
+                icon_url=Avatars.get_user_avatar(self.user),
+            )
             embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
             try:
-                await self.message.channel.send(embed=embed, view=self.view_message)
-            except (errors.Forbidden, errors.HTTPException):
+                await self.message.channel.send(
+                    embed=embed,
+                    view=self.view_message,
+                )
+            except (
+                errors.Forbidden,
+                errors.HTTPException,
+            ):
                 pass
 
             return
@@ -578,12 +744,21 @@ class Punishments:
                     timestamp=utils.utcnow(),
                     description=f"{Emojis.REPLY.value} Osoba {self.user.mention} osiągnęła limit `50` ostrzeżeń.",
                 )
-                embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+                embed.set_author(
+                    name=self.user,
+                    icon_url=Avatars.get_user_avatar(self.user),
+                )
                 embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
                 try:
-                    await self.message.channel.send(embed=embed, view=self.view_message)
-                except (errors.Forbidden, errors.HTTPException):
+                    await self.message.channel.send(
+                        embed=embed,
+                        view=self.view_message,
+                    )
+                except (
+                    errors.Forbidden,
+                    errors.HTTPException,
+                ):
                     pass
                 return
 
@@ -596,7 +771,11 @@ class Punishments:
 
             await self.bot.db.execute_fetchone(
                 "UPDATE warnings SET warns = ? WHERE guild_id = ? and user_id = ?",
-                (str(member_warns), self.guild.id, self.user.id),
+                (
+                    str(member_warns),
+                    self.guild.id,
+                    self.user.id,
+                ),
             )
 
         else:
@@ -606,7 +785,11 @@ class Punishments:
 
             await self.bot.db.execute_fetchone(
                 "INSERT INTO warnings(guild_id, user_id, warns) VALUES(?,?,?)",
-                (self.guild.id, self.user.id, str(new_warn)),
+                (
+                    self.guild.id,
+                    self.user.id,
+                    str(new_warn),
+                ),
             )
 
         embed = Embed(
@@ -615,16 +798,26 @@ class Punishments:
             timestamp=utils.utcnow(),
             color=Color.dark_theme(),
         )
-        embed.set_author(name=self.user, icon_url=Avatars.get_user_avatar(self.user))
+        embed.set_author(
+            name=self.user,
+            icon_url=Avatars.get_user_avatar(self.user),
+        )
         embed.set_thumbnail(url=Avatars.get_guild_icon(self.guild))
 
         try:
-            await self.message.channel.send(embed=embed, view=self.view_message)
-        except (errors.Forbidden, errors.HTTPException):
+            await self.message.channel.send(
+                embed=embed,
+                view=self.view_message,
+            )
+        except (
+            errors.Forbidden,
+            errors.HTTPException,
+        ):
             pass
 
         warnings_punishments_response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM warnings_punishments WHERE guild_id = ?", (self.guild.id,)
+            "SELECT * FROM warnings_punishments WHERE guild_id = ?",
+            (self.guild.id,),
         )
 
         if not warnings_punishments_response:
@@ -655,14 +848,18 @@ class OnMessageEvent(CustomCog):
 
         if not message.author.guild_permissions.manage_messages:
             response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-                "SELECT * FROM antylink WHERE guild_id = ?", (message.guild.id,)
+                "SELECT * FROM antylink WHERE guild_id = ?",
+                (message.guild.id,),
             )
             if response:
                 result: Optional[Match] = search(self.regex, message.content)
                 if result:
                     punishments: Punishments = Punishments(message, self.bot)
 
-                    punishments_data: dict[str, Callable[[], Awaitable[None]]] = {
+                    punishments_data: dict[
+                        str,
+                        Callable[[], Awaitable[None]],
+                    ] = {
                         "kick": punishments.kick,
                         "ban": punishments.ban,
                         "warn": punishments.add_warn,
@@ -704,7 +901,8 @@ class OnMessageEvent(CustomCog):
 
         if not message.author.guild_permissions.manage_messages:
             response_antyflood: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-                "SELECT * FROM antyflood WHERE guild_id = ?", (message.guild.id,)
+                "SELECT * FROM antyflood WHERE guild_id = ?",
+                (message.guild.id,),
             )
             if response_antyflood:
                 same_message: int = 0
@@ -750,7 +948,10 @@ class OnMessageEvent(CustomCog):
             timestamp=utils.utcnow(),
         )
         embed.set_thumbnail(url=self.avatars.get_guild_icon(message.guild))
-        embed.set_author(name=message.author, icon_url=self.avatars.get_user_avatar(message.author))
+        embed.set_author(
+            name=message.author,
+            icon_url=self.avatars.get_user_avatar(message.author),
+        )
         embed.set_footer(text="Głosowanie: 0%")
 
         suggestion_message: Message = await message.channel.send(embed=embed)
@@ -766,7 +967,8 @@ class OnMessageEvent(CustomCog):
 
         if comments == "on":
             thread: Thread = await suggestion_message.create_thread(
-                name="Komentarze", auto_archive_duration=1440
+                name="Komentarze",
+                auto_archive_duration=1440,
             )
             await thread.send(content="W tym wątku możecie dodawać komentarze dotyczące propozycji.")
 
@@ -774,7 +976,8 @@ class OnMessageEvent(CustomCog):
         assert message.guild
 
         response_responder: Iterable[DB_RESPONSE] = await self.bot.db.execute_fetchall(
-            "SELECT * FROM autoresponder WHERE guild_id = ?", (message.guild.id,)
+            "SELECT * FROM autoresponder WHERE guild_id = ?",
+            (message.guild.id,),
         )
         file: Optional[File] = None
 
@@ -782,7 +985,10 @@ class OnMessageEvent(CustomCog):
             for data in response_responder:
                 if data[4]:
                     image_data: BytesIO = BytesIO(data[4])
-                    file = File(image_data, "autoresponder.png")
+                    file = File(
+                        image_data,
+                        "autoresponder.png",
+                    )
 
                 if data[2] == "in" and data[1].lower() in message.content.lower():
                     await message.reply(content=data[3], file=file)
@@ -803,25 +1009,37 @@ class OnMessageEvent(CustomCog):
             content = (
                 content.replace("{level}", str(new_level))
                 .replace("{user}", message.author.name)
-                .replace("{user.mention}", message.author.mention)
+                .replace(
+                    "{user.mention}",
+                    message.author.mention,
+                )
             )
 
             return content
 
         response_levels_data: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM levels WHERE guild_id = ?", (message.guild.id,)
+            "SELECT * FROM levels WHERE guild_id = ?",
+            (message.guild.id,),
         )
 
         if response_levels_data:
             response_users_data: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
                 "SELECT * FROM levels_users WHERE guild_id = ? AND user_id = ?",
-                (message.guild.id, message.author.id),
+                (
+                    message.guild.id,
+                    message.author.id,
+                ),
             )
 
             if not response_users_data:
                 await self.bot.db.execute_fetchone(
                     "INSERT INTO levels_users(guild_id, user_id, level, xp) VALUES(?,?,?,?)",
-                    (message.guild.id, message.author.id, 1, 0),
+                    (
+                        message.guild.id,
+                        message.author.id,
+                        1,
+                        0,
+                    ),
                 )
                 return
 
@@ -831,19 +1049,30 @@ class OnMessageEvent(CustomCog):
             if response_levels_data[3]:  # multiplier data
                 multiplier_data: dict[int, int] = literal_eval(response_levels_data[3])
 
-                for role_id, role_multiplier in multiplier_data.items():
+                for (
+                    role_id,
+                    role_multiplier,
+                ) in multiplier_data.items():
                     if role_id in user_roles_id:
                         if role_multiplier > multiplier:
                             multiplier = role_multiplier
 
-            level, xp = response_users_data[2], response_users_data[3]
+            level, xp = (
+                response_users_data[2],
+                response_users_data[3],
+            )
             xp += multiplier
             next_level_xp: int = level * 50
 
             if xp < next_level_xp:
                 await self.bot.db.execute_fetchone(
                     "UPDATE levels_users SET xp = ?, level = ? WHERE guild_id = ? AND user_id = ?",
-                    (xp, level, message.guild.id, message.author.id),
+                    (
+                        xp,
+                        level,
+                        message.guild.id,
+                        message.author.id,
+                    ),
                 )
                 return
 
@@ -852,7 +1081,12 @@ class OnMessageEvent(CustomCog):
 
             await self.bot.db.execute_fetchone(
                 "UPDATE levels_users SET xp = ?, level = ? WHERE guild_id = ? AND user_id = ?",
-                (xp, level, message.guild.id, message.author.id),
+                (
+                    xp,
+                    level,
+                    message.guild.id,
+                    message.author.id,
+                ),
             )
 
             if response_levels_data[2]:  # notify data
@@ -895,19 +1129,28 @@ class OnMessageEvent(CustomCog):
             if response_levels_data[1]:  # roles_data
                 roles_data: dict[int, int] = literal_eval(response_levels_data[1])
 
-                for role_level, role_id in roles_data.items():
+                for (
+                    role_level,
+                    role_id,
+                ) in roles_data.items():
                     if role_level == level:
                         role_mention: str = "Deleted role"
 
                         try:
-                            role: Optional[Role] = await self.bot.getch_role(message.guild, role_id)
+                            role: Optional[Role] = await self.bot.getch_role(
+                                message.guild,
+                                role_id,
+                            )
 
                             if not role:
                                 raise AttributeError
 
                             role_mention: str = role.mention
 
-                            await message.author.add_roles(role, reason="Levelowanie - Smiffy")
+                            await message.author.add_roles(
+                                role,
+                                reason="Levelowanie - Smiffy",
+                            )
 
                         except errors.Forbidden:
                             embed = Embed(
@@ -929,7 +1172,10 @@ class OnMessageEvent(CustomCog):
                             except errors.Forbidden:
                                 pass
 
-                        except (AttributeError, errors.NotFound):
+                        except (
+                            AttributeError,
+                            errors.NotFound,
+                        ):
                             embed = Embed(
                                 title=f"{Emojis.REDBUTTON.value} Wystąpił błąd.",
                                 color=Color.red(),
@@ -970,7 +1216,8 @@ class OnMessageEvent(CustomCog):
             return
 
         suggestions_response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM suggestions WHERE guild_id = ?", (message.guild.id,)
+            "SELECT * FROM suggestions WHERE guild_id = ?",
+            (message.guild.id,),
         )
 
         if suggestions_response and suggestions_response[1] == message.channel.id:

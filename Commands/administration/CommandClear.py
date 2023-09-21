@@ -22,9 +22,14 @@ if TYPE_CHECKING:
 
 class CommandClear(CustomCog):
     @slash_command(
-        name="clear", description="Usuń masowo wiadomości z kanału", dm_permission=False
+        name="clear",
+        description="Usuń masowo wiadomości z kanału",
+        dm_permission=False,
     )  # pyright: ignore
-    @PermissionHandler(ban_members=True, user_role_has_permission="clear")
+    @PermissionHandler(
+        ban_members=True,
+        user_role_has_permission="clear",
+    )
     async def clear(
         self,
         interaction: CustomInteraction,
@@ -40,7 +45,10 @@ class CommandClear(CustomCog):
                 description="Wystąpił nieoczekiwany błąd. Spróbuj ponownie."
             )
 
-        assert isinstance(interaction.channel, (Thread, TextChannel))
+        assert isinstance(
+            interaction.channel,
+            (Thread, TextChannel),
+        )
         # Type checking stuff
 
         if times > 1000 or times < 1:
@@ -48,7 +56,10 @@ class CommandClear(CustomCog):
                 "**Podałeś/aś zbyt małą lub zbyt dużą ilość.**\n> Min `1` -> Max `1000`"
             )
 
-        await interaction.send_success_message(title="Rozpoczynam usuwanie...", ephemeral=True)
+        await interaction.send_success_message(
+            title="Rozpoczynam usuwanie...",
+            ephemeral=True,
+        )
 
         try:
             await interaction.channel.purge(limit=times)
@@ -63,7 +74,10 @@ class CommandClear(CustomCog):
         )
         embed.set_thumbnail(url=interaction.guild_icon_url)
         embed.set_footer(text="Wiadomość zostanie usunięta za 10s")
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         await interaction.channel.send(embed=embed, delete_after=10)
 
 

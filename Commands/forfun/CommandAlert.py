@@ -13,11 +13,19 @@ if TYPE_CHECKING:
 
 
 class CommandAlert(CustomCog):
-    @slash_command(name="alert", description="Tworzy obrazek z alertem", dm_permission=False)
+    @slash_command(
+        name="alert",
+        description="Tworzy obrazek z alertem",
+        dm_permission=False,
+    )
     async def alert(
         self,
         interaction: CustomInteraction,
-        text: str = SlashOption(name="tekst", description="Podaj tekst alertu", max_length=80),
+        text: str = SlashOption(
+            name="tekst",
+            description="Podaj tekst alertu",
+            max_length=80,
+        ),
     ):
         await interaction.response.defer()
 

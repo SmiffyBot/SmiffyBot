@@ -31,9 +31,16 @@ class CommandDog(CustomCog):
 
         data = await response.json()
 
-        embed = Embed(title="Oto Twój piesek.", timestamp=utils.utcnow(), color=Color.dark_theme())
+        embed = Embed(
+            title="Oto Twój piesek.",
+            timestamp=utils.utcnow(),
+            color=Color.dark_theme(),
+        )
         embed.set_image(url=data["image"])
-        embed.set_footer(text=f"{interaction.user}", icon_url=interaction.user_avatar_url)
+        embed.set_footer(
+            text=f"{interaction.user}",
+            icon_url=interaction.user_avatar_url,
+        )
         await interaction.send(embed=embed)
 
 

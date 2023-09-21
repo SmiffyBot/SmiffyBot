@@ -26,7 +26,11 @@ from utilities import (
 
 
 class ReplyTextModal(ui.Modal):
-    def __init__(self, command_name: str, command_description: str):
+    def __init__(
+        self,
+        command_name: str,
+        command_description: str,
+    ):
         super().__init__(title="Odpowiedź komendy")
 
         self.text_input = ui.TextInput(
@@ -74,7 +78,14 @@ class ReplyTextModal(ui.Modal):
 
 
 class SlashCommand(SlashApplicationCommand):
-    def __init__(self, name: str, description: str, reply_text: str, guild: Guild, bot: Smiffy):
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        reply_text: str,
+        guild: Guild,
+        bot: Smiffy,
+    ):
         super().__init__(
             name=name,
             description=description,
@@ -103,7 +114,12 @@ class SlashCommand(SlashApplicationCommand):
         if not response:
             response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
                 "INSERT INTO local_commands(guild_id, command_name, command_description, reply_text) VALUES(?,?,?,?)",
-                (self.guild.id, self.name, self.description, self.reply_text),
+                (
+                    self.guild.id,
+                    self.name,
+                    self.description,
+                    self.reply_text,
+                ),
             )
 
         self.guild.add_application_command(self, overwrite=True, use_rollout=True)
@@ -127,7 +143,8 @@ class CommandLocalCommands(CustomCog):
 
             if not guild:
                 await self.bot.db.execute_fetchone(
-                    "DELETE FROM local_commands WHERE guild_id = ?", (guild_id,)
+                    "DELETE FROM local_commands WHERE guild_id = ?",
+                    (guild_id,),
                 )
                 continue
 
@@ -160,12 +177,19 @@ class CommandLocalCommands(CustomCog):
     async def local_commands(self, interaction: CustomInteraction) -> None:
         pass
 
-    @local_commands.subcommand(name="stwórz", description="Tworzy nową lokalną komende")  # pyright: ignore
+    @local_commands.subcommand(
+        name="stwórz",
+        description="Tworzy nową lokalną komende",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def local_command_create(
         self,
         interaction: CustomInteraction,
-        name: str = SlashOption(name="nazwa_komendy", description="Podaj nazwę komendy", max_length=32),
+        name: str = SlashOption(
+            name="nazwa_komendy",
+            description="Podaj nazwę komendy",
+            max_length=32,
+        ),
         description: str = SlashOption(
             name="opis_komendy",
             description="Opis komendy będzie widoczny " "podczas jej wpisywania",
@@ -187,7 +211,8 @@ class CommandLocalCommands(CustomCog):
         for command_data in response:
             if command_data[0] == name:
                 command_mention: str = interaction.get_command_mention(
-                    command_name=name, guild=interaction.guild
+                    command_name=name,
+                    guild=interaction.guild,
                 )
 
                 return await interaction.send_error_message(
@@ -211,13 +236,18 @@ class CommandLocalCommands(CustomCog):
         modal: ReplyTextModal = ReplyTextModal(name, description)
         await interaction.response.send_modal(modal)
 
-    @local_commands.subcommand(name="usuń", description="Usuwa lokalną komende")  # pyright: ignore
+    @local_commands.subcommand(
+        name="usuń",
+        description="Usuwa lokalną komende",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def local_command_delete(
         self,
         interaction: CustomInteraction,
         command_name: str = SlashOption(
-            name="nazwa_komendy", description="Podaj nazwę komendy", max_length=32
+            name="nazwa_komendy",
+            description="Podaj nazwę komendy",
+            max_length=32,
         ),
     ):
         await interaction.response.defer()
@@ -241,7 +271,10 @@ class CommandLocalCommands(CustomCog):
 
                 await self.bot.db.execute_fetchone(
                     "DELETE FROM local_commands WHERE guild_id = ? AND command_name = ?",
-                    (interaction.guild.id, command_name),
+                    (
+                        interaction.guild.id,
+                        command_name,
+                    ),
                 )
 
                 return await interaction.send_success_message(
@@ -253,7 +286,11 @@ class CommandLocalCommands(CustomCog):
         return await interaction.send_error_message(description="Podana komenda nie istnieje.")
 
     @local_command_delete.on_autocomplete("command_name")
-    async def search_commands(self, interaction: CustomInteraction, search: str) -> Optional[list[str]]:
+    async def search_commands(
+        self,
+        interaction: CustomInteraction,
+        search: str,
+    ) -> Optional[list[str]]:
         assert interaction.guild
 
         response: Iterable[DB_RESPONSE] = await self.bot.db.execute_fetchall(
@@ -270,7 +307,10 @@ class CommandLocalCommands(CustomCog):
         ]
         return get_near_command
 
-    @local_commands.subcommand(name="lista", description="Lista lokalnych komend")  # pyright: ignore
+    @local_commands.subcommand(
+        name="lista",
+        description="Lista lokalnych komend",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def local_commands_list(self, interaction: CustomInteraction):
         commands: Iterable[DB_RESPONSE] = await self.bot.db.execute_fetchall("SELECT * FROM local_commands")
@@ -285,12 +325,16 @@ class CommandLocalCommands(CustomCog):
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
         for command_data in commands:
             command_mention: str = interaction.get_command_mention(
-                command_name=command_data[1], guild=interaction.guild
+                command_name=command_data[1],
+                guild=interaction.guild,
             )
 
             command_description: str = command_data[2]

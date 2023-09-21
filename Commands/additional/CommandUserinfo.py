@@ -16,7 +16,11 @@ if TYPE_CHECKING:
 
 class CommandUserInfo(CustomCog):
     @user_command(name="userinfo")
-    async def userinfo_application(self, interaction: CustomInteraction, member: Member) -> None:
+    async def userinfo_application(
+        self,
+        interaction: CustomInteraction,
+        member: Member,
+    ) -> None:
         await self.userinfo(interaction, member)
 
     @slash_command(
@@ -24,7 +28,11 @@ class CommandUserInfo(CustomCog):
         description="Pokazuje informacje na temat użytkownika",
         dm_permission=False,
     )
-    async def userinfo(self, interaction: CustomInteraction, member: Member) -> None:
+    async def userinfo(
+        self,
+        interaction: CustomInteraction,
+        member: Member,
+    ) -> None:
         if member.joined_at:
             account_joined_at: str = f"<t:{int(mktime(member.joined_at.timetuple()))}:R>"
         else:
@@ -43,22 +51,46 @@ class CommandUserInfo(CustomCog):
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
-        embed.add_field(name="`📝` Nick", value=f"{reply_emoji} `{member}`")
+        embed.add_field(
+            name="`📝` Nick",
+            value=f"{reply_emoji} `{member}`",
+        )
 
-        embed.add_field(name="`🔖` Pseudonim", value=f"{reply_emoji} `{account_nickname}`")
+        embed.add_field(
+            name="`🔖` Pseudonim",
+            value=f"{reply_emoji} `{account_nickname}`",
+        )
 
-        embed.add_field(name="`💫` Ilość ról", value=f"{reply_emoji} `{account_roles_amount}`")
+        embed.add_field(
+            name="`💫` Ilość ról",
+            value=f"{reply_emoji} `{account_roles_amount}`",
+        )
 
-        embed.add_field(name="`⏰` Wiek Konta", value=f"{reply_emoji} {account_created_at}")
+        embed.add_field(
+            name="`⏰` Wiek Konta",
+            value=f"{reply_emoji} {account_created_at}",
+        )
 
-        embed.add_field(name="`⌛` Dołączył na serwer", value=f"{reply_emoji} {account_joined_at}")
+        embed.add_field(
+            name="`⌛` Dołączył na serwer",
+            value=f"{reply_emoji} {account_joined_at}",
+        )
 
-        embed.add_field(name="`⚡` Najwyższa rola", value=f"{reply_emoji} {account_top_role.mention}")
+        embed.add_field(
+            name="`⚡` Najwyższa rola",
+            value=f"{reply_emoji} {account_top_role.mention}",
+        )
 
-        embed.add_field(name="`⚙️` ID", value=f"{reply_emoji} `{account_id}`")
+        embed.add_field(
+            name="`⚙️` ID",
+            value=f"{reply_emoji} `{account_id}`",
+        )
 
         embed.set_footer(
             text=f"Smiffy v{self.bot.__version__}",

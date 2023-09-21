@@ -40,7 +40,11 @@ class VideoListener:
 
         self.delay: int = 6
 
-    def add_new_channel(self, guild_id: int, data: dict[str, list | str | int]) -> None:
+    def add_new_channel(
+        self,
+        guild_id: int,
+        data: dict[str, list | str | int],
+    ) -> None:
         self.yt_data[guild_id] = data
 
         if not self.running_loop:
@@ -49,7 +53,8 @@ class VideoListener:
 
     async def update_video_ids_db(self, guild_id: int, video_ids: list[str]) -> None:
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM yt_notifications WHERE guild_id = ?", (guild_id,)
+            "SELECT * FROM yt_notifications WHERE guild_id = ?",
+            (guild_id,),
         )
         if response:
             await self.bot.db.execute_fetchone(
@@ -59,7 +64,11 @@ class VideoListener:
         else:
             self.delete_channel_data(guild_id)
 
-    def update_channel_data(self, guild_id: int, data: dict[str, list | str | int]) -> dict:
+    def update_channel_data(
+        self,
+        guild_id: int,
+        data: dict[str, list | str | int],
+    ) -> dict:
         channel_data: Optional[dict] = self.yt_data.get(guild_id)
 
         if not channel_data:
@@ -69,7 +78,12 @@ class VideoListener:
         channel_data.update(data)
         self.yt_data[guild_id] = channel_data
 
-        self.bot.loop.create_task(self.update_video_ids_db(guild_id, channel_data["video_ids"]))
+        self.bot.loop.create_task(
+            self.update_video_ids_db(
+                guild_id,
+                channel_data["video_ids"],
+            )
+        )
         return channel_data
 
     def delete_channel_data(self, guild_id: int) -> None:
@@ -79,14 +93,21 @@ class VideoListener:
             return
 
         async def delete_from_db():
-            await self.bot.db.execute_fetchone("DELETE FROM yt_notifications WHERE guild_id = ?", (guild_id,))
+            await self.bot.db.execute_fetchone(
+                "DELETE FROM yt_notifications WHERE guild_id = ?",
+                (guild_id,),
+            )
 
         self.bot.loop.create_task(delete_from_db())
 
     async def get_latest_video(self, channel_url: str) -> Optional[str]:
         delay: int = int(self.delay / 2)
 
-        async for video_data in scrapetube.get_channel(channel_url=channel_url, limit=1, sleep=delay):
+        async for video_data in scrapetube.get_channel(
+            channel_url=channel_url,
+            limit=1,
+            sleep=delay,
+        ):
             latest_video_id = video_data.get("videoId")
             return latest_video_id
 
@@ -144,9 +165,16 @@ class VideoListener:
                         video_url: str = f"\nhttps://www.youtube.com/watch?v={latest_video_id}"
                         await channel.send(
                             notify_content + video_url,
-                            allowed_mentions=AllowedMentions(everyone=True, users=True, roles=True),
+                            allowed_mentions=AllowedMentions(
+                                everyone=True,
+                                users=True,
+                                roles=True,
+                            ),
                         )
-                    except (errors.HTTPException, errors.Forbidden):
+                    except (
+                        errors.HTTPException,
+                        errors.Forbidden,
+                    ):
                         pass
 
         self.running_loop = False
@@ -171,7 +199,11 @@ class ReplyMessageModal(ui.Modal):
     ):
         super().__init__("Ustaw komunikat o nowym filmie / streamie")
 
-        self.channel_id, self.channel_url, self.latest_video_id = (
+        (
+            self.channel_id,
+            self.channel_url,
+            self.latest_video_id,
+        ) = (
             channel_id,
             channel_url,
             latest_video_id,
@@ -190,7 +222,10 @@ class ReplyMessageModal(ui.Modal):
         self.add_item(self.message)
 
     async def callback(self, interaction: CustomInteraction):
-        assert interaction.guild and isinstance(interaction.channel, (TextChannel, Thread))
+        assert interaction.guild and isinstance(
+            interaction.channel,
+            (TextChannel, Thread),
+        )
 
         if not self.message.value:
             return await interaction.send_error_message(description="Wystąpił nieoczekiwany błąd.")
@@ -198,7 +233,8 @@ class ReplyMessageModal(ui.Modal):
         bot: Smiffy = interaction.bot
 
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
-            "SELECT * FROM yt_notifications WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM yt_notifications WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         if response:
@@ -233,7 +269,10 @@ class ReplyMessageModal(ui.Modal):
             f"- Ostatni film: [LINK](https://youtube.com/watch?v={self.latest_video_id})",
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
         await interaction.channel.send(embed=embed)
@@ -274,7 +313,8 @@ class CommandYoutubeNotify(CustomCog):
             description="Wybierz kanał do wysyłania powiadomień",
         ),
         youtube_channel: str = SlashOption(
-            name="link_do_kanału", description="Podaj link do swojego kanału youtube"
+            name="link_do_kanału",
+            description="Podaj link do swojego kanału youtube",
         ),
     ):
         try:
@@ -282,16 +322,27 @@ class CommandYoutubeNotify(CustomCog):
                 raise exceptions.MissingSchema("Invalid channel link.")
 
             latest_video_id: Optional[str] = None
-            channel = scrapetube.get_channel(channel_url=youtube_channel, limit=1)
+            channel = scrapetube.get_channel(
+                channel_url=youtube_channel,
+                limit=1,
+            )
 
             async for data in channel:
                 latest_video_id = data["videoId"]
                 break
 
-        except (exceptions.MissingSchema, JSONDecodeError):
+        except (
+            exceptions.MissingSchema,
+            JSONDecodeError,
+        ):
             return await interaction.send_error_message(description="Nieprawidłowy link do kanału youtube.")
 
-        modal = ReplyMessageModal(text_channel.id, youtube_channel, latest_video_id, self.video_listener)
+        modal = ReplyMessageModal(
+            text_channel.id,
+            youtube_channel,
+            latest_video_id,
+            self.video_listener,
+        )
         await interaction.response.send_modal(modal)
 
     @notify_youtube.subcommand(  # pyright: ignore
@@ -303,14 +354,16 @@ class CommandYoutubeNotify(CustomCog):
         assert interaction.guild
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM yt_notifications WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM yt_notifications WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         if not response:
             return await interaction.send_error_message(description="Powiadomienia nie są włączone.")
 
         await self.bot.db.execute_fetchone(
-            "DELETE FROM yt_notifications WHERE guild_id = ?", (interaction.guild.id,)
+            "DELETE FROM yt_notifications WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         self.video_listener.delete_channel_data(guild_id=interaction.guild.id)

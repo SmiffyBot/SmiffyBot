@@ -22,8 +22,14 @@ class CommandAddMoney(CustomCog):
     async def economy_addmoney(
         self,
         interaction: CustomInteraction,
-        member: Member = SlashOption(name="osoba", description="Podaj osobę której chcesz dodać balans"),
-        amount: int = SlashOption(name="kwota", description="Podaj kwotę, którą chcesz dodać"),
+        member: Member = SlashOption(
+            name="osoba",
+            description="Podaj osobę której chcesz dodać balans",
+        ),
+        amount: int = SlashOption(
+            name="kwota",
+            description="Podaj kwotę, którą chcesz dodać",
+        ),
     ):
         assert interaction.guild
 
@@ -38,7 +44,10 @@ class CommandAddMoney(CustomCog):
         if not await manager.get_guild_economy_status(interaction.guild):
             return await interaction.send_error_message(description="Ekonomia na serwerze jest wyłączona.")
 
-        await manager.add_user_money(user=member, money_data={"money": amount})
+        await manager.add_user_money(
+            user=member,
+            money_data={"money": amount},
+        )
 
         await interaction.send_success_message(
             title=f"Pomyślnie zaktualizowano {Emojis.GREENBUTTON.value}",
@@ -64,7 +73,10 @@ class CommandAddMoney(CustomCog):
             name="`👤` Kwota",
             value=f"{Emojis.REPLY.value} `{amount}$`",
         )
-        embed.set_author(name=self.bot.user, icon_url=self.bot.avatar_url)
+        embed.set_author(
+            name=self.bot.user,
+            icon_url=self.bot.avatar_url,
+        )
         embed.set_thumbnail(url=Avatars.get_guild_icon(member.guild))
 
         try:

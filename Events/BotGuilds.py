@@ -19,7 +19,10 @@ class BotGuilds(CustomCog):
     async def on_guild_join(self, guild: Guild):
         for text_channel in guild.text_channels:
             try:
-                gif: File = File("./Data/images/smiffy-help-2.gif", filename="bot.gif")
+                gif: File = File(
+                    "./Data/images/smiffy-help-2.gif",
+                    filename="bot.gif",
+                )
                 commands: int = len(self.bot.get_all_application_commands())
                 help_mention: str = "</help:1040624807768752188>"
                 report_bug_mention: str = "</bot blad:1092585173029244930>"
@@ -38,14 +41,24 @@ sprawdzić używając {help_mention}.
                     description=description,
                 )
 
-                embed.set_author(name=guild.me, icon_url=self.bot.avatar_url)
+                embed.set_author(
+                    name=guild.me,
+                    icon_url=self.bot.avatar_url,
+                )
 
                 embed.set_image(url="attachment://bot.gif")
                 embed.set_footer(text=f"Serwery: {len(self.bot.guilds)}")
 
-                await text_channel.send(embed=embed, file=gif, view=DiscordSupportButton())
+                await text_channel.send(
+                    embed=embed,
+                    file=gif,
+                    view=DiscordSupportButton(),
+                )
                 break
-            except (errors.Forbidden, errors.HTTPException):
+            except (
+                errors.Forbidden,
+                errors.HTTPException,
+            ):
                 continue
 
 

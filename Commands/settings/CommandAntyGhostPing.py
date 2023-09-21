@@ -17,19 +17,24 @@ class CommandAntyGhostPing(CustomCog):
     async def antyghostping(self, interaction: CustomInteraction):
         pass
 
-    @antyghostping.subcommand(name="włącz", description="Włącza AntyGhostPing na serwerze")  # pyright: ignore
+    @antyghostping.subcommand(
+        name="włącz",
+        description="Włącza AntyGhostPing na serwerze",
+    )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def antyghostping_on(self, interaction: CustomInteraction):
         assert interaction.guild
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM antyghostping WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM antyghostping WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if response:
             return await interaction.send_error_message(description="AntyGhostPing już jest włączony.")
 
         await self.bot.db.execute_fetchone(
-            "INSERT INTO antyghostping(guild_id) VALUES(?)", (interaction.guild.id,)
+            "INSERT INTO antyghostping(guild_id) VALUES(?)",
+            (interaction.guild.id,),
         )
 
         await interaction.send_success_message(
@@ -39,20 +44,23 @@ class CommandAntyGhostPing(CustomCog):
         )
 
     @antyghostping.subcommand(  # pyright: ignore
-        name="wyłącz", description="Wyłącza AntyGhostPing na serwerze"
+        name="wyłącz",
+        description="Wyłącza AntyGhostPing na serwerze",
     )
     @PermissionHandler(manage_guild=True)
     async def antyghostping_off(self, interaction: CustomInteraction):
         assert interaction.guild
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
-            "SELECT * FROM antyghostping WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM antyghostping WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
         if not response:
             return await interaction.send_error_message(description="AntyGhostPing już jest wyłączony.")
 
         await self.bot.db.execute_fetchone(
-            "DELETE FROM antyghostping WHERE guild_id = ?", (interaction.guild.id,)
+            "DELETE FROM antyghostping WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         await interaction.send_success_message(

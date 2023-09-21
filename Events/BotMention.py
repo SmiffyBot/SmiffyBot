@@ -72,13 +72,31 @@ Moje komendy sprawdzisz używając {help_mention}
             latecy: int = round(shard.latency * 1000)
 
             uptime = str(timedelta(seconds=int(round(time() - self.bot_startup))))
-            embed.add_field(name="`🌐` Ping", value=f"{reply_emoji} `{latecy}ms`")
-            embed.add_field(name="`〽️` UpTime", value=f"{reply_emoji} `{uptime}`")
-            embed.add_field(name="`🔧` Komendy", value=f"{reply_emoji} `{commands}`")
-            embed.add_field(name="`🧠` Serwery", value=f"{reply_emoji} `{_guilds}`")
+            embed.add_field(
+                name="`🌐` Ping",
+                value=f"{reply_emoji} `{latecy}ms`",
+            )
+            embed.add_field(
+                name="`〽️` UpTime",
+                value=f"{reply_emoji} `{uptime}`",
+            )
+            embed.add_field(
+                name="`🔧` Komendy",
+                value=f"{reply_emoji} `{commands}`",
+            )
+            embed.add_field(
+                name="`🧠` Serwery",
+                value=f"{reply_emoji} `{_guilds}`",
+            )
 
-            embed.add_field(name="`👥` Użytkownicy", value=f"{reply_emoji} `{_members}`")
-            embed.add_field(name="`🛠️` Shard", value=f"{reply_emoji} `{shard.id + 1}`")
+            embed.add_field(
+                name="`👥` Użytkownicy",
+                value=f"{reply_emoji} `{_members}`",
+            )
+            embed.add_field(
+                name="`🛠️` Shard",
+                value=f"{reply_emoji} `{shard.id + 1}`",
+            )
 
             embed.set_author(
                 name=message.author,

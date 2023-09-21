@@ -26,7 +26,8 @@ class CommandSerwer(CustomCog):
         guild_name: str = interaction.guild.name
 
         guild_owner: Optional[Member] = await self.bot.getch_member(
-            interaction.guild, interaction.guild.owner_id
+            interaction.guild,
+            interaction.guild.owner_id,
         )
 
         if not guild_owner:
@@ -54,28 +55,61 @@ class CommandSerwer(CustomCog):
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
-        embed.add_field(name="`📝` Nazwa Serwera", value=f"{reply_emoji} `{guild_name}`")
+        embed.add_field(
+            name="`📝` Nazwa Serwera",
+            value=f"{reply_emoji} `{guild_name}`",
+        )
 
-        embed.add_field(name="`👑` Właściciel", value=f"{reply_emoji} {guild_owner.mention}")
+        embed.add_field(
+            name="`👑` Właściciel",
+            value=f"{reply_emoji} {guild_owner.mention}",
+        )
 
-        embed.add_field(name="`🔗` Wiek serwera", value=f"{reply_emoji} {guild_created_at}")
+        embed.add_field(
+            name="`🔗` Wiek serwera",
+            value=f"{reply_emoji} {guild_created_at}",
+        )
 
-        embed.add_field(name="`✨` Boosty", value=f"{reply_emoji} `{guild_boosts}`")
+        embed.add_field(
+            name="`✨` Boosty",
+            value=f"{reply_emoji} `{guild_boosts}`",
+        )
 
-        embed.add_field(name="`💬` Kanały Tekstowe", value=f"{reply_emoji} `{guild_text_channels}`")
+        embed.add_field(
+            name="`💬` Kanały Tekstowe",
+            value=f"{reply_emoji} `{guild_text_channels}`",
+        )
 
-        embed.add_field(name="`📞` Kanały Głosowe", value=f"{reply_emoji} `{guild_voice_channels}`")
+        embed.add_field(
+            name="`📞` Kanały Głosowe",
+            value=f"{reply_emoji} `{guild_voice_channels}`",
+        )
 
-        embed.add_field(name="`👥` Osoby", value=f"{reply_emoji} `{guild_members}`")
+        embed.add_field(
+            name="`👥` Osoby",
+            value=f"{reply_emoji} `{guild_members}`",
+        )
 
-        embed.add_field(name="`🤖` Boty", value=f"{reply_emoji} `{guild_bots}`")
+        embed.add_field(
+            name="`🤖` Boty",
+            value=f"{reply_emoji} `{guild_bots}`",
+        )
 
-        embed.add_field(name="`⭐` Role", value=f"{reply_emoji} `{guild_roles}`")
+        embed.add_field(
+            name="`⭐` Role",
+            value=f"{reply_emoji} `{guild_roles}`",
+        )
 
-        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
+        embed.set_footer(
+            text=f"Smiffy v{self.bot.__version__}",
+            icon_url=self.bot.avatar_url,
+        )
         await interaction.send(embed=embed)
 
 

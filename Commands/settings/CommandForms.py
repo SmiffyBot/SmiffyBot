@@ -29,7 +29,11 @@ if TYPE_CHECKING:
 
 
 class DecisionFormView(ui.View):
-    def __init__(self, user: Optional[Member] = None, form_id: Optional[str] = None):
+    def __init__(
+        self,
+        user: Optional[Member] = None,
+        form_id: Optional[str] = None,
+    ):
         super().__init__(timeout=None)
 
         self.form_id: Optional[str] = form_id
@@ -54,7 +58,9 @@ class DecisionFormView(ui.View):
         custom_id="accept-form",
     )
     async def accept_button(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         bot: Smiffy = interaction.client
 
@@ -73,7 +79,10 @@ class DecisionFormView(ui.View):
         if self.user and self.form_id:
             response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
                 "SELECT notify FROM forms WHERE guild_id = ? AND form_id = ?",
-                (interaction.guild.id, self.form_id),
+                (
+                    interaction.guild.id,
+                    self.form_id,
+                ),
             )
             if response and response[0] and response[0] == "on":
                 embed = Embed(
@@ -98,11 +107,17 @@ class DecisionFormView(ui.View):
                     value=f"{Emojis.REPLY.value} `{interaction.user}`",
                     inline=False,
                 )
-                embed.add_field(name="`📌` Formularz", value=f"{Emojis.REPLY.value} `{self.form_id}`")
+                embed.add_field(
+                    name="`📌` Formularz",
+                    value=f"{Emojis.REPLY.value} `{self.form_id}`",
+                )
 
                 try:
                     await self.user.send(embed=embed)
-                except (nc_errors.HTTPException, nc_errors.Forbidden):
+                except (
+                    nc_errors.HTTPException,
+                    nc_errors.Forbidden,
+                ):
                     pass
 
         await interaction.send_success_message(
@@ -119,7 +134,9 @@ class DecisionFormView(ui.View):
         custom_id="decline-form",
     )
     async def decline_button(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         bot: Smiffy = interaction.client
 
@@ -138,7 +155,10 @@ class DecisionFormView(ui.View):
         if self.user and self.form_id:
             response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
                 "SELECT notify FROM forms WHERE guild_id = ? AND form_id = ?",
-                (interaction.guild.id, self.form_id),
+                (
+                    interaction.guild.id,
+                    self.form_id,
+                ),
             )
             if response and response[0] and response[0] == "on":
                 embed = Embed(
@@ -162,11 +182,17 @@ class DecisionFormView(ui.View):
                     value=f"{Emojis.REPLY.value} `{interaction.user}`",
                     inline=False,
                 )
-                embed.add_field(name="`📌` Formularz", value=f"{Emojis.REPLY.value} `{self.form_id}`")
+                embed.add_field(
+                    name="`📌` Formularz",
+                    value=f"{Emojis.REPLY.value} `{self.form_id}`",
+                )
 
                 try:
                     await self.user.send(embed=embed)
-                except (nc_errors.HTTPException, nc_errors.Forbidden):
+                except (
+                    nc_errors.HTTPException,
+                    nc_errors.Forbidden,
+                ):
                     pass
 
         await interaction.send_success_message(
@@ -224,8 +250,15 @@ class FormModal(ui.Modal):
 
         if self.db_data[4] == "on":
             try:
-                await interaction.channel.set_permissions(interaction.user, send_messages=False)
-            except (nc_errors.HTTPException, nc_errors.Forbidden, nc_errors.NotFound):
+                await interaction.channel.set_permissions(
+                    interaction.user,
+                    send_messages=False,
+                )
+            except (
+                nc_errors.HTTPException,
+                nc_errors.Forbidden,
+                nc_errors.NotFound,
+            ):
                 pass
 
         embed = Embed(
@@ -256,7 +289,10 @@ class FormModal(ui.Modal):
 
         try:
             await channel.send(embed=embed, view=decisionView)
-        except (nc_errors.Forbidden, nc_errors.HTTPException):
+        except (
+            nc_errors.Forbidden,
+            nc_errors.HTTPException,
+        ):
             return await interaction.send_error_message(
                 description="Wystąpił błąd z przesyłaniem Twojego formularzu. Spróbuj ponownie.",
                 ephemeral=True,
@@ -280,7 +316,9 @@ class SubmitFormView(ui.View):
         custom_id="submit-form",
     )
     async def submit_button(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         assert interaction.guild
 
@@ -291,7 +329,10 @@ class SubmitFormView(ui.View):
 
         response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
             "SELECT * FROM forms WHERE guild_id = ? AND message_id = ?",
-            (interaction.guild.id, interaction.message.id),
+            (
+                interaction.guild.id,
+                interaction.message.id,
+            ),
         )
 
         if not response:
@@ -317,15 +358,23 @@ class CommandForms(CustomCog):
     async def form(self, interaction: CustomInteraction):
         pass
 
-    @form.subcommand(name="stwórz", description="Tworzy nowy system formularzu")  # pyright: ignore
+    @form.subcommand(
+        name="stwórz",
+        description="Tworzy nowy system formularzu",
+    )  # pyright: ignore
     @PermissionHandler(manage_channels=True)
     async def form_create(
         self,
         interaction: CustomInteraction,
         channel: TextChannel = SlashOption(
-            name="kanal", description="Podaj kanał na które mają być wysyłane podania"
+            name="kanal",
+            description="Podaj kanał na które mają być wysyłane podania",
         ),
-        name: str = SlashOption(name="nazwa_formularza", description="Podaj nazwę formularza", max_length=45),
+        name: str = SlashOption(
+            name="nazwa_formularza",
+            description="Podaj nazwę formularza",
+            max_length=45,
+        ),
         block: str = SlashOption(
             name="blokada_kanalu_po_wyslaniu",
             description="Ustaw czy bot ma blokować kanał osobie która już przesłała formularz.",
@@ -334,7 +383,10 @@ class CommandForms(CustomCog):
         notify: str = SlashOption(
             name="wyniki_powiadomienia_pv",
             description="Jeśli włączysz tą opcje, " "to bot będzie informował osobę o wyniku swojego podania",
-            choices={"Włącz": "on", "Wyłącz": "off"},
+            choices={
+                "Włącz": "on",
+                "Wyłącz": "off",
+            },
         ),
         question_1: str = SlashOption(
             name="pytanie_1",
@@ -342,19 +394,33 @@ class CommandForms(CustomCog):
             max_length=45,
         ),
         question_2: Optional[str] = SlashOption(
-            name="pytanie_2", description="Podaj treść drugiego pytania", max_length=45
+            name="pytanie_2",
+            description="Podaj treść drugiego pytania",
+            max_length=45,
         ),
         question_3: Optional[str] = SlashOption(
-            name="pytanie_3", description="Podaj treść trzeciego pytania", max_length=45
+            name="pytanie_3",
+            description="Podaj treść trzeciego pytania",
+            max_length=45,
         ),
         question_4: Optional[str] = SlashOption(
-            name="pytanie_4", description="Podaj treść czwartego pytania", max_length=45
+            name="pytanie_4",
+            description="Podaj treść czwartego pytania",
+            max_length=45,
         ),
         question_5: Optional[str] = SlashOption(
-            name="pytanie_5", description="Podaj treść piątego pytania", max_length=45
+            name="pytanie_5",
+            description="Podaj treść piątego pytania",
+            max_length=45,
         ),
     ):
-        assert isinstance(interaction.channel, (Thread, TextChannel)) and interaction.guild
+        assert (
+            isinstance(
+                interaction.channel,
+                (Thread, TextChannel),
+            )
+            and interaction.guild
+        )
 
         response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
             "SELECT * FROM forms WHERE guild_id = ? AND form_id = ?",
@@ -373,7 +439,10 @@ class CommandForms(CustomCog):
             description="> Naciśnij poniższy przycisk, aby wypełnić formularz",
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_footer(text="Made by SmiffyBot")
 
         button: SubmitFormView = SubmitFormView()
@@ -408,13 +477,18 @@ class CommandForms(CustomCog):
             ephemeral=True,
         )
 
-    @form.subcommand(name="usuń", description="Usuwa wybrany formularz")  # pyright: ignore
+    @form.subcommand(
+        name="usuń",
+        description="Usuwa wybrany formularz",
+    )  # pyright: ignore
     @PermissionHandler(manage_channels=True)
     async def form_delete(
         self,
         interaction: CustomInteraction,
         form_name: str = SlashOption(
-            name="nazwa_formularza", description="Podaj nazwę formularza", max_length=45
+            name="nazwa_formularza",
+            description="Podaj nazwę formularza",
+            max_length=45,
         ),
     ):
         assert interaction.guild
@@ -446,12 +520,15 @@ class CommandForms(CustomCog):
 
     @form_delete.on_autocomplete("form_name")
     async def message_content_autocomplete(
-        self, interaction: CustomInteraction, query: Optional[str]
+        self,
+        interaction: CustomInteraction,
+        query: Optional[str],
     ) -> Optional[list[str]]:
         assert interaction.guild
 
         response: Iterable[DB_RESPONSE] = await self.bot.db.execute_fetchall(
-            "SELECT * FROM forms WHERE guild_id = ?", (interaction.guild.id,)
+            "SELECT * FROM forms WHERE guild_id = ?",
+            (interaction.guild.id,),
         )
 
         if not response:

@@ -16,7 +16,8 @@ if TYPE_CHECKING:
 
 class CommandBuy(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
-        name="kup", description="Kupuje przedmiot ze sklepu"
+        name="kup",
+        description="Kupuje przedmiot ze sklepu",
     )
     async def economy_buy(
         self,
@@ -37,7 +38,8 @@ class CommandBuy(CustomCog):
             return await interaction.send_error_message(description="Ekonomia na serwerze jest wyłączona.")
 
         item_data: Optional[EconomyItemData] = await manager.get_guild_item(
-            guild=interaction.guild, item_name=item_name
+            guild=interaction.guild,
+            item_name=item_name,
         )
         if not item_data:
             return await interaction.send_error_message(description="Podany przedmiot nie istnieje.")
@@ -77,14 +79,21 @@ class CommandBuy(CustomCog):
             if role and role not in interaction.user.roles:
                 try:
                     await interaction.user.add_roles(role)
-                except (errors.Forbidden, errors.HTTPException):
+                except (
+                    errors.Forbidden,
+                    errors.HTTPException,
+                ):
                     pass
 
         user_money -= item_data["price"]
         user_items.append(item_data["item_id"])
 
         await manager.update_user_account(
-            user=interaction.user, data={"money": user_money, "items": user_items}
+            user=interaction.user,
+            data={
+                "money": user_money,
+                "items": user_items,
+            },
         )
 
         if not item_data["reply_message"]:
@@ -100,7 +109,9 @@ class CommandBuy(CustomCog):
 
     @economy_buy.on_autocomplete("item_name")
     async def buy_autocomplete(
-        self, interaction: CustomInteraction, query: Optional[str]
+        self,
+        interaction: CustomInteraction,
+        query: Optional[str],
     ) -> Optional[list[str]]:
         assert interaction.guild
 

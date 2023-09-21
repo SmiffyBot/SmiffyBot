@@ -16,13 +16,17 @@ if TYPE_CHECKING:
 
 class CommandSetVolume(CustomCog):
     @MusicCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
-        name="głośność", description="Ustawia % głośności bota"
+        name="głośność",
+        description="Ustawia % głośności bota",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_setvolume(
         self,
         interaction: CustomInteraction,
-        volume: int = SlashOption(name="głośność", description="% głośności od 1 do 500"),
+        volume: int = SlashOption(
+            name="głośność",
+            description="% głośności od 1 do 500",
+        ),
     ):
         assert isinstance(interaction.user, Member)
         assert interaction.guild

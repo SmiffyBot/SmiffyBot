@@ -29,7 +29,10 @@ class CommandWeather(CustomCog):
     async def weather(
         self,
         interaction: CustomInteraction,
-        place: str = SlashOption(name="miejsce", description="Podaj miejsce które chcesz sprawdzić"),
+        place: str = SlashOption(
+            name="miejsce",
+            description="Podaj miejsce które chcesz sprawdzić",
+        ),
     ):
         await interaction.response.defer()
 
@@ -39,7 +42,10 @@ class CommandWeather(CustomCog):
         if not location:
             return await interaction.send_error_message(description=f"Nie odnaleziono miejsca: `{place}`")
 
-        latitude, longitude = location.latitude, location.longitude  # pyright: ignore
+        latitude, longitude = (
+            location.latitude,
+            location.longitude,
+        )  # pyright: ignore
 
         response: Optional[ClientResponse] = await self.bot.session.send_api_request(
             interaction=interaction,
@@ -64,11 +70,19 @@ class CommandWeather(CustomCog):
             timestamp=utils.utcnow(),
             description=f"- **Czas obserwacji:** `{observation_time}`",
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
-        embed.add_field(name="`🔆` Temperatura", value=f"{Emojis.REPLY.value} **●** {temperature} C")
         embed.add_field(
-            name="`💨` Prędkość wiatru", value=f"{Emojis.REPLY.value} **●** {windspeed} km/h", inline=False
+            name="`🔆` Temperatura",
+            value=f"{Emojis.REPLY.value} **●** {temperature} C",
+        )
+        embed.add_field(
+            name="`💨` Prędkość wiatru",
+            value=f"{Emojis.REPLY.value} **●** {windspeed} km/h",
+            inline=False,
         )
         await interaction.send(embed=embed)
 

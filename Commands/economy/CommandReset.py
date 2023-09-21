@@ -14,7 +14,11 @@ if TYPE_CHECKING:
 
 
 class ConfirmReset(ui.View):
-    def __init__(self, interaction: CustomInteraction, bot: Smiffy):
+    def __init__(
+        self,
+        interaction: CustomInteraction,
+        bot: Smiffy,
+    ):
         super().__init__(timeout=None)
 
         self.bot: Smiffy = bot
@@ -31,7 +35,10 @@ class ConfirmReset(ui.View):
         if interaction.user.id == self.original_interaction.user.id:
             return True
 
-        return await interaction.send_error_message("Nie możesz tego użyć.", ephemeral=True)
+        return await interaction.send_error_message(
+            "Nie możesz tego użyć.",
+            ephemeral=True,
+        )
 
     @ui.button(  # pyright: ignore
         label="Anuluj",
@@ -39,7 +46,9 @@ class ConfirmReset(ui.View):
         emoji="<:suggestiondislike:997650135209222344>",
     )
     async def cancel(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         await self.original_interaction.delete_original_message()
 
@@ -49,7 +58,9 @@ class ConfirmReset(ui.View):
         emoji="<:suggestionlike:997650032683667506>",
     )
     async def confirm(
-        self, button: ui.Button, interaction: CustomInteraction
+        self,
+        button: ui.Button,
+        interaction: CustomInteraction,
     ):  # pylint: disable=unused-argument
         assert interaction.guild
 
@@ -60,7 +71,10 @@ class ConfirmReset(ui.View):
             color=Color.red(),
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         await interaction.send_success_message(
             title="Resetowanie ekonomii <a:loading:919653287383404586>",
             color=Color.red(),
@@ -69,7 +83,8 @@ class ConfirmReset(ui.View):
 
         for tabel in self.tables:
             await self.bot.db.execute_fetchone(
-                f"DELETE FROM {tabel} WHERE guild_id = ?", (interaction.guild.id,)
+                f"DELETE FROM {tabel} WHERE guild_id = ?",
+                (interaction.guild.id,),
             )
 
         embed = Embed(
@@ -78,14 +93,18 @@ class ConfirmReset(ui.View):
             description=f"{Emojis.REPLY.value} Ekonomia na serwerze została zresetowana.",
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
         await interaction.edit_original_message(embed=embed)
 
 
 class CommandReset(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
-        name="reset", description="Resetuję całą ekonomie na serwerze"
+        name="reset",
+        description="Resetuję całą ekonomie na serwerze",
     )
     @PermissionHandler(manage_guild=True)
     async def economy_reset(self, interaction: CustomInteraction):
@@ -95,7 +114,10 @@ class CommandReset(CustomCog):
             description=f"{Emojis.REPLY.value} Reset ekonomii obejmuje sklep, użytkowników, ustawień.",
             timestamp=utils.utcnow(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
         buttons = ConfirmReset(interaction, self.bot)

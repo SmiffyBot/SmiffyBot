@@ -33,7 +33,11 @@ if TYPE_CHECKING:
 
 
 class SelectPlaylist(ui.Select):
-    def __init__(self, playlists_data: dict[str, list[dict]], cog: CommandSpotify):
+    def __init__(
+        self,
+        playlists_data: dict[str, list[dict]],
+        cog: CommandSpotify,
+    ):
         self.cog: CommandSpotify = cog
 
         options: list[SelectOption] = []
@@ -60,9 +64,17 @@ class SelectPlaylist(ui.Select):
                 # Discord limitation
                 break
 
-        super().__init__(placeholder="Wybierz playliste", options=options)
+        super().__init__(
+            placeholder="Wybierz playliste",
+            options=options,
+        )
 
-    async def get_tracks_links(self, bot: Smiffy, playlist_id: str, inter: CustomInteraction) -> list[str]:
+    async def get_tracks_links(
+        self,
+        bot: Smiffy,
+        playlist_id: str,
+        inter: CustomInteraction,
+    ) -> list[str]:
         tracks_links: list[str] = []
 
         headers: dict[str, str] = {"Authorization": f"Bearer {self.cog.authorization_token}"}
@@ -113,7 +125,9 @@ class SelectPlaylist(ui.Select):
         bot: Smiffy = interaction.bot
 
         tracks_links: list[str] = await self.get_tracks_links(
-            bot=bot, playlist_id=playlist_id, inter=interaction
+            bot=bot,
+            playlist_id=playlist_id,
+            inter=interaction,
         )
         if not tracks_links:
             return
@@ -133,7 +147,8 @@ class SelectPlaylist(ui.Select):
                 continue
 
             _track: Optional[list[Track] | Playlist] = await node.fetch_tracks(
-                query=uri, search_type=SearchType.SPOTIFY_SEARCH.value
+                query=uri,
+                search_type=SearchType.SPOTIFY_SEARCH.value,
             )
 
             if isinstance(_track, list):
@@ -169,7 +184,8 @@ class SelectPlaylist(ui.Select):
 
         if interaction.guild.me.voice:
             await interaction.guild.change_voice_state(
-                channel=interaction.guild.me.voice.channel, self_deaf=True
+                channel=interaction.guild.me.voice.channel,
+                self_deaf=True,
             )
 
         player._connected = True
@@ -233,8 +249,14 @@ class SelectPlaylist(ui.Select):
         if tracks[0]:
             embed.set_thumbnail(url=tracks[0].artwork_url)
 
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
-        buttons_view = MusicManagerView(player=player, author_id=interaction.user.id)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
+        buttons_view = MusicManagerView(
+            player=player,
+            author_id=interaction.user.id,
+        )
         await interaction.send(embed=embed, view=buttons_view)
 
         if __track:
@@ -246,7 +268,10 @@ class SelectPlaylist(ui.Select):
                 timestamp=utils.utcnow(),
             )
 
-            embed.add_field(name="`⏰` Długość", value=f"{Emojis.REPLY.value} `{track_lenght}`")
+            embed.add_field(
+                name="`⏰` Długość",
+                value=f"{Emojis.REPLY.value} `{track_lenght}`",
+            )
             embed.add_field(
                 name="`👤` Autor",
                 value=f"{Emojis.REPLY.value} `{__track.author}`",
@@ -269,12 +294,19 @@ class SelectPlaylist(ui.Select):
                 icon_url=interaction.user_avatar_url,
             )
 
-            if isinstance(interaction.channel, (TextChannel, Thread)):
+            if isinstance(
+                interaction.channel,
+                (TextChannel, Thread),
+            ):
                 await interaction.channel.send(embed=embed)
 
 
 class SelectPlaylistView(ui.View):
-    def __init__(self, playlists_data: dict[str, list[dict]], cog: CommandSpotify):
+    def __init__(
+        self,
+        playlists_data: dict[str, list[dict]],
+        cog: CommandSpotify,
+    ):
         super().__init__(timeout=None)
 
         self.add_item(SelectPlaylist(playlists_data, cog))
@@ -288,7 +320,10 @@ class CommandSpotify(CustomCog):
         self.bot.loop.create_task(self.get_access_token())
 
     @staticmethod
-    async def handle_ratelimit(inter: CustomInteraction, response: ClientResponse) -> None:
+    async def handle_ratelimit(
+        inter: CustomInteraction,
+        response: ClientResponse,
+    ) -> None:
         if response.headers.get("Retry-After"):
             seconds: int = int(response.headers["Retry-After"]) + 1
 
@@ -324,7 +359,11 @@ class CommandSpotify(CustomCog):
                 "client_secret": secret,
             }
 
-            response: ClientResponse = await self.bot.session.post(url=url, data=data, headers=headers)
+            response: ClientResponse = await self.bot.session.post(
+                url=url,
+                data=data,
+                headers=headers,
+            )
             if response.status != 200:
                 self.bot.logger.error("Connection to Spotify API failed. Invalid parameters.")
                 return None
@@ -359,7 +398,8 @@ class CommandSpotify(CustomCog):
         ...
 
     @music_spotify.subcommand(  # pyright: ignore
-        name="playlisty", description="Wyświetla playliste możliwe do odtworzenia"
+        name="playlisty",
+        description="Wyświetla playliste możliwe do odtworzenia",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_spotify_playlists(self, interaction: CustomInteraction):
@@ -410,12 +450,18 @@ class CommandSpotify(CustomCog):
             timestamp=utils.utcnow(),
             colour=Color.dark_theme(),
         )
-        embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
+        embed.set_author(
+            name=interaction.user,
+            icon_url=interaction.user_avatar_url,
+        )
         embed.set_thumbnail(url=interaction.guild_icon_url)
         view = SelectPlaylistView(response_data, self)
         await interaction.send(embed=embed, view=view)
 
-    @music_spotify.subcommand(name="odłącz_konto", description="Odłącza konto spotify od konta discord")
+    @music_spotify.subcommand(
+        name="odłącz_konto",
+        description="Odłącza konto spotify od konta discord",
+    )
     async def music_spotify_disconnect(self, interaction: CustomInteraction):
         assert isinstance(interaction.user, Member)
 
@@ -440,7 +486,10 @@ class CommandSpotify(CustomCog):
             description=f"{Emojis.REPLY.value} Odłączono konto spotify.",
         )
 
-    @music_spotify.subcommand(name="podłącz_konto", description="Łączy twoje konto discord z kotnem spotify")
+    @music_spotify.subcommand(
+        name="podłącz_konto",
+        description="Łączy twoje konto discord z kotnem spotify",
+    )
     async def music_spotify_connect(
         self,
         interaction: CustomInteraction,
@@ -506,7 +555,11 @@ class CommandSpotify(CustomCog):
         if not db_response:
             await self.bot.db.execute_fetchone(
                 "INSERT INTO music_users(user_id, favorite_songs, spotify_account) VALUES(?,?,?)",
-                (interaction.user.id, "[]", account_id),
+                (
+                    interaction.user.id,
+                    "[]",
+                    account_id,
+                ),
             )
         else:
             await self.bot.db.execute_fetchone(

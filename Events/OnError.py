@@ -34,9 +34,17 @@ class OnError(CustomCog):
             await channel.send(f"`❌` **An error occurred:** {exception}\n- `{args}`")
 
     @CustomCog.listener()
-    async def on_application_command_error(self, inter: CustomInteraction, exception: Exception):
+    async def on_application_command_error(
+        self,
+        inter: CustomInteraction,
+        exception: Exception,
+    ):
         exception_traceback: str = "".join(
-            format_exception(type(exception), exception, exception.__traceback__)
+            format_exception(
+                type(exception),
+                exception,
+                exception.__traceback__,
+            )
         )
         if isinstance(exception, self.bot.ignore_exceptions):
             self.bot.logger.debug(f"Ignoring exception: {type(exception)}.")
@@ -50,7 +58,11 @@ class OnError(CustomCog):
         command_name: str = "None" if not command else str(command.name)
 
         exception_traceback: str = "".join(
-            format_exception(type(exception), exception, exception.__traceback__)
+            format_exception(
+                type(exception),
+                exception,
+                exception.__traceback__,
+            )
         )
 
         self.bot.logger.error(

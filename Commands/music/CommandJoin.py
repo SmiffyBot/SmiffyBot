@@ -18,7 +18,8 @@ if TYPE_CHECKING:
 
 class CommandJoin(CustomCog):
     @MusicCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
-        name="dołącz", description="Dołącza na kanał głosowy"
+        name="dołącz",
+        description="Dołącza na kanał głosowy",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_join(self, interaction: CustomInteraction):
