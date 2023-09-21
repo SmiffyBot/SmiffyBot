@@ -7,7 +7,7 @@ from utilities import BotBase, CircuitBreaker, Database, bot_logger, bot_utils
 class Smiffy(BotBase):
     __version__: ClassVar[str] = "2.0"
 
-    def __init__(self, **kwargs: Bot_Settings):
+    def __init__(self, **kwargs: Bot_Settings):  # Pull request to test precommit hooks
         """
         The __init__ function is called when the class is instantiated.
         It sets up all of the attributes that are needed for this bot to function properly.
