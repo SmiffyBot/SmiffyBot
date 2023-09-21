@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 
 
 class MusicManagerView(ui.View):
-    def __init__(self, player: PlayerT, author_id: int):
+    def __init__(self, player: PlayerT, author_id: int):  # pyright: ignore
         super().__init__(timeout=None)
 
         self.author_id: int = author_id

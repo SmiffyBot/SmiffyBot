@@ -14,6 +14,7 @@ mafic==2.9.3
 orjson==3.9.7
 Pillow==9.5.0
 PyNaCl==1.5.0
+pyright
 git+https://github.com/xXenvy/async-scrapetube
 git+https://github.com/xXenvy/cordcutter.git
 git+https://github.com/SmiffyBot/nextcord.git@Smiffy

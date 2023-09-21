@@ -947,7 +947,7 @@ class BotBase(AutoShardedBot):
         self.dispatch("client_error", *args, **kwargs)
 
     @staticmethod
-    async def check_global_ban(interaction: InterT) -> bool:
+    async def check_global_ban(interaction: InterT) -> bool:  # pyright: ignore
         """
         The check_global_ban function is a coroutine that checks if the user has been globally banned.
         If so, it sends them an error message and returns False. Otherwise, it returns True.
@@ -1104,7 +1104,7 @@ class BotBase(AutoShardedBot):
         if not getattr(self, "session", None):
             self.add_application_command_check(self.check_global_ban)
 
-    def get_interaction(self, data, *, cls=CustomInteraction) -> InterT:
+    def get_interaction(self, data, *, cls=CustomInteraction) -> InterT:  # pyright: ignore
         # pylint: disable=useless-parent-delegation
 
         """
@@ -1353,7 +1353,7 @@ async def check_giveaway_requirement(
 
     if isinstance(inter_or_message, Message):
         message: Optional[Message] = inter_or_message
-        inter_or_message.bot = bot
+        inter_or_message.bot = bot  # pyright: ignore
     else:
         message: Optional[Message] = inter_or_message.message
 
