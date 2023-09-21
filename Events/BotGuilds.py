@@ -2,22 +2,23 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from nextcord import Color, Embed, File, Guild, errors, utils, ui, ButtonStyle
-from utilities import CustomCog, DiscordSupportButton
+from nextcord import ButtonStyle, Color, Embed, File, Guild, errors, ui, utils
 
 from enums import Emojis
+from utilities import CustomCog, DiscordSupportButton
 
 if TYPE_CHECKING:
     from bot import Smiffy
 
 
 class AddBotView(ui.View):
-
     def __init__(self, bot_id: int, permissions: int = 8):
         super().__init__(timeout=None)
 
-        bot_invite: str = f"https://discord.com/api/oauth2/authorize?client_id={bot_id}" \
-                          f"&permissions={permissions}&scope=bot%20applications.commands"
+        bot_invite: str = (
+            f"https://discord.com/api/oauth2/authorize?client_id={bot_id}"
+            f"&permissions={permissions}&scope=bot%20applications.commands"
+        )
 
         self.add_item(
             ui.Button(
@@ -31,7 +32,6 @@ class AddBotView(ui.View):
 class BotGuilds(CustomCog):
     @CustomCog.listener()
     async def on_guild_available(self, guild: Guild):
-
         if guild.me.guild_permissions.administrator:
             self.bot.dispatch("invite_update", guild)
 
@@ -40,10 +40,10 @@ class BotGuilds(CustomCog):
             embed = Embed(
                 title=f"{Emojis.REDBUTTON.value} Wystąpił błąd.",
                 description=f"{Emojis.REPLY.value} Nie posiadam wymaganej permisji: `Administrator`."
-                            f"\n\nJest ona wymagana to poprawnego działania. "
-                            f"Dodaj mnie ponownie z zaproszenia poniżej i nie zmieniaj moich uprawnień.",
+                f"\n\nJest ona wymagana to poprawnego działania. "
+                f"Dodaj mnie ponownie z zaproszenia poniżej i nie zmieniaj moich uprawnień.",
                 color=Color.red(),
-                timestamp=utils.utcnow()
+                timestamp=utils.utcnow(),
             )
             embed.set_author(name=self.bot.user, icon_url=self.bot.avatar_url)
             embed.set_thumbnail(url=self.avatars.get_guild_icon(guild))
@@ -61,7 +61,7 @@ class BotGuilds(CustomCog):
     async def on_guild_join(self, guild: Guild):
         if not guild.me.guild_permissions.administrator:
             self.bot.dispatch("guild_available", guild)
-            
+
             return
 
         gif: File = File(
