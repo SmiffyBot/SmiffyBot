@@ -987,11 +987,9 @@ class BotBase(AutoShardedBot):
         """
 
         role: Optional[Role] = guild.get_role(role_id)
-        if role:
-            return role
 
         if not fetch:
-            return None
+            return role
 
         self.logger.warning(f"Role: {role_id} was not found in the cache. Sending HTTP Request.")
 
@@ -1013,6 +1011,7 @@ class BotBase(AutoShardedBot):
         :return: The guild object or None
         """
         guild: Optional[Guild] = self.get_guild(guild_id)
+
         if guild:
             return guild
 
@@ -1036,7 +1035,8 @@ class BotBase(AutoShardedBot):
         """
 
         channel = self.get_channel(channel_id)
-        if channel and isinstance(channel, GuildChannel):
+
+        if isinstance(channel, GuildChannel):
             return channel
 
         try:
@@ -1062,6 +1062,7 @@ class BotBase(AutoShardedBot):
         """
 
         member: Optional[Member] = guild.get_member(member_id)
+
         if member:
             return member
 
