@@ -1040,8 +1040,8 @@ class BotBase(AutoShardedBot):
 
     @staticmethod
     async def check_global_ban(
-        interaction: InterT,
-    ) -> bool:  # pyright: ignore
+        interaction: InterT,  # pyright: ignore
+    ) -> bool:
         """
         The check_global_ban function is a coroutine that checks if the user has been globally banned.
         If so, it sends them an error message and returns False. Otherwise, it returns True.
@@ -1533,8 +1533,8 @@ async def check_giveaway_requirement(
         elif requirement == "role":
             try:
                 role: Optional[Role] = await RoleConverter().convert(
-                    inter_or_message,
-                    str(value),  # pyright: ignore
+                    inter_or_message, # pyright: ignore
+                    str(value),
                 )
                 if not role:
                     raise errors.RoleNotFound(str(value))

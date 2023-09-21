@@ -43,9 +43,9 @@ class CommandWeather(CustomCog):
             return await interaction.send_error_message(description=f"Nie odnaleziono miejsca: `{place}`")
 
         latitude, longitude = (
-            location.latitude,
-            location.longitude,
-        )  # pyright: ignore
+            location.latitude,  # pyright: ignore
+            location.longitude,  # pyright: ignore
+        )
 
         response: Optional[ClientResponse] = await self.bot.session.send_api_request(
             interaction=interaction,
