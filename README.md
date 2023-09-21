@@ -20,7 +20,7 @@ Jednakże jesteśmy gdzie jesteśmy i jest aktualnie na ponad 1600 serwerach.
 - Edytowaną wersję nextcorda możecie zobaczyć pod tym [linkiem](https://github.com/SmiffyBot/nextcord/tree/Smiffy).
 
 ## Współtworzenie
-- Każdy bez wyjątku może został developerem bota. Wymagam jedynie przyzwoitej wiedzy języka Python, jak i umiejętność pisania botów, aby dowiedzieć się więcej, przeczytaj [contribution.md]().
+- Każdy bez wyjątku może został developerem bota. Wymagam jedynie przyzwoitej wiedzy języka Python, jak i umiejętność pisania botów, aby dowiedzieć się więcej, przeczytaj [CONTRIBUTING.md]().
 
 ## Linki
 - [Discord](https://discord.gg/TmUpSDyzQn)
