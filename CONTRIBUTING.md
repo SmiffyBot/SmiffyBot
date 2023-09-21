@@ -4,8 +4,8 @@ Zapoznaj się z [Wymaganiami](#wymagania) oraz [Strukturą plików](#struktura-p
 
 - Przed wprowadzaniem jakichkolwiek zmian, przetestuj swój kod, używając [Pyright'a](https://microsoft.github.io/pyright/#/).
 
-- Staraj się dzielić pull requesty tak, aby nie były one duże. Zamiast robić jeden, 
-- w którym wprowadzisz dużo rzeczy, podziel to na kilka pull requestów.
+- Staraj się dzielić pull requesty tak, aby nie były one duże. Zamiast robić jeden,
+w którym wprowadzisz dużo rzeczy, podziel to na kilka pull requestów.
 
 > Zobacz [Instalacja](#instalacja)
 
@@ -29,7 +29,7 @@ Nie wszystkie dane muszą być uzupełnione, aby bot działał poprawnie.**
 ## Instalacja
 - Najpierw utwórz swój [fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) reprozytorium.
 
-```shell
+```sh
 git clone https://github.com/<your-username>/SmiffyBot
 cd SmiffyBot
 
