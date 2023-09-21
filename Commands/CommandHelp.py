@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from nextcord import slash_command
+
 from utilities import CustomCog, CustomInteraction
 
 if TYPE_CHECKING:
@@ -9,7 +11,6 @@ if TYPE_CHECKING:
 
 
 class CommandHelp(CustomCog):
-
     @slash_command(name="pomoc", description="Komenda pomocy", dm_permission=False)
     async def help(self, interaction: CustomInteraction):
         ...
@@ -17,4 +18,3 @@ class CommandHelp(CustomCog):
 
 def setup(bot: Smiffy):
     bot.add_cog(CommandHelp(bot))
-
