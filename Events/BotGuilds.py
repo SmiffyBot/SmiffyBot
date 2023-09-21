@@ -31,6 +31,7 @@ class AddBotView(ui.View):
 class BotGuilds(CustomCog):
     @CustomCog.listener()
     async def on_guild_available(self, guild: Guild):
+        assert self.bot.user
 
         if guild.me.guild_permissions.administrator:
             self.bot.dispatch("invite_update", guild)
