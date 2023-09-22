@@ -1248,14 +1248,7 @@ class DiscordSupportButton(ui.View):
         if guild_invite in (None, ""):
             raise InvalidServerData
 
-        self.add_item(
-            ui.Button(
-                label="Discord Bota",
-                style=ButtonStyle.link,
-                url=guild_invite,
-                row=2
-            )
-        )
+        self.add_item(ui.Button(label="Discord Bota", style=ButtonStyle.link, url=guild_invite, row=2))
 
 
 def PermissionHandler(**perms):

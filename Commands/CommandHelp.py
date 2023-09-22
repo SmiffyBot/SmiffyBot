@@ -1,9 +1,19 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Callable, Awaitable, Iterable
 
-from nextcord import slash_command, ui, SelectOption, Color, Embed, utils, SlashApplicationCommand
-from utilities import CustomCog, CustomInteraction, DiscordSupportButton
+from typing import TYPE_CHECKING, Awaitable, Callable, Iterable
+
+from nextcord import (
+    Color,
+    Embed,
+    SelectOption,
+    SlashApplicationCommand,
+    slash_command,
+    ui,
+    utils,
+)
+
 from enums import Emojis
+from utilities import CustomCog, CustomInteraction, DiscordSupportButton
 
 if TYPE_CHECKING:
     from bot import Smiffy
@@ -18,58 +28,33 @@ class BotCommandsCategory(ui.Select):
 
         options = [
             SelectOption(
-                label="Administracyjne",
-                description="Komendy administracyjne.",
-                emoji="⛔",
-                value="admin"),
-
+                label="Administracyjne", description="Komendy administracyjne.", emoji="⛔", value="admin"
+            ),
             SelectOption(
                 label="Ustawienia",
                 description="Komendy pozwalające skonfigurować serwer.",
                 emoji="🔧",
-                value="settings"),
-
-            SelectOption(
-                label="Muzyczne",
-                description="Komendy dotyczące muzyki.",
-                emoji="🔊",
-                value="music"),
-
+                value="settings",
+            ),
+            SelectOption(label="Muzyczne", description="Komendy dotyczące muzyki.", emoji="🔊", value="music"),
             SelectOption(
                 label="Ekonomia",
                 description="Komendy ekonomii.",
                 emoji="<a:amoney:1154533728010383391>",
-                value="economy"),
-
+                value="economy",
+            ),
             SelectOption(
-                label="Dodatkowe",
-                description="Dodatkowe komendy bota.",
-                emoji="🍀",
-                value="additional"),
-
+                label="Dodatkowe", description="Dodatkowe komendy bota.", emoji="🍀", value="additional"
+            ),
             SelectOption(
-                label="Levelowanie",
-                description="Komendy dotyczące levelowania.",
-                emoji="✨",
-                value="leveling"),
-
+                label="Levelowanie", description="Komendy dotyczące levelowania.", emoji="✨", value="leveling"
+            ),
+            SelectOption(label="Bot", description="Komendy dotyczące bota.", emoji="🤖", value="bot"),
             SelectOption(
-                label="Bot",
-                description="Komendy dotyczące bota.",
-                emoji="🤖",
-                value="bot"),
-
-            SelectOption(
-                label="4Fun",
-                description="Komendy do umilenia sobie czasu.",
-                emoji="😆",
-                value="forfun"),
-
-            SelectOption(
-                label="Menu",
-                description="Powrót do menu komendy.",
-                emoji="🔗",
-                value="menu")]
+                label="4Fun", description="Komendy do umilenia sobie czasu.", emoji="😆", value="forfun"
+            ),
+            SelectOption(label="Menu", description="Powrót do menu komendy.", emoji="🔗", value="menu"),
+        ]
 
         super().__init__(placeholder="Wybierz kategorie komend", options=options)
 
@@ -97,7 +82,9 @@ class BotCommandsCategory(ui.Select):
                     if sub_command.children:
                         for sub_sub_command in sub_command.children.values():
                             commands_amount += 1
-                            description += f"- {sub_sub_command.get_mention()} - {sub_sub_command.description}\n"
+                            description += (
+                                f"- {sub_sub_command.get_mention()} - {sub_sub_command.description}\n"
+                            )
                     else:
                         commands_amount += 1
                         description += f"- {sub_command.get_mention()} - {sub_command.description}\n"
@@ -117,8 +104,8 @@ class BotCommandsCategory(ui.Select):
 
     async def admin(self, interaction: CustomInteraction):
         if not self.cached_categories.get("admin"):
-            commands: list[SlashApplicationCommand] = list(self.get_commands_by_category(
-                interaction.bot, "administration")
+            commands: list[SlashApplicationCommand] = list(
+                self.get_commands_by_category(interaction.bot, "administration")
             )
             description, amount_of_commands = self.format_commands(commands)
             self.cached_categories["admin"] = (description, amount_of_commands)
@@ -132,7 +119,9 @@ class BotCommandsCategory(ui.Select):
 
     async def settings(self, interaction: CustomInteraction):
         if not self.cached_categories.get("settings"):
-            commands: list[SlashApplicationCommand] = list(self.get_commands_by_category(interaction.bot, "settings"))
+            commands: list[SlashApplicationCommand] = list(
+                self.get_commands_by_category(interaction.bot, "settings")
+            )
             commands = [cmd for cmd in commands if cmd.name != "levelowanie"]
 
             description, amount_of_commands = self.format_commands(commands)
@@ -145,26 +134,30 @@ class BotCommandsCategory(ui.Select):
         await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
 
     async def music(self, interaction: CustomInteraction):
-        if not self.cached_categories.get('music'):
-            commands: list[SlashApplicationCommand] = list(self.get_commands_by_category(interaction.bot, "music"))
+        if not self.cached_categories.get("music"):
+            commands: list[SlashApplicationCommand] = list(
+                self.get_commands_by_category(interaction.bot, "music")
+            )
             description, amount_of_commands = self.format_commands(commands)
 
-            self.cached_categories['music'] = (description, amount_of_commands)
+            self.cached_categories["music"] = (description, amount_of_commands)
         else:
-            description, amount_of_commands = self.cached_categories['music']
+            description, amount_of_commands = self.cached_categories["music"]
 
         self.embed.title = f"`🔊` Kategoria: Muzyka ({amount_of_commands})"
         self.embed.description = description
         await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
 
     async def economy(self, interaction: CustomInteraction):
-        if not self.cached_categories.get('economy'):
-            commands: list[SlashApplicationCommand] = list(self.get_commands_by_category(interaction.bot, "economy"))
+        if not self.cached_categories.get("economy"):
+            commands: list[SlashApplicationCommand] = list(
+                self.get_commands_by_category(interaction.bot, "economy")
+            )
             description, amount_of_commands = self.format_commands(commands)
 
-            self.cached_categories['economy'] = (description, amount_of_commands)
+            self.cached_categories["economy"] = (description, amount_of_commands)
         else:
-            description, amount_of_commands = self.cached_categories['economy']
+            description, amount_of_commands = self.cached_categories["economy"]
 
         self.embed.title = f"`💸` Kategoria: Ekonomia ({amount_of_commands})"
         self.embed.description = description
@@ -172,13 +165,15 @@ class BotCommandsCategory(ui.Select):
         await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
 
     async def additional(self, interaction: CustomInteraction):
-        if not self.cached_categories.get('additional'):
-            commands: list[SlashApplicationCommand] = list(self.get_commands_by_category(interaction.bot, "additional"))
+        if not self.cached_categories.get("additional"):
+            commands: list[SlashApplicationCommand] = list(
+                self.get_commands_by_category(interaction.bot, "additional")
+            )
             description, amount_of_commands = self.format_commands(commands)
 
-            self.cached_categories['additional'] = (description, amount_of_commands)
+            self.cached_categories["additional"] = (description, amount_of_commands)
         else:
-            description, amount_of_commands = self.cached_categories['additional']
+            description, amount_of_commands = self.cached_categories["additional"]
 
         self.embed.title = f"`🍀` Kategoria: Dodatkowe ({amount_of_commands})"
         self.embed.description = description
@@ -187,7 +182,9 @@ class BotCommandsCategory(ui.Select):
 
     async def leveling(self, interaction: CustomInteraction):
         if not self.cached_categories.get("leveling"):
-            commands: list[SlashApplicationCommand] = list(self.get_commands_by_category(interaction.bot, "settings"))
+            commands: list[SlashApplicationCommand] = list(
+                self.get_commands_by_category(interaction.bot, "settings")
+            )
             commands = [cmd for cmd in commands if cmd.name == "levelowanie"]
 
             description, amount_of_commands = self.format_commands(commands)
@@ -201,15 +198,17 @@ class BotCommandsCategory(ui.Select):
         await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
 
     async def bot(self, interaction: CustomInteraction):
-        if not self.cached_categories.get('bot'):
-            commands: list[SlashApplicationCommand] = list(self.get_commands_by_category(interaction.bot, "client"))
+        if not self.cached_categories.get("bot"):
+            commands: list[SlashApplicationCommand] = list(
+                self.get_commands_by_category(interaction.bot, "client")
+            )
             commands = [cmd for cmd in commands if cmd.name != "globalban"]
 
             description, amount_of_commands = self.format_commands(commands)
 
-            self.cached_categories['bot'] = (description, amount_of_commands)
+            self.cached_categories["bot"] = (description, amount_of_commands)
         else:
-            description, amount_of_commands = self.cached_categories['bot']
+            description, amount_of_commands = self.cached_categories["bot"]
 
         self.embed.title = f"`🤖` Kategoria: Bot ({amount_of_commands})"
         self.embed.description = description
@@ -217,13 +216,15 @@ class BotCommandsCategory(ui.Select):
         await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
 
     async def forfun(self, interaction: CustomInteraction):
-        if not self.cached_categories.get('forfun'):
-            commands: list[SlashApplicationCommand] = list(self.get_commands_by_category(interaction.bot, "forfun"))
+        if not self.cached_categories.get("forfun"):
+            commands: list[SlashApplicationCommand] = list(
+                self.get_commands_by_category(interaction.bot, "forfun")
+            )
             description, amount_of_commands = self.format_commands(commands)
 
-            self.cached_categories['forfun'] = (description, amount_of_commands)
+            self.cached_categories["forfun"] = (description, amount_of_commands)
         else:
-            description, amount_of_commands = self.cached_categories['forfun']
+            description, amount_of_commands = self.cached_categories["forfun"]
 
         self.embed.title = f"`😆` Kategoria: ForFun ({amount_of_commands})"
         self.embed.description = description
@@ -237,7 +238,6 @@ class BotCommandsCategory(ui.Select):
 
 
 class CommandHelpView(DiscordSupportButton):
-
     def __init__(self, message_author: int, embed: Embed):
         super().__init__()
 
@@ -252,8 +252,7 @@ class CommandHelpView(DiscordSupportButton):
             return True  # Checking if the user who pressed the button is the author of the interaction
 
         await interaction.send_error_message(
-            description="Tylko autor użytej komendy może tego użyć.",
-            ephemeral=True
+            description="Tylko autor użytej komendy może tego użyć.", ephemeral=True
         )
 
         return False
@@ -270,16 +269,13 @@ class CommandHelp(CustomCog):
             color=Color.dark_theme(),
             timestamp=utils.utcnow(),
             description=f"{Emojis.REPLY.value} **Dzięki tej komendzie możesz sprawdzić wszystkie moje komendy.**"
-                        f"\n\n- `🏓` Ping: `{ping}ms`\n"
-                        f"- `🛠️` Shard: `{shard}`\n"
-                        f"- `🔧` Komendy: `{commands}`"
+            f"\n\n- `🏓` Ping: `{ping}ms`\n"
+            f"- `🛠️` Shard: `{shard}`\n"
+            f"- `🔧` Komendy: `{commands}`",
         )
         embed.set_author(name=interaction.user, icon_url=interaction.user_avatar_url)
         embed.set_thumbnail(url=interaction.guild_icon_url)
-        embed.set_footer(
-            text=f"Smiffy v{self.bot.__version__}",
-            icon_url=self.bot.avatar_url
-        )
+        embed.set_footer(text=f"Smiffy v{self.bot.__version__}", icon_url=self.bot.avatar_url)
 
         await interaction.send(embed=embed, view=CommandHelpView(interaction.user.id, embed))
 

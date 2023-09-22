@@ -21,11 +21,7 @@ class ButtonsView(DiscordSupportButton):
 
         self.add_item(
             ui.Button(
-                style=ButtonStyle.link,
-                url="https://smiffybot.pl/",
-                label="Strona Bota",
-                disabled=True,
-                row=2
+                style=ButtonStyle.link, url="https://smiffybot.pl/", label="Strona Bota", disabled=True, row=2
             )
         )
 
