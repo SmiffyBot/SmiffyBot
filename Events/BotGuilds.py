@@ -37,8 +37,11 @@ class BotGuilds(CustomCog):
         if guild.me.guild_permissions.administrator:
             self.bot.dispatch("invite_update", guild)
 
+            if guild not in self.bot.guilds:
+                self.bot.guilds.append(guild)
+
         else:
-            # Bot has not permission Administrator
+            # Bot doesn't have the proper permissions
             embed = Embed(
                 title=f"{Emojis.REDBUTTON.value} Wystąpił błąd.",
                 description=f"{Emojis.REPLY.value} Nie posiadam wymaganej permisji: `Administrator`."
@@ -61,9 +64,12 @@ class BotGuilds(CustomCog):
 
     @CustomCog.listener()
     async def on_guild_join(self, guild: Guild):
-        if not guild.me.guild_permissions.administrator:
-            self.bot.dispatch("guild_available", guild)
+        # According to nextcord's documentation,
+        # the on_guild_available event is called if the server is in bot.guilds cache.
+        # We also want to call it at on_guild_join to handle invites if permissions are okay.
+        self.bot.dispatch("guild_available", guild)
 
+        if not guild.me.guild_permissions.administrator:
             return
 
         gif: File = File(
