@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from logging import Logger
-from typing import TYPE_CHECKING, Any, Optional, TypedDict, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Optional, TypedDict, TypeVar, Union, NamedTuple
 
 from aiosqlite import Row
 
@@ -19,6 +19,14 @@ RED_COLOR: tuple[int, ...] = (252, 45, 55)
 PlayerT = TypeVar("PlayerT", bound="VoiceProtocol")
 InterT = TypeVar("InterT", bound="Interaction")
 UserType = Union["Member", "User"]
+
+
+class HTTPRatelimitParams(NamedTuple):
+    limit: int
+    remaining: int
+    reset_after: float
+    bucket: str
+    scope: Optional[str]
 
 
 class EconomyUserData(TypedDict):
