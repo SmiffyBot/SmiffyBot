@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Optional, TypedDict, TypeVar, Union
-from logging import Logger
 
 from aiosqlite import Row
 
