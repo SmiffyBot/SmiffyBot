@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 class CommandPay(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
         name="przelej",
-        description="Przelewa wybranej osobie określoną kwotę",
+        description="Przelewa wybranej osobie określoną kwotę.",
     )
     async def economy_pay(
         self,

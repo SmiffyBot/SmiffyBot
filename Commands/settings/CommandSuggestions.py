@@ -23,7 +23,7 @@ class CommandSuggestions(CustomCog):
 
     @suggestions.subcommand(
         name="włącz",
-        description="Włącza propozycjne na serwerze",
+        description="Włącza propozycje na serwerze.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def suggestions_on(
@@ -68,7 +68,7 @@ class CommandSuggestions(CustomCog):
 
     @suggestions.subcommand(
         name="wyłącz",
-        description="Wyłącz propozycje na serwerze",
+        description="Wyłącz propozycje na serwerze.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def suggestions_off(self, interaction: CustomInteraction):

@@ -561,7 +561,7 @@ class CommandGiveaway(CustomCog):
 
     @giveaway_main.subcommand(
         name="relosuj",
-        description="Relosuje wygranych w konkursie",
+        description="Relosuje wygranych w konkursie.",
     )  # pyright: ignore
     @PermissionHandler(
         manage_messages=True,
@@ -645,7 +645,7 @@ class CommandGiveaway(CustomCog):
 
     @giveaway_main.subcommand(
         name="zakończ",
-        description="Kończy giveaway przed czasem",
+        description="Kończy konkurs przed czasem.",
     )  # pyright: ignore
     @PermissionHandler(
         manage_messages=True,

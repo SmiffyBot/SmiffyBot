@@ -76,7 +76,7 @@ class ItemsListView(ui.View):
 class CommandInventory(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
         name="ekwipunek",
-        description="Wyświetla Twój ekwipunek",
+        description="Wyświetla Twój ekwipunek.",
     )
     async def economy_inventory(self, interaction: CustomInteraction):
         await interaction.response.defer()

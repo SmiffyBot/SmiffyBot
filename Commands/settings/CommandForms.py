@@ -360,7 +360,7 @@ class CommandForms(CustomCog):
 
     @form.subcommand(
         name="stwórz",
-        description="Tworzy nowy system formularzu",
+        description="Tworzy nowy system formularzy.",
     )  # pyright: ignore
     @PermissionHandler(manage_channels=True)
     async def form_create(
@@ -479,7 +479,7 @@ class CommandForms(CustomCog):
 
     @form.subcommand(
         name="usuń",
-        description="Usuwa wybrany formularz",
+        description="Usuwa wybrany formularz.",
     )  # pyright: ignore
     @PermissionHandler(manage_channels=True)
     async def form_delete(

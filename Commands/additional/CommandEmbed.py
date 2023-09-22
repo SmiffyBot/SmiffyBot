@@ -23,7 +23,7 @@ supported_colors: dict = {
 class CommandEmbed(CustomCog):
     @slash_command(
         name="embed",
-        description="Twórzy specjalny embed",
+        description="Twórzy specjalną wiadomość embed.",
         dm_permission=False,
     )
     async def embed(

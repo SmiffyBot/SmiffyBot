@@ -209,7 +209,7 @@ class CommandFavoriteSongs(CustomCog):
 
     @music_favorite_songs.subcommand(
         name="uruchom",
-        description="Uruchamia ulubione piosenki",
+        description="Uruchamia ulubione piosenki.",
     )
     async def music_play_favorite_songs(self, interaction: CustomInteraction):
         assert interaction.guild and isinstance(interaction.user, Member)
@@ -321,7 +321,7 @@ class CommandFavoriteSongs(CustomCog):
 
     @music_favorite_songs.subcommand(
         name="lista",
-        description="Lista z ulubionymi piosenkami",
+        description="Lista z ulubionymi piosenkami.",
     )
     async def music_list_favorite_song(self, interaction: CustomInteraction):
         assert interaction.user
@@ -378,7 +378,7 @@ class CommandFavoriteSongs(CustomCog):
 
     @music_favorite_songs.subcommand(
         name="usuń",
-        description="Usuwa piosenkę z ulubionych",
+        description="Usuwa piosenkę z ulubionych.",
     )
     async def music_delete_favorite_song(
         self,

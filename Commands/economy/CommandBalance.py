@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class CommandBalance(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
         name="stan_konta",
-        description="Wyświetla stan konta osoby",
+        description="Wyświetla stan konta osoby.",
     )
     async def economy_balance(
         self,

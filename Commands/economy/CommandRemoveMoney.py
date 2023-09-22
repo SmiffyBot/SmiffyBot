@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 class CommandRemoveMoney(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member   # pyright: ignore
         name="usuń_pieniądze",
-        description="Usuwa wybranej osobie określoną kwotę pieniędzy",
+        description="Usuwa wybranej osobie określoną kwotę pieniędzy.",
     )
     @PermissionHandler(manage_guild=True)
     async def economy_removemoney(

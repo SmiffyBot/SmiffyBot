@@ -317,6 +317,7 @@ class BotUtils:
             "./Commands",
             "./Events",
         ]
+
         for cog_folder in cog_folders:
             for file_or_folder in listdir(cog_folder):
                 if file_or_folder.endswith(".py"):
@@ -1247,13 +1248,7 @@ class DiscordSupportButton(ui.View):
         if guild_invite in (None, ""):
             raise InvalidServerData
 
-        self.add_item(
-            ui.Button(
-                label="Discord Bota",
-                style=ButtonStyle.link,
-                url=guild_invite,
-            )
-        )
+        self.add_item(ui.Button(label="Discord Bota", style=ButtonStyle.link, url=guild_invite, row=2))
 
 
 def PermissionHandler(**perms):

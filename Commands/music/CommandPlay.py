@@ -560,7 +560,7 @@ class CommandPlay(CustomCog):
 
     @MusicCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
         name="play",
-        description="uruchamia muzykę",
+        description="Uruchamia podaną piosenke.",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_play(

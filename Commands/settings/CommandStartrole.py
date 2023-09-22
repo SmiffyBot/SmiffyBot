@@ -23,7 +23,7 @@ class CommandStartRole(CustomCog):
 
     @startrole.subcommand(  # pyright: ignore
         name="włącz",
-        description="Ustawia rolę która ma być nadawana przy wejściu na serwer",
+        description="Włącza role, która ma być nadawana po wejściu na serwer.",
     )
     @PermissionHandler(manage_guild=True)
     async def startrole_on(
@@ -73,7 +73,7 @@ class CommandStartRole(CustomCog):
 
     @startrole.subcommand(
         name="wyłącz",
-        description="Wyłącza startowa role",
+        description="Wyłącza startowarole.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def startrole_off(self, interaction: CustomInteraction):

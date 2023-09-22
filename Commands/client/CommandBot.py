@@ -39,7 +39,6 @@ class CommandBot(CustomCog):
 
     @slash_command(
         name="bot",
-        guild_ids=[983442350963576863],
         dm_permission=False,
     )
     async def bot_command(self, interaction: CustomInteraction):
@@ -96,7 +95,7 @@ class CommandBot(CustomCog):
             ephemeral=True,
         )
 
-    @bot_command.subcommand(name="bląd", description="Zgłoś błąd bota")
+    @bot_command.subcommand(name="bląd", description="Zgłoś błąd bota.")
     async def bot_error(
         self,
         interaction: CustomInteraction,

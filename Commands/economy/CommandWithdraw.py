@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 class CommandWitdraw(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
         name="wypłać",
-        description="Wypłaca pieniądze z banku do portfela",
+        description="Wypłaca pieniądze z banku do portfela.",
     )
     async def economy_withdraw(
         self,

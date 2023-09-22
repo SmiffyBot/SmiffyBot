@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class CommandSlowmode(CustomCog):
     @slash_command(  # pyright: ignore
         name="slowmode",
-        description="Zmień prędkość wysyłania wiadomości na kanale",
+        description="Zmień prędkość wysyłania wiadomości na kanale.",
         dm_permission=False,
     )
     @PermissionHandler(

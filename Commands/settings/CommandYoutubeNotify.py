@@ -302,7 +302,7 @@ class CommandYoutubeNotify(CustomCog):
 
     @notify_youtube.subcommand(  # pyright: ignore
         name="włącz",
-        description="Dodaj powiadomienia o nowych filmach / streamach z twojego kanału",
+        description="Włącza powiadomienia o nowych filmach / streamach z twojego kanału.",
     )
     @PermissionHandler(manage_channels=True)
     async def notify_youtube_add(
@@ -347,7 +347,7 @@ class CommandYoutubeNotify(CustomCog):
 
     @notify_youtube.subcommand(  # pyright: ignore
         name="wyłącz",
-        description="Wyłącz powiadomienia o nowych filmach / streamach z twojego kanału",
+        description="Wyłącz powiadomienia o nowych filmach / streamach.",
     )
     @PermissionHandler(manage_channels=True)
     async def notify_youtube_off(self, interaction: CustomInteraction):

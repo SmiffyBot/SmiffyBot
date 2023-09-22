@@ -87,7 +87,7 @@ class CommandAntylink(CustomCog):
 
     @antylink.subcommand(
         name="włącz",
-        description="Włącza system Antylink",
+        description="Włącza system Antylink.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def antylink_on(self, interaction: CustomInteraction):
@@ -111,7 +111,7 @@ class CommandAntylink(CustomCog):
 
     @antylink.subcommand(
         name="wyłącz",
-        description="Wyłącza system Antylink",
+        description="Wyłącza system Antylink.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def antylink_off(self, interaction: CustomInteraction):

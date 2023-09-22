@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class CommandEconomySettings(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
         name="ustawienia",
-        description="Ustaw ustawienia ekonomii na serwerze",
+        description="Ustaw ustawienia ekonomii na serwerze.",
     )
     @PermissionHandler(manage_guild=True)
     async def economy_settings(

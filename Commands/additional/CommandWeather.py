@@ -23,7 +23,7 @@ class CommandWeather(CustomCog):
 
     @slash_command(
         name="pogoda",
-        description="Bot pokaże aktualną pogodę w dowolnym miejscu",
+        description="Bot pokaże aktualną pogodę w dowolnym miejscu.",
         dm_permission=False,
     )
     async def weather(

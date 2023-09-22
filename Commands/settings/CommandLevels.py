@@ -1492,7 +1492,7 @@ class CommandLevels(CustomCog):
 
     @levels.subcommand(
         name="włącz",
-        description="Włącza levelowanie na serwerze",
+        description="Włącza levelowanie na serwerze.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def levels_on(self, interaction: CustomInteraction) -> None:
@@ -1520,7 +1520,7 @@ class CommandLevels(CustomCog):
 
     @levels.subcommand(
         name="wyłącz",
-        description="Wyłącza levelowanie na serwerze",
+        description="Wyłącza levelowanie na serwerze.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def levels_off(self, interaction: CustomInteraction) -> None:
@@ -1548,7 +1548,7 @@ class CommandLevels(CustomCog):
 
     @levels.subcommand(
         name="reset",
-        description="Totalny reset levelowania na serwerze",
+        description="Całkowicie resetuję levelowanie.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def reset(self, interaction: CustomInteraction):
@@ -1591,7 +1591,7 @@ class CommandLevels(CustomCog):
 
     @levels.subcommand(  # pyright: ignore
         name="ustawienia",
-        description="Ustawienia dotyczące levelowania na serwerze",
+        description="Ustawienia dotyczące levelowania.",
     )
     @PermissionHandler(manage_guild=True)
     async def levels_settings(
@@ -1861,7 +1861,7 @@ class CommandLevels(CustomCog):
 
     @levels.subcommand(
         name="rank",
-        description="Pokazuje level użytkownika",
+        description="Pokazuje level użytkownika.",
     )
     async def rank(
         self,
@@ -1919,7 +1919,7 @@ class CommandLevels(CustomCog):
 
     @levels.subcommand(
         name="topka",
-        description="Tabela Top 10 użytkowników w levelach",
+        description="Tabela Top 10 użytkowników.",
     )
     async def leaderboard(self, interaction: CustomInteraction):
         assert interaction.guild

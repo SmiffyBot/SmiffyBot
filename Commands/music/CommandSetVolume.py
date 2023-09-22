@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class CommandSetVolume(CustomCog):
     @MusicCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
         name="głośność",
-        description="Ustawia % głośności bota",
+        description="Zmienia głośność piosenki w %",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_setvolume(

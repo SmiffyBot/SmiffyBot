@@ -207,7 +207,7 @@ class SelectView(ui.View):
 class CommandMusicSettings(CustomCog):
     @MusicCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
         name="ustawienia",
-        description="Zmień ustawienia muzyki na serwerze",
+        description="Zmień ustawienia muzyki na serwerze.",
     )
     @PermissionHandler(manage_guild=True)
     async def music_settings(

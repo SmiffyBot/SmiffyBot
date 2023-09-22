@@ -106,7 +106,7 @@ class CommandAutoResponder(CustomCog):
 
     @autoresponder.subcommand(  # pyright: ignore
         name="dodaj",
-        description="Dodaj automatyczną odpowiedź bota",
+        description="Dodaje automatyczną odpowiedź bota.",
     )
     @PermissionHandler(
         manage_messages=True,
@@ -146,7 +146,7 @@ class CommandAutoResponder(CustomCog):
 
     @autoresponder.subcommand(
         name="usuń",
-        description="Usuwa automatyczną odpowiedź bota",
+        description="Usuwa automatyczną odpowiedź bota.",
     )  # pyright: ignore
     @PermissionHandler(
         manage_messages=True,
@@ -216,7 +216,7 @@ class CommandAutoResponder(CustomCog):
 
     @autoresponder.subcommand(
         name="info",
-        description="Informacje o obecnych automatycznych odpowiedziach",
+        description="Informacje o autoresponderach.",
     )
     async def autoresponder_info(
         self,

@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 class CommandClear(CustomCog):
     @slash_command(
         name="clear",
-        description="Usuń masowo wiadomości z kanału",
+        description="Usuwa masowo wiadomości z kanału.",
         dm_permission=False,
     )  # pyright: ignore
     @PermissionHandler(

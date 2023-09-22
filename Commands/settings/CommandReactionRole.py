@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class CommandReactionRole(CustomCog):
     @slash_command(
         name="reactionrole",
-        description="Bot tworzy nową reactionrole",
+        description="Bot tworzy nową reactionrole.",
         dm_permission=False,
     )  # pyright: ignore
     @PermissionHandler(manage_roles=True)

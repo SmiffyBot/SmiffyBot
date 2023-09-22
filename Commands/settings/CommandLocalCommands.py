@@ -179,7 +179,7 @@ class CommandLocalCommands(CustomCog):
 
     @local_commands.subcommand(
         name="stwórz",
-        description="Tworzy nową lokalną komende",
+        description="Tworzy nową lokalną komende.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def local_command_create(
@@ -238,7 +238,7 @@ class CommandLocalCommands(CustomCog):
 
     @local_commands.subcommand(
         name="usuń",
-        description="Usuwa lokalną komende",
+        description="Usuwa lokalną komende.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def local_command_delete(
@@ -309,7 +309,7 @@ class CommandLocalCommands(CustomCog):
 
     @local_commands.subcommand(
         name="lista",
-        description="Lista lokalnych komend",
+        description="Lista lokalnych komend.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def local_commands_list(self, interaction: CustomInteraction):

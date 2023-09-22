@@ -20,7 +20,7 @@ class CommandAntyFlood(CustomCog):
 
     @antyflood.subcommand(
         name="włącz",
-        description="Włącza system AntyFlood",
+        description="Włącza system AntyFlood.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def antyflood_on(self, interaction: CustomInteraction):
@@ -112,7 +112,7 @@ class CommandAntyFlood(CustomCog):
 
     @antyflood.subcommand(
         name="wyłącz",
-        description="Wyłącza system AntyFlood",
+        description="Wyłącza system AntyFlood.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def antyflood_off(self, interaction: CustomInteraction):

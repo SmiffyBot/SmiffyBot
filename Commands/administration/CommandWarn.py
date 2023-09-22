@@ -881,7 +881,7 @@ class CommandWarn(CustomCog):
 
     @warnings_system.subcommand(  # pyright: ignore
         name="usuń_wszystkie",
-        description="Zresetuj wszystkie warny osobie lub na całym serwerze.",
+        description="Resetuje wszystkie ostrzeżenia osobie lub na całym serwerze.",
     )
     @PermissionHandler(
         moderate_members=True,

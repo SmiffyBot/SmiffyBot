@@ -25,7 +25,7 @@ class CommandUserInfo(CustomCog):
 
     @slash_command(
         name="userinfo",
-        description="Pokazuje informacje na temat użytkownika",
+        description="Pokazuje informacje na temat użytkownika.",
         dm_permission=False,
     )
     async def userinfo(
