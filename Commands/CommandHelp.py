@@ -65,7 +65,7 @@ class BotCommandsCategory(ui.Select):
         for cmd in bot.get_all_application_commands():
             if cmd.is_global:
                 module: str = cmd.parent_cog.__class__.__dict__["__module__"]
-                if category in module and isinstance(cmd, SlashApplicationCommand):
+                if category in module and isinstance(cmd, SlashApplicationCommand) and cmd.name:
                     commands[cmd.name] = cmd
 
         sorted_commands: dict[str, SlashApplicationCommand] = dict(sorted(commands.items()))
@@ -115,7 +115,9 @@ class BotCommandsCategory(ui.Select):
 
         self.embed.title = f"`⛔` Kategoria: Administracyjne ({amount_of_commands})"
         self.embed.description = description
-        await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
+
+        if interaction.message:
+            await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
 
     async def settings(self, interaction: CustomInteraction):
         if not self.cached_categories.get("settings"):
@@ -131,7 +133,9 @@ class BotCommandsCategory(ui.Select):
 
         self.embed.title = f"`🔧` Kategoria: Ustawienia ({amount_of_commands})"
         self.embed.description = description
-        await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
+
+        if interaction.message:
+            await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
 
     async def music(self, interaction: CustomInteraction):
         if not self.cached_categories.get("music"):
@@ -146,7 +150,9 @@ class BotCommandsCategory(ui.Select):
 
         self.embed.title = f"`🔊` Kategoria: Muzyka ({amount_of_commands})"
         self.embed.description = description
-        await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
+
+        if interaction.message:
+            await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
 
     async def economy(self, interaction: CustomInteraction):
         if not self.cached_categories.get("economy"):
@@ -162,7 +168,8 @@ class BotCommandsCategory(ui.Select):
         self.embed.title = f"`💸` Kategoria: Ekonomia ({amount_of_commands})"
         self.embed.description = description
 
-        await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
+        if interaction.message:
+            await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
 
     async def additional(self, interaction: CustomInteraction):
         if not self.cached_categories.get("additional"):
@@ -178,7 +185,8 @@ class BotCommandsCategory(ui.Select):
         self.embed.title = f"`🍀` Kategoria: Dodatkowe ({amount_of_commands})"
         self.embed.description = description
 
-        await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
+        if interaction.message:
+            await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
 
     async def leveling(self, interaction: CustomInteraction):
         if not self.cached_categories.get("leveling"):
@@ -195,7 +203,8 @@ class BotCommandsCategory(ui.Select):
         self.embed.title = f"`✨` Kategoria: Levelowanie ({amount_of_commands})"
         self.embed.description = description
 
-        await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
+        if interaction.message:
+            await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
 
     async def bot(self, interaction: CustomInteraction):
         if not self.cached_categories.get("bot"):
@@ -213,7 +222,8 @@ class BotCommandsCategory(ui.Select):
         self.embed.title = f"`🤖` Kategoria: Bot ({amount_of_commands})"
         self.embed.description = description
 
-        await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
+        if interaction.message:
+            await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
 
     async def forfun(self, interaction: CustomInteraction):
         if not self.cached_categories.get("forfun"):
@@ -229,12 +239,15 @@ class BotCommandsCategory(ui.Select):
         self.embed.title = f"`😆` Kategoria: ForFun ({amount_of_commands})"
         self.embed.description = description
 
-        await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
+        if interaction.message:
+            await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
 
     async def menu(self, interaction: CustomInteraction):
         self.embed.title = "`✨` Smiffy - Pomoc"
         self.embed.description = self.default_description
-        await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
+
+        if interaction.message:
+            await interaction.followup.edit_message(embed=self.embed, message_id=interaction.message.id)
 
 
 class CommandHelpView(DiscordSupportButton):
@@ -243,11 +256,17 @@ class CommandHelpView(DiscordSupportButton):
 
         self.message_author: int = message_author
         self.embed: Embed = embed
-        self.default_description: str = embed.description
+
+        if isinstance(embed.description, str):
+            self.default_description: str = embed.description
+        else:
+            self.default_description = ""
 
         self.add_item(BotCommandsCategory(self.embed, self.default_description))
 
     async def interaction_check(self, interaction: CustomInteraction):
+        assert interaction.user
+
         if self.message_author == interaction.user.id:
             return True  # Checking if the user who pressed the button is the author of the interaction
 
@@ -261,6 +280,8 @@ class CommandHelpView(DiscordSupportButton):
 class CommandHelp(CustomCog):
     @slash_command(name="pomoc", description="Komenda pomocy", dm_permission=False)
     async def help(self, interaction: CustomInteraction):
+        assert interaction.user
+
         ping, shard = interaction.get_bot_latency()
         commands: int = len(self.bot.get_all_application_commands())
 
