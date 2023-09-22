@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from logging import Logger
-from typing import TYPE_CHECKING, Any, Optional, TypedDict, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Optional, Tuple, TypedDict, TypeVar, Union
 
 from aiosqlite import Row
 
@@ -19,6 +19,7 @@ RED_COLOR: tuple[int, ...] = (252, 45, 55)
 PlayerT = TypeVar("PlayerT", bound="VoiceProtocol")
 InterT = TypeVar("InterT", bound="Interaction")
 UserType = Union["Member", "User"]
+HTTPRatelimitParams = Tuple[int, int, float, str, Optional[str]]
 
 
 class EconomyUserData(TypedDict):
