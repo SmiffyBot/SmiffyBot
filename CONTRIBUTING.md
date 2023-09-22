@@ -5,7 +5,7 @@ Zapoznaj się z [Wymaganiami](#wymagania) oraz [Strukturą plików](#struktura-p
 - Przed wprowadzaniem jakichkolwiek zmian, przetestuj swój kod, używając [Pyright'a](https://microsoft.github.io/pyright/#/).
 
 - Staraj się dzielić pull requesty tak, aby nie były one duże. Zamiast robić jeden,
-w którym wprowadzisz dużo rzeczy, podziel to na kilka pull requestów.
+w którym wprowadzisz dużo rzeczy, podziel je na kilka.
 
 > Zobacz [Instalacja](#instalacja)
 

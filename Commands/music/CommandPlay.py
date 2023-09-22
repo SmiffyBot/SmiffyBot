@@ -588,10 +588,8 @@ class CommandPlay(CustomCog):
 
         if not interaction.guild.voice_client:
             try:
-                player: PlayerT = (  # pyright: ignore
-                    await interaction.user.voice.channel.connect(
-                        cls=MusicPlayer  # pyright: ignore
-                    )
+                player: PlayerT = await interaction.user.voice.channel.connect(  # pyright: ignore
+                    cls=MusicPlayer  # pyright: ignore
                 )
             except errors.NoNodesAvailable:
                 return await interaction.send_error_message(

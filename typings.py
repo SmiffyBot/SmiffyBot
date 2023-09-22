@@ -1,10 +1,8 @@
 # pylint: disable=unused-import
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any, Optional, TypedDict, TypeVar, Union
 
 from aiosqlite import Row
-
 from logging import Logger
 
 if TYPE_CHECKING:
