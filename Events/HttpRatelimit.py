@@ -1,22 +1,21 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, Optional
-from typing_extensions import Unpack
 
 from nextcord import TextChannel, errors
+from typing_extensions import Unpack
 
-from utilities import CustomCog, bot_utils
 from errors import InvalidServerData
+from utilities import CustomCog, bot_utils
 
 if TYPE_CHECKING:
+    from nextcord.abc import GuildChannel
 
     from bot import Smiffy
     from typings import HTTPRatelimitParams
 
-    from nextcord.abc import GuildChannel
-
 
 class HttpRatelimit(CustomCog):
-
     async def send_ratelimit_notify_to_channel(self, **kwargs: Any):
         channel_id: Optional[int] = bot_utils.get_value_from_config("ERRORS_CHANNEL_NOTIFY")
 
@@ -44,8 +43,9 @@ class HttpRatelimit(CustomCog):
         self.bot.logger.warning(f"Reached HTTP Ratelimit under bucket: {bucket}.")
         self.bot.logger.warning(f"Remaining requests: {remaining}. Reset after: {reset_after}s.")
 
-        await self.send_ratelimit_notify_to_channel(limit=limit, remaining=remaining,
-                                                    reset_after=reset_after, bucket=bucket)
+        await self.send_ratelimit_notify_to_channel(
+            limit=limit, remaining=remaining, reset_after=reset_after, bucket=bucket
+        )
 
     @CustomCog.listener()
     async def on_global_http_ratelimit(self, retry_after: float):
