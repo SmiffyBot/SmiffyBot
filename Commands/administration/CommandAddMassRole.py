@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 class CommandAddMassRole(CustomCog):
     @slash_command(
         name="nadajmasoworole",
-        description="Nadaje każdemu wybraną role",
+        description="Nadaje każdemu wybraną role.",
         dm_permission=False,
     )  # pyright: ignore
     @PermissionHandler(manage_roles=True)

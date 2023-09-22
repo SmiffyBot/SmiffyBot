@@ -42,7 +42,7 @@ class CommandLeaderboard(CustomCog):
 
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
         name="topka",
-        description="Top 10 w ekonomii",
+        description="Top 10 osób w $.",
     )
     async def economy_leaderboard(self, interaction: CustomInteraction):
         assert interaction.guild

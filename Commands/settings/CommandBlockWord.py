@@ -30,7 +30,7 @@ class CommandBlockWord(CustomCog):
 
     @blockword.subcommand(
         name="dodaj",
-        description="Dodaj słowo do zablokowania",
+        description="Dodaj słowo do zablokowania.",
     )  # pyright: ignore
     @PermissionHandler(manage_messages=True)
     async def blockword_add(
@@ -85,7 +85,7 @@ class CommandBlockWord(CustomCog):
 
     @blockword.subcommand(
         name="usuń",
-        description="Usuwa słowo z zablokowanych słów",
+        description="Usuwa słowo z zablokowanych słów.",
     )  # pyright: ignore
     @PermissionHandler(manage_messages=True)
     async def blockword_remove(
@@ -130,7 +130,7 @@ class CommandBlockWord(CustomCog):
 
     @blockword.subcommand(
         name="lista",
-        description="Wyświetla listę zablokowanych słów",
+        description="Wyświetla listę zablokowanych słów.",
     )  # pyright: ignore
     @PermissionHandler(manage_messages=True)
     async def blockword_list(self, interaction: CustomInteraction):

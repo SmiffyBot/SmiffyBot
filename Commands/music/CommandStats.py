@@ -32,7 +32,7 @@ class CommandStats(CustomCog):
 
     @MusicCog.main.subcommand(  # pylint: disable=no-member
         name="statystyki",
-        description="Statystyki muzyki Smiffiego",
+        description="Statystyki muzyki Smiffiego.",
     )
     async def music_stats(self, interaction: CustomInteraction):
         await interaction.response.defer()

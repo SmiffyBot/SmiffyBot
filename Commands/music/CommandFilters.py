@@ -22,7 +22,7 @@ class CommandFilters(CustomCog):
 
     @music_filters.subcommand(  # pyright: ignore
         name="bassboost",
-        description="Włącza lub wyłącza efekt bassboost",
+        description="Włącza lub wyłącza efekt bassboost.",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_bassboost(
@@ -102,7 +102,7 @@ class CommandFilters(CustomCog):
 
     @music_filters.subcommand(
         name="8d",
-        description="Włącza lub wyłącza efekt 8D",
+        description="Włącza lub wyłącza efekt 8D.",
     )  # pyright: ignore
     @PermissionHandler(user_role_has_permission="music")
     async def music_8d(
@@ -160,7 +160,7 @@ class CommandFilters(CustomCog):
 
     @music_filters.subcommand(  # pyright: ignore
         name="nightcore",
-        description="Włącza lub wyłącza efekt nightcore",
+        description="Włącza lub wyłącza efekt nightcore.",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_nightcore(

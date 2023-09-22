@@ -49,7 +49,7 @@ class CommandPermissions(CustomCog):
 
     @permission.subcommand(
         name="dodaj",
-        description="Dodaj uprawnienia dla roli podanej komendy",
+        description="Dodaje uprawnienie użycia podanej komendy dla roli.",
     )
     @is_guild_owner()
     async def permission_add(
@@ -123,7 +123,7 @@ class CommandPermissions(CustomCog):
 
     @permission.subcommand(
         name="usuń",
-        description="Usuń uprawnienia roli do podanej komendy",
+        description="Usuwa uprawnienia roli do podanej komendy",
     )
     @is_guild_owner()
     async def permission_remove(
@@ -188,7 +188,7 @@ class CommandPermissions(CustomCog):
 
     @permission.subcommand(
         name="lista",
-        description="Lista uprawnień dla podanej roli",
+        description="Lista uprawnień podanej roli.",
     )
     @is_guild_owner()
     async def permission_list(

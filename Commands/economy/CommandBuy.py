@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class CommandBuy(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
         name="kup",
-        description="Kupuje przedmiot ze sklepu",
+        description="Kupuje przedmiot ze sklepu.",
     )
     async def economy_buy(
         self,

@@ -104,7 +104,7 @@ class ConfirmReset(ui.View):
 class CommandReset(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
         name="reset",
-        description="Resetuję całą ekonomie na serwerze",
+        description="Resetuje całą ekonomie na serwerze.",
     )
     @PermissionHandler(manage_guild=True)
     async def economy_reset(self, interaction: CustomInteraction):

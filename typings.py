@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional, TypedDict, TypeVar, Union
 
 from aiosqlite import Row
 
-from utilities import Logger
+from logging import Logger
 
 if TYPE_CHECKING:
     from nextcord import Interaction, Member, User, VoiceProtocol

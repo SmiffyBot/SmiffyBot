@@ -19,7 +19,7 @@ class CommandAntyGhostPing(CustomCog):
 
     @antyghostping.subcommand(
         name="włącz",
-        description="Włącza AntyGhostPing na serwerze",
+        description="Włącza AntyGhostPing na serwerze.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def antyghostping_on(self, interaction: CustomInteraction):
@@ -45,7 +45,7 @@ class CommandAntyGhostPing(CustomCog):
 
     @antyghostping.subcommand(  # pyright: ignore
         name="wyłącz",
-        description="Wyłącza AntyGhostPing na serwerze",
+        description="Wyłącza AntyGhostPing na serwerze.",
     )
     @PermissionHandler(manage_guild=True)
     async def antyghostping_off(self, interaction: CustomInteraction):

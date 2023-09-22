@@ -19,7 +19,7 @@ class CommandLogs(CustomCog):
 
     @logs.subcommand(
         name="włącz",
-        description="Włącza logi na serwerze",
+        description="Włącza logi na serwerze.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def logs_on(
@@ -61,7 +61,7 @@ class CommandLogs(CustomCog):
 
     @logs.subcommand(
         name="wyłącz",
-        description="Wyłącza logi na serwerze",
+        description="Wyłącza logi na serwerze.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def logs_off(self, interaction: CustomInteraction):

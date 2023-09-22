@@ -102,7 +102,7 @@ class ItemsListView(ui.View):
 class CommandShop(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
         name="sklep",
-        description="Wyświetla sklep na serwerze",
+        description="Wyświetla sklep na serwerze.",
     )
     async def economy_shop(self, interaction: CustomInteraction):
         assert isinstance(interaction.user, Member) and interaction.guild

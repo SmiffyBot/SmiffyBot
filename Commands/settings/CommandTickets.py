@@ -1238,7 +1238,7 @@ class CommandTickets(CustomCog):
 
     @tickets.subcommand(  # pyright: ignore
         name="instalacja",
-        description="Rozpocznij instalacje ticketów na serwerze!",
+        description="Rozpocznyna instalacje ticketów na serwerze!",
     )
     @PermissionHandler(manage_guild=True)
     async def tickets_setup(
@@ -1324,7 +1324,7 @@ class CommandTickets(CustomCog):
 
     @tickets.subcommand(
         name="usuń",
-        description="Usuwa system ticketu z serwera",
+        description="Usuwa system ticketu z serwera.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def ticket_delete(
@@ -1396,7 +1396,7 @@ class CommandTickets(CustomCog):
 
     @tickets.subcommand(  # pyright: ignore
         name="info",
-        description="Pokazuje wszystkie dostępne informacje o ticketcie",
+        description="Pokazuje wszystkie dostępne informacje o tickecie.",
     )
     @PermissionHandler(manage_guild=True)
     async def ticket_info(

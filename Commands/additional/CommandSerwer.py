@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class CommandSerwer(CustomCog):
     @slash_command(
         name="serwerinfo",
-        description="Pokazuje informacje o serwerze",
+        description="Pokazuje informacje o serwerze.",
         dm_permission=False,
     )
     async def serwer(self, interaction: CustomInteraction):

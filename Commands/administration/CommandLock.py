@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 class CommandLock(CustomCog):
     @slash_command(
         name="zablokujkanal",
-        description="Blokuje wybrany kanał",
+        description="Blokuje wybrany kanał.",
         dm_permission=False,
     )  # pyright: ignore
     @PermissionHandler(manage_channels=True)
@@ -48,7 +48,7 @@ class CommandLock(CustomCog):
 
     @slash_command(
         name="odblokujkanal",
-        description="Odblokowuje wybrany kanał",
+        description="Odblokowuje wybrany kanał.",
         dm_permission=False,
     )  # pyright: ignore
     @PermissionHandler(manage_channels=True)

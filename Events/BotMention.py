@@ -25,6 +25,7 @@ class ButtonsView(DiscordSupportButton):
                 url="https://smiffybot.pl/",
                 label="Strona Bota",
                 disabled=True,
+                row=2
             )
         )
 

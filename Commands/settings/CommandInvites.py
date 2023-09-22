@@ -44,7 +44,7 @@ class CommandInvites(CustomCog):
 
     @invites.subcommand(
         name="włącz",
-        description="Włącza system zaproszeń na serwerze",
+        description="Włącza system zaproszeń na serwerze.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def invites_on(self, interaction: CustomInteraction):
@@ -88,7 +88,7 @@ class CommandInvites(CustomCog):
 
     @invites.subcommand(
         name="wyłącz",
-        description="Wyłącza system zaproszeń na serwerze",
+        description="Wyłącza system zaproszeń na serwerze.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def invites_off(self, interaction: CustomInteraction):
@@ -114,7 +114,7 @@ class CommandInvites(CustomCog):
 
     @invites.subcommand(
         name="sprawdź",
-        description="Pokazuje zaproszenia wybranej osoby",
+        description="Pokazuje zaproszenia wybranej osoby.",
     )
     async def invites_check(
         self,
@@ -163,7 +163,7 @@ class CommandInvites(CustomCog):
 
     @invites.subcommand(
         name="topka",
-        description="Top 10 w zaproszeniach na serwerze",
+        description="Top 10 w zaproszeniach na serwerze.",
     )
     async def invites_leaderboard(self, interaction: CustomInteraction):
         assert interaction.guild
@@ -248,7 +248,7 @@ class CommandInvites(CustomCog):
 
     @invites.subcommand(
         "powiadomienia",
-        description="Pozwala zarządzać powiadomieniami o zaproszonych osobach",
+        description="Pozwala zarządzać powiadomieniami o zaproszonych osobach.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def invites_notify(
@@ -449,7 +449,7 @@ class CommandInvites(CustomCog):
 
     @invites.subcommand(
         name="dodaj",
-        description="Dodaje zaproszenia wybranej osobie",
+        description="Dodaje zaproszenia wybranej osobie.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def invites_add(
@@ -529,7 +529,7 @@ class CommandInvites(CustomCog):
 
     @invites.subcommand(
         name="usuń",
-        description="Usuwa zaproszenia wybranej osobie",
+        description="Usuwa zaproszenia wybranej osobie.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def invites_remove(
@@ -612,7 +612,7 @@ class CommandInvites(CustomCog):
 
     @invites.subcommand(
         name="info",
-        description="Sprawdza kto zaprosił danego użytkownika",
+        description="Sprawdza kto zaprosił danego użytkownika.",
     )
     async def invites_info(
         self,

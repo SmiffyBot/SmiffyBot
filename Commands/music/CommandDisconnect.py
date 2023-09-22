@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 class CommandDisconnect(CustomCog):
     @MusicCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
         name="odłącz",
-        description="Wychodzi z kanału głosowego",
+        description="Wychodzi z kanału głosowego.",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_disconnect(self, interaction: CustomInteraction):

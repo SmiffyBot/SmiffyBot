@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class CommandCoinflip(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
         name="rzut_moneta",
-        description="Rzut monetą o pieniądze",
+        description="Rzut monetą o pieniądze.",
     )
     @shared_cooldown("command_coinflip")
     async def economy_coinflip(

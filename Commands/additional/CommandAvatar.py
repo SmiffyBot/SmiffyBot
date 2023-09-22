@@ -29,7 +29,7 @@ class CommandAvatar(CustomCog):
 
     @slash_command(
         name="avatar",
-        description="Wyświetli avatar użytkownika",
+        description="Wyświetli avatar użytkownika.",
         dm_permission=False,
     )
     async def avatar(

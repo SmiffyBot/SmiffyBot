@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 class CommandWork(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
         name="pracuj",
-        description="Pracuj i zdobywaj pieniądze",
+        description="Pracuj i zdobywaj pieniądze.",
     )
     @shared_cooldown("command_work")
     async def economy_work(self, interaction: CustomInteraction):

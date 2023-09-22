@@ -31,7 +31,7 @@ class CommandEditItem(CustomCog):
 
     @EconomyCog.main.subcommand(  # pylint: disable=no-member   # pyright: ignore
         name="edytuj_przedmiot",
-        description="Edytuje opcję przedmiotu",
+        description="Zmienia opcję przedmiotu.",
     )
     @PermissionHandler(manage_guild=True)
     async def economy_edititem(

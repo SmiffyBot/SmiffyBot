@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 class CommandDeposit(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member
         name="wpłać",
-        description="Wpłaca pieniądze do banku",
+        description="Wpłaca pieniądze do banku.",
     )
     async def economy_deposit(
         self,

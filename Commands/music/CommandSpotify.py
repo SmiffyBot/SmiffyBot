@@ -399,7 +399,7 @@ class CommandSpotify(CustomCog):
 
     @music_spotify.subcommand(  # pyright: ignore
         name="playlisty",
-        description="Wyświetla playliste możliwe do odtworzenia",
+        description="Wyświetla playlisty możliwe do odtworzenia.",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_spotify_playlists(self, interaction: CustomInteraction):
@@ -460,7 +460,7 @@ class CommandSpotify(CustomCog):
 
     @music_spotify.subcommand(
         name="odłącz_konto",
-        description="Odłącza konto spotify od konta discord",
+        description="Odłącza konto spotify od konta discord.",
     )
     async def music_spotify_disconnect(self, interaction: CustomInteraction):
         assert isinstance(interaction.user, Member)
@@ -488,7 +488,7 @@ class CommandSpotify(CustomCog):
 
     @music_spotify.subcommand(
         name="podłącz_konto",
-        description="Łączy twoje konto discord z kotnem spotify",
+        description="Łączy twoje konto discord z kontem spotify.",
     )
     async def music_spotify_connect(
         self,

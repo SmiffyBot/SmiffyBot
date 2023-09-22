@@ -41,7 +41,7 @@ class CommandSettings(CustomCog):
 
     @slash_command(  # pyright: ignore
         name="ustawienia",
-        description="Pokaże ci status wszystkich ustawień na serwerze",
+        description="Wyświetla status wszystkich ustawień na serwerze.",
         dm_permission=False,
     )
     @PermissionHandler(manage_guild=True)

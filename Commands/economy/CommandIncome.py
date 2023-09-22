@@ -301,7 +301,7 @@ class CommandIncome(CustomCog):
 
     @economy_income.subcommand(
         name="dodaj",
-        description="Dodaj przychód dla roli",
+        description="Dodaje przychód dla roli.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def income_add(
@@ -360,7 +360,7 @@ class CommandIncome(CustomCog):
 
     @economy_income.subcommand(  # pyright: ignore
         name="usuń",
-        description="Usuwa przychód przypisany do roli",
+        description="Usuwa przychód przypisany do roli.",
     )
     @PermissionHandler(manage_guild=True)
     async def income_delete(
@@ -413,7 +413,7 @@ class CommandIncome(CustomCog):
 
     @economy_income.subcommand(  # pyright: ignore
         name="lista",
-        description="Lista ról z przypisanymi dochodami",
+        description="Lista ról z przypisanymi dochodami.",
     )
     @PermissionHandler(manage_guild=True)
     async def income_list(self, interaction: CustomInteraction):

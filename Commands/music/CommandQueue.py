@@ -78,7 +78,7 @@ class QuqueListView(ui.View):
 class CommandQueue(CustomCog):
     @MusicCog.main.subcommand(  # pylint: disable=no-member
         name="kolejka",
-        description="Pomija aktualną graną piosenke",
+        description="Pomija aktualną graną piosenke.",
     )
     async def music_queue(self, interaction: CustomInteraction):
         assert interaction.guild

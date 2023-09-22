@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class CommandCreateItem(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member   # pyright: ignore
         name="stwórz_przedmiot",
-        description="Tworzy nowy przedmiot do sklepu",
+        description="Tworzy nowy przedmiot do sklepu.",
     )
     @PermissionHandler(manage_guild=True)
     async def economy_createitem(

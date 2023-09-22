@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class CommandDeleteItem(CustomCog):
     @EconomyCog.main.subcommand(  # pylint: disable=no-member   # pyright: ignore
         name="usuń_przedmiot",
-        description="Usuwa wybrany przedmiot",
+        description="Usuwa wybrany przedmiot.",
     )
     @PermissionHandler(manage_guild=True)
     async def economy_deleteitem(

@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class CommandResume(CustomCog):
     @MusicCog.main.subcommand(  # pylint: disable=no-member  # pyright: ignore
         name="wznów",
-        description="Wyłącza pauze z piosenki",
+        description="Wyłącza pauzę z piosenki.",
     )
     @PermissionHandler(user_role_has_permission="music")
     async def music_resume(self, interaction: CustomInteraction):

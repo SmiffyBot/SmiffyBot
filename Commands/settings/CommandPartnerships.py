@@ -156,7 +156,7 @@ class CommandPartnerships(CustomCog):
 
     @partnerships.subcommand(
         name="bump",
-        description="Wysyła reklame serwera na wszystkie serwery z partnerstwami",
+        description="Wysyła reklame serwera na wszystkie serwery z partnerstwami.",
     )
     @cooldown(
         1,
@@ -206,7 +206,7 @@ class CommandPartnerships(CustomCog):
 
     @partnerships.subcommand(  # pyright: ignore
         name="włącz",
-        description="Włącza system partnerstw na serwerze",
+        description="Włącza system partnerstw na serwerze.",
     )
     @PermissionHandler(manage_guild=True)
     async def partnerships_on(
@@ -222,7 +222,7 @@ class CommandPartnerships(CustomCog):
 
     @partnerships.subcommand(  # pyright: ignore
         name="wyłącz",
-        description="Wyłącza system partnerstw na serwerze",
+        description="Wyłącza system partnerstw na serwerze.",
     )
     @PermissionHandler(manage_guild=True)
     async def partnerships_off(self, interaction: CustomInteraction):

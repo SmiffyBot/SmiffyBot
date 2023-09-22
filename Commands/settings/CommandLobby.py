@@ -438,7 +438,7 @@ class CommandLobby(CustomCog):
 
     @goodbye.subcommand(
         name="włącz",
-        description="Ustaw pożegnania na serwerze",
+        description="Ustawia pożegnania na serwerze.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def goodbye_on(
@@ -560,7 +560,7 @@ class CommandLobby(CustomCog):
 
     @welcome.subcommand(
         name="włącz",
-        description="Ustaw przywitania na serwerze!",
+        description="Ustawia przywitania na serwerze.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def welcome_on(
@@ -659,7 +659,7 @@ class CommandLobby(CustomCog):
 
     @welcome.subcommand(
         name="wyłącz",
-        description="Wyłącza aktualne przywitania",
+        description="Wyłącza aktualne przywitania.",
     )  # pyright: ignore
     @PermissionHandler(manage_guild=True)
     async def welcome_off(self, interaction: CustomInteraction):
