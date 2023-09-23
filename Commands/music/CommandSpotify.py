@@ -245,7 +245,7 @@ class SelectPlaylist(ui.Select):
         )
 
         if tracks[0]:
-            track_0 = tracks[0]
+            tracks[0]
             embed.set_thumbnail(url=tracks[0].artwork_url)
 
         embed.set_author(
@@ -259,7 +259,6 @@ class SelectPlaylist(ui.Select):
         await interaction.send(embed=embed, view=buttons_view)
 
         if __track:
-
             track_lenght: str = str(timedelta(seconds=int(__track.length / 1000)))
 
             embed = Embed(
