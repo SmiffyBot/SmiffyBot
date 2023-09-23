@@ -245,7 +245,6 @@ class SelectPlaylist(ui.Select):
         )
 
         if tracks[0]:
-            tracks[0]
             embed.set_thumbnail(url=tracks[0].artwork_url)
 
         embed.set_author(
