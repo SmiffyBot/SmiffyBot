@@ -17,8 +17,13 @@ if TYPE_CHECKING:
     from typings import DB_RESPONSE
 
 
-class CommandReactionRole(CustomCog):
-    @slash_command(
+class CommandAutorole(CustomCog):
+
+    @slash_command(name="autorole")
+    async def autorole(self, interaction: CustomInteraction):
+        ...
+
+    @autorole.subcommand(
         name="reactionrole",
         description="Bot tworzy nową reactionrole.",
         dm_permission=False,
@@ -107,4 +112,4 @@ class CommandReactionRole(CustomCog):
 
 
 def setup(bot: Smiffy):
-    bot.add_cog(CommandReactionRole(bot))
+    bot.add_cog(CommandAutorole(bot))
