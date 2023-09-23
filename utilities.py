@@ -128,7 +128,7 @@ class BotUtils:
     async def set_activity(bot: Smiffy) -> None:
         """
         The set_activity function is a coroutine that sets the bot activity to 'Running' at startup
-        and then changes it to '/help' once the bot has finished loading.
+        and then changes it to '/pomoc' once the bot has finished loading.
 
         :param bot: Bot object to change status
         :return: None
@@ -142,7 +142,7 @@ class BotUtils:
             await bot.wait_until_ready()
 
         await bot.change_presence(
-            activity=Game(name="/help"),
+            activity=Game(name="/pomoc"),
             status=Status.dnd,
         )
 
