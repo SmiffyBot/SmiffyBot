@@ -98,8 +98,8 @@ class MusicManagerView(ui.View):
             return
 
         self.player.queue.clear()
-        self.player.cleanup()
         await self.player.stop()
+        self.player.cleanup()
 
         await interaction.send_success_message(
             title=f"Pomyślnie wyłączono muzykę {Emojis.GREENBUTTON.value}",
