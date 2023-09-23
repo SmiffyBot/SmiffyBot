@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
 
 class CommandAutorole(CustomCog):
-
     @slash_command(name="autorole")
     async def autorole(self, interaction: CustomInteraction):
         ...
