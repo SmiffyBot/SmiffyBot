@@ -203,14 +203,12 @@ class SelectPlaylist(ui.Select):
         if len(tracks) > 100:
             tracks = tracks[0:100]
 
+        player._connected = True
+
         if not player.current:
-            if len(tracks) <= 1:
-                player.queue.extend(tracks)
-                __track: Optional[Track] = None
-            else:
-                player.queue.extend(tracks[1::])
-                __track: Optional[Track] = tracks[0]
-                await player.play(__track)
+            player.queue.extend(tracks[1::])
+            __track: Optional[Track] = tracks[0]
+            await player.play(__track)
 
         else:
             __track: Optional[Track] = None
@@ -247,6 +245,7 @@ class SelectPlaylist(ui.Select):
         )
 
         if tracks[0]:
+            tracks[0]
             embed.set_thumbnail(url=tracks[0].artwork_url)
 
         embed.set_author(
