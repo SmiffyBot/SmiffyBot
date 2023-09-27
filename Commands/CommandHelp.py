@@ -21,7 +21,6 @@ if TYPE_CHECKING:
 
 class BotCommandsCategory(ui.Select):
     def __init__(self, embed: Optional[Embed], embed_description: Optional[str]) -> None:
-
         self.default_description: Optional[str] = embed_description
         self.embed: Optional[Embed] = embed
 
@@ -69,7 +68,7 @@ class BotCommandsCategory(ui.Select):
 
         embed: Embed = interaction.message.embeds[0]
         embed_description = f"""{Emojis.REPLY.value} **Dzięki tej komendzie możesz sprawdzić wszystkie moje komendy.**
-        
+
 - `🏓` Ping: `{ping}ms`
 - `🛠️` Shard: `{shard}`
 - `🔧` Komendy: `{commands}`"""
@@ -324,8 +323,7 @@ class CommandHelpView(DiscordSupportButton):
 
                 if user_id != interaction.user.id:
                     await interaction.send_error_message(
-                        description="Tylko autor użytej komendy może tego użyć.",
-                        ephemeral=True
+                        description="Tylko autor użytej komendy może tego użyć.", ephemeral=True
                     )
                     return False
 
@@ -345,7 +343,6 @@ class CommandHelpView(DiscordSupportButton):
 
 
 class CommandHelp(CustomCog):
-
     def __init__(self, bot: Smiffy):
         super().__init__(bot)
 
