@@ -34,7 +34,7 @@ class Smiffy(BotBase):
         """
         bot_utils.print_welcome_message(bot=self)
 
-    async def on_connect(self, shard_id: int) -> None:
+    async def on_connect(self) -> None:
         """
         The on_connect function is called when the bot has successfully connected to discord.
 
@@ -44,9 +44,9 @@ class Smiffy(BotBase):
         await self.setup_checks()
         await self.setup_session()
 
-        await super().on_connect(shard_id)
+        await super().on_connect()
 
-        self.logger.info(f"Shard #{shard_id} has been connected to Discord API.")
+        self.logger.info(f"Shard #{len(self.shards)} has been connected to Discord API.")
 
 
 if __name__ == "__main__":
