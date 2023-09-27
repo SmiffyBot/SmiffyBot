@@ -308,7 +308,7 @@ class CommandHelpView(DiscordSupportButton):
         assert interaction.user
 
         if interaction.message and not self.message_author:
-            # Since we don't have access to message_author after a restart of a bot
+            # Since we don't have access to message_author after a restart a bot
             # this method will try to retrieve the user_id by icon_url from the embed
 
             try:
