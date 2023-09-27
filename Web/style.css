@@ -22,9 +22,9 @@ body {
 
     margin: auto;
     margin-top: 3px;
-    border: 1px solid #1d1d24; 
+    border: 1px solid #1d1d24;
 }
-  
+
 .navbar a {
     display: inline-block;
     text-align: center;
@@ -34,7 +34,7 @@ body {
     font-size: 1.5vw;
     border-radius: 15px;
   }
-  
+
 .navbar a:hover {
     color: #0066FF;
 }
@@ -181,7 +181,7 @@ section {
 .box hr {
     border: 1px solid #1d1d24;
     margin-top: 0.5vw;
-      
+
 }
 
 .team {
@@ -215,16 +215,16 @@ section {
 ::-webkit-scrollbar {
     width: 0.5vw;
 }
-  
+
 ::-webkit-scrollbar-track {
     box-shadow: inset 0 0 0px;
 }
-   
+
 ::-webkit-scrollbar-thumb {
-    background: #0066FF; 
+    background: #0066FF;
     border-radius: 1vw;
 }
-  
+
 ::-webkit-scrollbar-thumb:hover {
     background: #0091ff;
 }
