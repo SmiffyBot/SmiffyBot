@@ -23,7 +23,7 @@ However, we are where we are and it is currently on over 1600 servers.
 - You can see the edited version of nextcord at this [link](https://github.com/SmiffyBot/nextcord/tree/Smiffy).
 
 ## Contributing
-- Everyone without exception can become a bot developer. I just expect a decent knowledge of the Python language, as well as the ability to develop bots, to learn more, read [CONTRIBUTING.md](CONTRIBUTING.md).
+- Everyone can become a bot developer. I just expect a decent knowledge of the Python language, as well as the ability to develop bots, to learn more, read [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Links
 - [Discord](https://discord.gg/TmUpSDyzQn)
