@@ -13,7 +13,7 @@ However, we are where we are and it is currently on over 1600 servers.
 - I recently decided that I will make the project public for everyone, because I think it is quite a good project and unfortunately, but lately I do not have much time for it any more - Perhaps there will be a person who will be able to help me improve the bot.
 
 
-## Nextcord Library
+## ~~Nextcord Library~~ (It's currently outdated)
 - Bot is based mainly on nextcord (a fork of Discord.py), but much of the code has been removed or changed just for the bot. For example, the entire implementation of prefix commands or even entire objects such as `Context` have been removed.
 
 
