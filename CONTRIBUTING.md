@@ -1,39 +1,41 @@
-# Współtworzenie
-## Wprowadzenie
-Zapoznaj się z [Wymaganiami](#wymagania) oraz [Strukturą plików](#struktura-plików).
+# Contributing
+## Introduction
+Take a look at [Requirements](#requriements) and [Project structure](#project-structure).
 
-- Przed wprowadzaniem jakichkolwiek zmian, przetestuj swój kod, używając [Pyright'a](https://microsoft.github.io/pyright/#/).
+- Before making any pull requests, test your code using [Pyright](https://microsoft.github.io/pyright/#/).
 
-- Staraj się dzielić pull requesty tak, aby nie były one duże. Zamiast robić jeden,
-w którym wprowadzisz dużo rzeczy, podziel je na kilka.
 
-> Zobacz [Instalacja](#instalacja)
+- Try to split pull requests so that they are not large. Instead of making one,
+in which you introduce a lot of stuff, separate them into several.
 
-## Wymagania
-- Zainstalowany [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
-- Python `3.9` lub nowszy.
-- Znajomość Pythona i Githuba.
+> See [Installation.](#installation)
 
-## Struktura plików
-Bot jest aktualnie podzielony na 2 główne sekcje.
+## Requriements
+- Installed [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+- Python `3.9` or never.
+- Knowledge of Python and Github.
+
+## Project structure
+Bot is currently organized into 2 main sections.
 
 - `Commands`
 - `Events`
 
-W `Commands` jak można się domyślić, znajdują się komendy podzielone jednak na poszczególne podkategorie.
-Natomiast w `Events` znajdują się eventy.
+In `Commands`, as you can guess, there are commands classified, into individual subcategories. 
 
-**W folderze `Data` znajduję się plik `config.json` należy go uzupełnić przed uruchomieniem bota.
-Nie wszystkie dane muszą być uzupełnione, aby bot działał poprawnie.**
+Meanwhile, in `Events` there are events xD.
 
-## Instalacja
-- Najpierw utwórz swój [fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) reprozytorium.
+**In the `Data` folder there is a `config.json` file that should be completed before the bot is launched.
+Not all data must be filled for the bot to work properly.**
+
+## Installation
+- first of all, create your repository [fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
 
 ```sh
 git clone https://github.com/<your-username>/SmiffyBot
 cd SmiffyBot
 
 pip install -U -r requirements.txt
-# Przed uruchomieniem bota uzupełnij dane w configu (Data/config.json)
+# Before running the bot, fill the data in the config (Data/config.json)
 python3 bot.py
 ```
