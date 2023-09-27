@@ -5,22 +5,25 @@
 ![](https://img.shields.io/github/license/SmiffyBot/SmiffyBot?style=for-the-badge&color=%232289e0)
 
 
-## O Projekcie
-- Smiffy jest to Polski bot discord, który pierwotnie miał być przeznaczony na jeden serwer.
-Jednakże jesteśmy gdzie jesteśmy i jest aktualnie na ponad 1600 serwerach.
-
-- Niedawno postanowiłem, że upublicznię projekt dla każdego, ponieważ uważam to za całkiem udany projekt a niestety, ale ostatnio nie mam już dla niego zbytnio czasu - Być może znajdzie się osoba, która będzie mi w stanie pomóc w udoskonalaniu bota.
+## About Project
+- Smiffy is a Polish discord bot that was originally intended for a single server.
+However, we are where we are and it is currently on over 1600 servers.
 
 
-## Biblioteka nextcord
-- Bot bazuję głównie na nextcordzie (forku Discord.py), ale duża część kodu została usunięta lub zmieniona właśnie pod bota. Dla przykładu cała implementacja komend prefixowych czy nawet całe obiekty takie jak `Context` zostały usunięte.
+- I recently decided that I will make the project public for everyone, because I think it is quite a good project and unfortunately, but lately I do not have much time for it any more - Perhaps there will be a person who will be able to help me improve the bot.
 
-- System cache'u też został delikatnie zmieniony, tak, aby metody, które wykonują zapytania HTTP `(.fetch)` po otrzymaniu odpowiedzi automatycznie dodawały obiekt do cache'u.
 
-- Edytowaną wersję nextcorda możecie zobaczyć pod tym [linkiem](https://github.com/SmiffyBot/nextcord/tree/Smiffy).
+## Nextcord Library
+- Bot is based mainly on nextcord (a fork of Discord.py), but much of the code has been removed or changed just for the bot. For example, the entire implementation of prefix commands or even entire objects such as `Context` have been removed.
 
-## Współtworzenie
-- Każdy bez wyjątku może został developerem bota. Wymagam jedynie przyzwoitej wiedzy języka Python, jak i umiejętność pisania botów, aby dowiedzieć się więcej, przeczytaj [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Linki
+- Cache system has also been lightly changed, so methods that make HTTP requests `(.fetch)` after receiving a response will automatically add the object to the cache.
+
+
+- You can see the edited version of nextcord at this [link](https://github.com/SmiffyBot/nextcord/tree/Smiffy).
+
+## Contributing
+- Everyone without exception can become a bot developer. I just expect a decent knowledge of the Python language, as well as the ability to develop bots, to learn more, read [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Links
 - [Discord](https://discord.gg/TmUpSDyzQn)
