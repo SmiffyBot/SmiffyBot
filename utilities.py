@@ -38,7 +38,7 @@ from nextcord import errors as nextcord_errors
 from nextcord import ui, utils
 from nextcord.abc import GuildChannel
 from nextcord.ext.application_checks import ApplicationMissingPermissions
-from nextcord.ext.commands import AutoShardedBot, Cog, errors
+from nextcord.ext.commands import AutoShardedBot, Cog, errors, RoleConverter as ncRoleConverter
 from orjson import loads
 
 from converters import RoleConverter
@@ -61,8 +61,9 @@ if TYPE_CHECKING:
         Role,
         ShardInfo,
         SlashApplicationSubcommand,
-        WebhookMessage,
+        WebhookMessage
     )
+    from nextcord.ext.commands import Context
     from nextcord.state import ConnectionState
     from nextcord.types.interactions import InteractionType as InteractionPayload
 
@@ -511,7 +512,7 @@ class CustomInteraction(Interaction["Smiffy"]):
         description: str,
         ephemeral: bool = False,
         delete_after: Optional[int] = None,
-    ) -> Union[WebhookMessage, PartialInteractionMessage, None,]:
+    ) -> Union[WebhookMessage, PartialInteractionMessage, None]:
         """
         The send_error_message function is used to send an error message to the chat.
 
@@ -551,7 +552,7 @@ class CustomInteraction(Interaction["Smiffy"]):
         color: Color = Color.green(),
         ephemeral: bool = False,
         delete_after: Optional[int] = None,
-    ) -> Union[WebhookMessage, PartialInteractionMessage, None,]:
+    ) -> Union[WebhookMessage, PartialInteractionMessage, None]:
         """
         The send_success_message function is a helper function that sends a success message to the user.
 
@@ -1330,7 +1331,7 @@ def PermissionHandler(**perms):
                 ApplicationCommandIsGuildOnly,
             ):
                 await inter.send_error_message(
-                    description="Komendy bota działa tylko i wyłącznie na serwerach."
+                    description="Komendy bota działają tylko i wyłącznie na serwerach."
                 )
                 return
 
@@ -1487,7 +1488,6 @@ async def check_giveaway_requirement(
 
     if isinstance(inter_or_message, Message):
         message: Optional[Message] = inter_or_message
-        inter_or_message.bot = bot  # pyright: ignore
     else:
         message: Optional[Message] = inter_or_message.message
 
@@ -1527,10 +1527,21 @@ async def check_giveaway_requirement(
 
         elif requirement == "role":
             try:
-                role: Optional[Role] = await RoleConverter().convert(
-                    inter_or_message,  # pyright: ignore
-                    str(value),
-                )
+                if isinstance(inter_or_message, Message):
+                    context: Context = await bot.get_context(inter_or_message)
+
+                    role: Optional[Role] = await ncRoleConverter().convert(
+                        context,  # pyright: ignore
+                        str(value),
+                    )
+                    if not role:
+                        raise errors.RoleNotFound(str(value))
+
+                else:
+                    role: Optional[Role] = await RoleConverter().convert(
+                        inter_or_message,  # pyright: ignore
+                        str(value),
+                    )
                 if not role:
                     raise errors.RoleNotFound(str(value))
 
