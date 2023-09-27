@@ -511,7 +511,7 @@ class CustomInteraction(Interaction["Smiffy"]):
         description: str,
         ephemeral: bool = False,
         delete_after: Optional[int] = None,
-    ) -> Union[WebhookMessage, PartialInteractionMessage, None,]:
+    ) -> Union[WebhookMessage, PartialInteractionMessage, None]:
         """
         The send_error_message function is used to send an error message to the chat.
 
@@ -551,7 +551,7 @@ class CustomInteraction(Interaction["Smiffy"]):
         color: Color = Color.green(),
         ephemeral: bool = False,
         delete_after: Optional[int] = None,
-    ) -> Union[WebhookMessage, PartialInteractionMessage, None,]:
+    ) -> Union[WebhookMessage, PartialInteractionMessage, None]:
         """
         The send_success_message function is a helper function that sends a success message to the user.
 
@@ -1330,7 +1330,7 @@ def PermissionHandler(**perms):
                 ApplicationCommandIsGuildOnly,
             ):
                 await inter.send_error_message(
-                    description="Komendy bota działa tylko i wyłącznie na serwerach."
+                    description="Komendy bota działają tylko i wyłącznie na serwerach."
                 )
                 return
 

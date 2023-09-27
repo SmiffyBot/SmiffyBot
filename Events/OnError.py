@@ -71,6 +71,9 @@ class OnError(CustomCog):
             f"• Command: /{command_name}"
         )
 
+        if isinstance(exception, InvalidServerData):
+            return
+
         await self.send_error_log_to_channel(
             f"\n```{exception_traceback}```",
             f"{guild} ({guild_id})",
