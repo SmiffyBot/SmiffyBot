@@ -113,8 +113,6 @@ class BotCommandsCategory(ui.Select):
         return description, commands_amount
 
     async def callback(self, interaction: CustomInteraction):
-        self.embed = cast(Embed, self.embed)
-
         if not self.default_description or not self.embed:
             self.embed, self.default_description = self.restore_args(interaction)
 
