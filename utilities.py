@@ -1517,7 +1517,7 @@ async def check_giveaway_requirement(
         if requirement == "lvl":
             levels_response: Optional[DB_RESPONSE] = await bot.db.execute_fetchone(
                 "SELECT level FROM levels_users WHERE guild_id = ? AND user_id = ?",
-                (member.guild.id, member.id),
+                (guild.id, member.id),
             )
 
             if not levels_response:
