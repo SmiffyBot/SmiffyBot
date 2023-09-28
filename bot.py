@@ -5,7 +5,7 @@ from utilities import BotBase, CircuitBreaker, Database, bot_logger, bot_utils
 
 
 class Smiffy(BotBase):
-    __version__: ClassVar[str] = "2.0"
+    __version__: ClassVar[str] = "2.1"
 
     def __init__(self, **kwargs: Bot_Settings):
         """
