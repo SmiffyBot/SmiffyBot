@@ -8,7 +8,7 @@ from enums import Emojis
 from utilities import CustomCog, check_giveaway_requirement
 
 if TYPE_CHECKING:
-    from nextcord import Member, Message, PartialEmoji, RawReactionActionEvent, Role
+    from nextcord import Member, Message, PartialEmoji, RawReactionActionEvent, Role, PartialMessage
     from nextcord.abc import GuildChannel
 
     from bot import Smiffy
@@ -23,10 +23,10 @@ class ReactionUpdateEvent(CustomCog):
         if not isinstance(channel, TextChannel):
             return
 
-        message: Optional[Message] = await channel.fetch_message(payload.message_id)
+        message: PartialMessage = channel.get_partial_message(payload.message_id)
         member: Optional[Member] = await self.bot.getch_member(channel.guild, payload.user_id)
 
-        if not member or not message or member.bot:
+        if not member or member.bot:
             return
 
         clicked_emoji: PartialEmoji = payload.emoji
@@ -103,6 +103,12 @@ class ReactionUpdateEvent(CustomCog):
 
                     break
 
+        try:
+            message_obj: Message = await message.fetch()
+        except (errors.Forbidden, errors.HTTPException, errors.NotFound):
+            self.bot.logger.warning("Fetching full message object from partial message failed.")
+            return
+
         suggestion_response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
             "SELECT * FROM suggestions WHERE guild_id = ?",
             (message.guild.id,),
@@ -113,11 +119,11 @@ class ReactionUpdateEvent(CustomCog):
                 951968571540529233,
                 951968542083932250,
             ):
-                for embed in message.embeds:
+                for embed in message_obj.embeds:
                     upvotes: int = -1
                     downvotes: int = -1
 
-                    for reaction in message.reactions:
+                    for reaction in message_obj.reactions:
                         if isinstance(reaction.emoji, str):
                             continue
 
@@ -132,9 +138,9 @@ class ReactionUpdateEvent(CustomCog):
 
                     await message.edit(embed=embed)
 
-        status: bool = await check_giveaway_requirement(self.bot, member, message)
+        status: bool = await check_giveaway_requirement(self.bot, member, message_obj)
         if not status:
-            await message.remove_reaction(clicked_emoji, member)
+            await message_obj.remove_reaction(clicked_emoji, member)
 
             embed = Embed(
                 title=f"{Emojis.REDBUTTON.value} Wystąpił błąd.",
@@ -160,10 +166,10 @@ class ReactionUpdateEvent(CustomCog):
         if not isinstance(channel, TextChannel):
             return
 
-        message: Optional[Message] = await channel.fetch_message(payload.message_id)
+        message: PartialMessage = channel.get_partial_message(payload.message_id)
         member: Optional[Member] = await self.bot.getch_member(channel.guild, payload.user_id)
 
-        if not member or not message or member.bot:
+        if not member or member.bot:
             return
 
         assert message.guild
@@ -241,6 +247,12 @@ class ReactionUpdateEvent(CustomCog):
 
                     break
 
+        try:
+            message_obj: Message = await message.fetch()
+        except (errors.Forbidden, errors.HTTPException, errors.NotFound):
+            self.bot.logger.warning("Fetching full message object from partial message failed.")
+            return
+
         suggestion_response: Optional[DB_RESPONSE] = await self.bot.db.execute_fetchone(
             "SELECT * FROM suggestions WHERE guild_id = ?",
             (message.guild.id,),
@@ -251,11 +263,11 @@ class ReactionUpdateEvent(CustomCog):
                 951968571540529233,
                 951968542083932250,
             ):
-                for embed in message.embeds:
+                for embed in message_obj.embeds:
                     upvotes: int = -1
                     downvotes: int = -1
 
-                    for reaction in message.reactions:
+                    for reaction in message_obj.reactions:
                         if isinstance(reaction.emoji, str):
                             continue
 
