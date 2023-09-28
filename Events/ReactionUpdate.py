@@ -8,7 +8,14 @@ from enums import Emojis
 from utilities import CustomCog, check_giveaway_requirement
 
 if TYPE_CHECKING:
-    from nextcord import Member, Message, PartialEmoji, RawReactionActionEvent, Role, PartialMessage
+    from nextcord import (
+        Member,
+        Message,
+        PartialEmoji,
+        PartialMessage,
+        RawReactionActionEvent,
+        Role,
+    )
     from nextcord.abc import GuildChannel
 
     from bot import Smiffy

@@ -7,7 +7,7 @@ from time import mktime
 from typing import TYPE_CHECKING, Iterable, List, Optional
 
 from humanfriendly import InvalidTimespan, parse_timespan
-from nextcord import Attachment, Color, Embed, Member, SlashOption, TextChannel
+from nextcord import Attachment, Color, Embed, SlashOption, TextChannel
 from nextcord import errors as nextcord_errors
 from nextcord import slash_command, ui
 from nextcord.ext.commands import errors
@@ -332,8 +332,7 @@ class CommandGiveaway(CustomCog):
             giveaway_winners.append(rand)
 
         result_message = await message.reply(
-            f"**Giveaway zakończony :tada:**\n"
-            f"Nagroda: `{reward}` trafia do: {' '.join(giveaway_winners)}"
+            f"**Giveaway zakończony :tada:**\n" f"Nagroda: `{reward}` trafia do: {' '.join(giveaway_winners)}"
         )
 
         embed.url = result_message.jump_url
