@@ -39,7 +39,7 @@ class ThreadCreate(CustomCog):
 
     @CustomCog.listener()
     async def on_thread_create(self, thread: Thread):
-        parent_channel: ForumChannel | TextChannel = thread.parent
+        parent_channel: Optional[ForumChannel | TextChannel] = thread.parent
 
         if not isinstance(parent_channel, ForumChannel):
             return
@@ -50,7 +50,7 @@ class ThreadCreate(CustomCog):
         bugs_channel: Optional[int] = self.get_bugs_forum_channel()
         bugs_tag_id: Optional[int] = self.get_bug_tag()
 
-        if parent_channel.id == help_channel:
+        if parent_channel.id == help_channel and help_tag_id:
             help_tag: Optional[ForumTag] = parent_channel.get_tag(help_tag_id)
             tags: list[ForumTag] | None = thread.applied_tags
             if help_tag is not None and tags is not None:
@@ -63,7 +63,7 @@ class ThreadCreate(CustomCog):
                 except (errors.Forbidden, errors.HTTPException):
                     pass
 
-        elif parent_channel.id == bugs_channel:
+        elif parent_channel.id == bugs_channel and bugs_tag_id:
             bug_tag: Optional[ForumTag] = parent_channel.get_tag(bugs_tag_id)
             tags: list[ForumTag] | None = thread.applied_tags
 
