@@ -21,7 +21,7 @@ Bot is currently organized into 2 main sections.
 - `Commands`
 - `Events`
 
-In `Commands`, as you can guess, there are commands classified, into individual subcategories. 
+In `Commands`, as you can guess, there are commands classified, into individual subcategories.
 
 Meanwhile, in `Events` there are events xD.
 
