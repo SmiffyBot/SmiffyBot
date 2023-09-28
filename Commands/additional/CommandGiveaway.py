@@ -221,7 +221,7 @@ class CommandGiveaway(CustomCog):
         while duration >= unix_timespan_now:
             now = datetime.utcnow()
             unix_timespan_now: int = int(mktime(now.timetuple()))
-            await sleep(3)
+            await sleep(1)
 
             try:
                 if embed.title:
@@ -254,7 +254,7 @@ class CommandGiveaway(CustomCog):
                 u = reaction.users()
 
                 async for user in u:
-                    if isinstance(user, Member):
+                    if user:
                         if await check_giveaway_requirement(
                             self.bot,
                             user,
@@ -287,7 +287,7 @@ class CommandGiveaway(CustomCog):
             value=f"{reply_emoji} `{host}`",
         )
 
-        if len(enters) == 0:
+        if len(enters) <= 0:
             result_message = await message.reply("Brak osób w konkursie. Nikt nie wygrywa :(")
             embed.url = result_message.jump_url
 
@@ -315,7 +315,7 @@ class CommandGiveaway(CustomCog):
             giveaway_winners.append(rand)
 
         result_message = await message.reply(
-            f"**Giveaway zakończony <:giveaway:997944144569831444>**\n"
+            f"**Giveaway zakończony :tada:**\n"
             f"Nagroda: `{reward}` trafia do: {' '.join(giveaway_winners)}"
         )
 
