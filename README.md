@@ -3,7 +3,7 @@
 ![](https://img.shields.io/github/commit-activity/w/SmiffyBot/SmiffyBot?style=for-the-badge&color=%232289e0)
 ![](https://img.shields.io/github/languages/top/SmiffyBot/SmiffyBot?style=for-the-badge&color=%232289e0)
 ![](https://img.shields.io/github/license/SmiffyBot/SmiffyBot?style=for-the-badge&color=%232289e0)
-
+![](https://img.shields.io/discord/996550477590315083?style=for-the-badge&label=Discord&color=%232289e0)
 
 ## About Project
 - Smiffy is a Polish discord bot that was originally intended for a single server.
