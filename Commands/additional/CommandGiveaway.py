@@ -7,7 +7,7 @@ from time import mktime
 from typing import TYPE_CHECKING, Iterable, List, Optional
 
 from humanfriendly import InvalidTimespan, parse_timespan
-from nextcord import Attachment, Color, Embed, SlashOption, TextChannel
+from nextcord import Attachment, Color, Embed, SlashOption, TextChannel, Member
 from nextcord import errors as nextcord_errors
 from nextcord import slash_command, ui
 from nextcord.ext.commands import errors
