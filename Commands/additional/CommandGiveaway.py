@@ -255,6 +255,23 @@ class CommandGiveaway(CustomCog):
 
                 async for user in u:
                     if user:
+                        if not isinstance(user, Member):
+                            """
+                            Because of the fact that we do not chunk people at the bot start 
+                            here we can get a User object, however we need a Member object 
+                            because User does not have access to the .roles attribute.
+                            """
+
+                            member_object: Optional[Member] = await self.bot.getch_member(
+                                message.guild,
+                                user.id
+                            )
+
+                            if not member_object:
+                                continue
+
+                            user = member_object
+
                         if await check_giveaway_requirement(
                             self.bot,
                             user,
