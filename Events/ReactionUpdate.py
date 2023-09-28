@@ -102,6 +102,7 @@ class ReactionUpdateEvent(CustomCog):
                         pass
 
                     break
+                return
 
         try:
             message_obj: Message = await message.fetch()
@@ -246,6 +247,8 @@ class ReactionUpdateEvent(CustomCog):
                         pass
 
                     break
+
+                return
 
         try:
             message_obj: Message = await message.fetch()
