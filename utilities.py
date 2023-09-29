@@ -8,6 +8,7 @@ from logging import DEBUG, INFO, Logger, StreamHandler, basicConfig, getLogger
 from os import listdir
 from traceback import format_exc
 from typing import TYPE_CHECKING, Any, Iterable, Optional, Union
+from cache import BotCache
 
 from aiofiles import open as aioopen
 from aiohttp import ClientSession, ClientTimeout, client_exceptions
@@ -34,13 +35,11 @@ from nextcord import (
     SlashApplicationCommand,
     Status,
 )
-from nextcord import errors as nextcord_errors
-from nextcord import ui, utils
+from nextcord import ui, utils, errors as nextcord_errors
 from nextcord.abc import GuildChannel
 from nextcord.ext.application_checks import ApplicationMissingPermissions
-from nextcord.ext.commands import AutoShardedBot, Cog
+from nextcord.ext.commands import AutoShardedBot, Cog, errors
 from nextcord.ext.commands import RoleConverter as ncRoleConverter
-from nextcord.ext.commands import errors
 from orjson import loads
 
 from converters import RoleConverter
@@ -979,6 +978,7 @@ class BotBase(AutoShardedBot):
     session: BotSession
     pool: NodePool
     logger: Logger
+    cache: BotCache
 
     def __init__(self, **kwargs: Bot_Settings) -> None:
         """
@@ -998,7 +998,7 @@ class BotBase(AutoShardedBot):
             ApplicationCommandIsGuildOnly,
         )
 
-        self._state: ConnectionState = self._connection
+        self._cache: BotCache = BotCache(self)
 
     @property
     def avatar_url(self) -> str:
@@ -1176,23 +1176,8 @@ class BotBase(AutoShardedBot):
         :return: A member object if it exists in the guild, or none if it does not
         """
 
-        member: Optional[Member] = guild.get_member(member_id)
-
-        if member:
-            return member
-
-        try:
-            self.logger.warning(f"Member: {member_id} was not found in the cache. Sending HTTP Request.")
-
-            data = await self._connection.http.get_member(guild.id, member_id)
-            member: Member = Member(data=data, guild=guild, state=self._state)
-
-            return member
-        except (
-            nextcord_errors.Forbidden,
-            nextcord_errors.HTTPException,
-        ):
-            return None
+        member: Optional[Member] = await self._cache.getch_member(guild.id, member_id)
+        return member
 
     async def setup_session(self) -> None:
         """
