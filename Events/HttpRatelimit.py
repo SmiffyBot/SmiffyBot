@@ -35,6 +35,9 @@ class HttpRatelimit(CustomCog):
     @CustomCog.listener()
     async def on_http_ratelimit(self, *args: Unpack[HTTPRatelimitParams]):
         limit, remaining, reset_after, bucket = args[0:-1]
+        if reset_after <= 0.3:
+            # Some commands make a lot of HTTP requests at once causing a small ratelimit.
+            return
 
         self.bot.logger.warning(f"Reached HTTP Ratelimit under bucket: {bucket}.")
         self.bot.logger.warning(f"Remaining requests: {remaining}. Reset after: {reset_after}s.")
