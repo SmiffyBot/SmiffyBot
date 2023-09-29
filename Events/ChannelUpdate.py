@@ -16,11 +16,7 @@ if TYPE_CHECKING:
 class ChannelUpdate(CustomCog):
     @CustomCog.listener()
     async def on_guild_channel_create(self, new_channel: GuildChannel):
-
-        await self.bot.cache.add_channel(
-            guild_id=new_channel.guild.id,
-            channel=new_channel
-        )
+        await self.bot.cache.add_channel(guild_id=new_channel.guild.id, channel=new_channel)
 
         logs_channel: Optional[GuildChannel] = await self.get_logs_channel(new_channel.guild)
 
