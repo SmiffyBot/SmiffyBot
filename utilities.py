@@ -998,6 +998,8 @@ class BotBase(AutoShardedBot):
             ApplicationCommandIsGuildOnly,
         )
 
+        self._state: ConnectionState = self._connection
+
     @property
     def avatar_url(self) -> str:
         """
@@ -1182,7 +1184,9 @@ class BotBase(AutoShardedBot):
         try:
             self.logger.warning(f"Member: {member_id} was not found in the cache. Sending HTTP Request.")
 
-            member: Optional[Member] = await guild.fetch_member(member_id)
+            data = await self._connection.http.get_member(guild.id, member_id)
+            member: Member = Member(data=data, guild=guild, state=self._state)
+
             return member
         except (
             nextcord_errors.Forbidden,
