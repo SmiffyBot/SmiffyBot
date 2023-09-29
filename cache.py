@@ -26,7 +26,7 @@ __all__ = ("CachedGuild", "BotCache")
 class RequestLimiter:
     __slots__: tuple[str, ...] = ("dispatched_requests", "client", "limit", "reset_after")
 
-    def __init__(self, client: Smiffy, limit: int = 2, reset_after: int = 60):
+    def __init__(self, client: Smiffy, limit: int = 2, reset_after: int = 30):
         """
         RequestLimiter is responsible for handling the number of requests that go to the discord api.
         If there are more identical requests than the set limit, the request is blocked.
@@ -93,7 +93,7 @@ class RequestLimiter:
         self.client.logger.debug(f"Added request: {request} to limiter.")
 
         self.client.loop.call_later(
-            self.reset_after, self.client.loop.create_task, self.remove_request(request)
+            self.reset_after, self.remove_request, request
         )
 
     def remove_request(self, request: CacheRequest) -> None:
@@ -351,8 +351,7 @@ class BotCache:
         start = time()
 
         for guild in self._state.guilds:
-            cachedGuild = CachedGuild(guild, self._logger)
-            self._cached_guilds[guild.id] = cachedGuild
+            cachedGuild = self.add_guild(guild)
 
             if guild.member_count and guild.member_count <= 100 and small_server_chunk_members:
                 if run_in_tasks:
