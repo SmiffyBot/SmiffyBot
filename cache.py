@@ -3,11 +3,12 @@ from __future__ import annotations
 from time import time
 from typing import TYPE_CHECKING, Optional
 
-from nextcord import Guild, Member, errors
+from nextcord import Guild, Member, errors, Role
 
 if TYPE_CHECKING:
     from asyncio import AbstractEventLoop
 
+    from nextcord.abc import GuildChannel
     from nextcord.gateway import DiscordWebSocket
     from nextcord.http import HTTPClient
     from nextcord.state import ConnectionState
@@ -20,24 +21,28 @@ __all__ = ("CachedGuild", "BotCache")
 
 
 class CachedGuild:
-    __slots__ = ("guild", "guild_id", "_logger", "__cached_members")
+    __slots__ = ("guild", "guild_id", "_logger", "__cached_members", "__cached_roles", "__cached_channels")
 
     def __init__(self, guild: Guild, logger: Logger):
         self.guild: Guild = guild
         self.guild_id: int = guild.id
 
         self._logger: Logger = logger
+
         self.__cached_members: dict[int, Member] = {member.id: member for member in guild.members}
+        self.__cached_roles: dict[int, Role] = {role.id: role for role in guild.roles}
+        self.__cached_channels: dict[int, GuildChannel] = {channel.id: channel for channel in guild.channels}
 
     async def chunk_members(self, limit: int = 100) -> None:
         """
-        The chunk_members function is a coroutine that fetches members of the guild and caches them in a dictionary.
+        The chunk_members function is a coroutine that fetches members of the guild and caches them into cache.
         The function takes an optional limit parameter, which defaults to 100.
         The limit parameter specifies how many members to fetch at once from the API.
 
         :param limit: Set the limit of members to be fetched at a time
         :return: None
         """
+
         self._logger.debug(f"Chunking {limit} members. Guild: {self.guild_id}.")
 
         if limit >= 500:
@@ -81,21 +86,89 @@ class CachedGuild:
         :return: Member object if found.
         """
 
-        self._logger.debug(f"Getting: {member_id} from cache.")
+        self._logger.debug(f"Getting member: {member_id} from cache.")
         return self.__cached_members.get(member_id)
+
+    def add_role_to_cache(self, role: Role) -> None:
+        """
+        The add_role_to_cache function adds a role to the cache.
+
+        :param role: Pass in the role object to be added to the cache
+        :return: None
+        """
+
+        self._logger.debug(f"Added role: {role.id} to cache.")
+
+        self.__cached_roles[role.id] = role
+
+    def remove_role_from_cache(self, role_id: int) -> None:
+        """
+        The remove_role_from_cache function removes a role from the cache.
+
+        :param role_id: Specify the role id of the role to be removed from cache
+        :return: None
+        """
+
+        try:
+            del self.__cached_roles[role_id]
+        except KeyError:
+            pass
+
+    def get_role_from_cache(self, role_id: int) -> Optional[Role]:
+        """
+        The get_role_from_cache function is a coroutine that returns the role object from the cache.
+        If it does not exist in the cache, then it will return None.
+
+        :param role_id: Get the role from the cache
+        :return: The role from the cache if exists
+        """
+
+        role: Optional[Role] = self.__cached_roles.get(role_id)
+
+        self._logger.debug(f"Getting role: {role_id} from cache.")
+        return role
+
+    def get_channel_from_cache(self, channel_id: int) -> Optional[GuildChannel]:
+        channel: Optional[GuildChannel] = self.__cached_channels.get(channel_id)
+
+        self._logger.debug(f"Getting channel: {channel_id} from cache.")
+        return channel
+
+    def remove_channel_from_cache(self, channel_id: int) -> None:
+        try:
+            del self.__cached_channels[channel_id]
+        except KeyError:
+            pass
+
+    def add_channel_to_cache(self, channel: GuildChannel) -> None:
+        self._logger.debug(f"Added channel: {channel.id} to cache.")
+
+        self.__cached_channels[channel.id] = channel
+
+    @property
+    def chunked(self):
+        return self.guild.member_count == len(self.members)
 
     @property
     def members(self) -> list[Member]:
         return list(self.__cached_members.values())
 
+    @property
+    def roles(self) -> list[Role]:
+        return list(self.__cached_roles.values())
+
+    @property
+    def channels(self) -> list[GuildChannel]:
+        return list(self.__cached_channels.values())
+
     def __hash__(self) -> int:
-        return hash((self.guild_id, len(self.__cached_members)))
+        return hash((self.guild_id, len(self.members), len(self.roles), len(self.channels)))
 
     def __eq__(self, other: object) -> bool:
         return hash(self) == hash(other)
 
     def __repr__(self) -> str:
-        return f"<CachedGuild(guild_id={self.guild_id}, cached_members={len(self.__cached_members)}>)"
+        return f"<CachedGuild(guild_id={self.guild_id}, chunked={self.chunked}>)"
 
 
 class BotCache:
@@ -120,18 +193,27 @@ class BotCache:
     def guilds(self) -> list[CachedGuild]:
         return list(self._cached_guilds.values())
 
-    def chunk_guilds(self) -> None:
+    async def chunk_guilds(self, run_in_tasks: bool, small_server_chunk_members: bool = True) -> None:
         """
         The chunk_guilds function is used to fill the cached_guilds dict of CachedGuild objects.
         The keys are the guild IDs, and the values are the CachedGuild objects themselves.
 
+        :param small_server_chunk_members: Is bot supposed to chunk people on servers under 100 people.
+        :param run_in_tasks: Whether chunking members is to be done in tasks.
         :return: None
         """
 
         start = time()
 
         for guild in self._state.guilds:
-            self._cached_guilds[guild.id] = CachedGuild(guild, self._logger)
+            cachedGuild = CachedGuild(guild, self._logger)
+            self._cached_guilds[guild.id] = cachedGuild
+
+            if guild.member_count <= 100 and small_server_chunk_members:
+                if run_in_tasks:
+                    self._loop.create_task(cachedGuild.chunk_members())
+                else:
+                    await cachedGuild.chunk_members()
 
         end = time() - start
         self._logger.info(f"Cached {len(self._cached_guilds)} servers in {round(end, 4)}s")
@@ -147,9 +229,9 @@ class BotCache:
         for cached_guilds in self.guilds:
             await cached_guilds.chunk_members(limit=limit)
 
-    def add_guild_to_cache(self, guild: Guild) -> CachedGuild:
+    def add_guild(self, guild: Guild) -> CachedGuild:
         """
-        The add_guild_to_cache function is used to add a guild to the cache.
+        The add_guild function is used to add a guild to the cache.
 
         :param guild: Pass the nextcord guild object
         :return: CachedGuild object.
@@ -162,9 +244,9 @@ class BotCache:
 
         return cached_guild
 
-    def remove_guild_from_cache(self, guild_id: int) -> None:
+    def remove_guild(self, guild_id: int) -> None:
         """
-        The remove_guild_from_cache function removes a guild from the cache.
+        The remove_guild function removes a guild from the cache.
 
         :param guild_id: Specify the guild id that is to be removed from the cache
         :return: None
@@ -176,9 +258,9 @@ class BotCache:
         except KeyError:
             pass
 
-    async def get_cached_guild(self, guild_id: int, fetch: bool = True) -> Optional[CachedGuild]:
+    async def get_guild(self, guild_id: int, fetch: bool = True) -> Optional[CachedGuild]:
         """
-        The get_cached_guild function is a helper function that returns the cached guild object for a given guild ID.
+        The get_guild function is a helper function that returns the cached guild object for a given guild ID.
         If the guild isn't cached, it will be fetched from Discord and then added to the cache.
 
         :param guild_id: Get the guild from the client
@@ -197,7 +279,7 @@ class BotCache:
         except (errors.Forbidden, errors.HTTPException):
             return None
 
-        cached_guild = self.add_guild_to_cache(guild)
+        cached_guild = self.add_guild(guild)
         return cached_guild
 
     async def get_member(self, guild_id: int, member_id: int) -> Optional[Member]:
@@ -211,7 +293,7 @@ class BotCache:
         :return: A member object that contains all the information about a specific user in a guild
         """
 
-        cached_guild: Optional[CachedGuild] = await self.get_cached_guild(guild_id)
+        cached_guild: Optional[CachedGuild] = await self.get_guild(guild_id)
         if not cached_guild:
             return None
 
@@ -242,35 +324,35 @@ class BotCache:
         cached_guild.add_member_to_cache(member)
         return member
 
-    async def remove_member_from_cache(self, guild_id: int, member_id: int) -> None:
+    async def remove_member(self, guild_id: int, member_id: int) -> None:
         """
-        The remove_member_from_cache function removes a member from the cache of a guild.
+        The remove_member function removes a member from the cache of a guild.
 
         :param guild_id: Identify the guild that we want to remove a member from
         :param member_id: Identify the member that is being removed from the cache
         :return: None
         """
 
-        cached_guild: Optional[CachedGuild] = await self.get_cached_guild(guild_id)
+        cached_guild: Optional[CachedGuild] = await self.get_guild(guild_id)
 
         if not cached_guild:
             return None
 
         cached_guild.remove_member_from_cache(member_id)
 
-    async def add_member_to_cache(self, member: Member, delete_after: Optional[int] = None) -> None:
+    async def add_member(self, member: Member, delete_after: Optional[int] = None) -> None:
         """
-        The add_member_to_cache function adds a member to the cache.
+        The add_member function adds a member to the cache.
 
         :param member: Pass in the member object that we want to add to the cache
         :param delete_after: Value in seconds after which it should remove the member object from the cache
         :return: None
         """
 
-        cached_guild: Optional[CachedGuild] = await self.get_cached_guild(member.guild.id)
+        cached_guild: Optional[CachedGuild] = await self.get_guild(member.guild.id)
 
         if cached_guild is None:
-            cached_guild: CachedGuild = self.add_guild_to_cache(member.guild)
+            cached_guild: CachedGuild = self.add_guild(member.guild)
 
         cached_guild.add_member_to_cache(member)
 
@@ -278,5 +360,75 @@ class BotCache:
             self._loop.call_later(
                 delete_after,
                 self._loop.create_task,
-                self.remove_member_from_cache(member.guild.id, member.id),
+                self.remove_member(member.guild.id, member.id),
             )
+
+    async def get_role(self, guild_id: int, role_id: int, fetch: bool = False) -> Optional[Role]:
+        """
+        The get_role function is used to get a role from the cache. if fetch is True
+        it will fetch all roles from Discord and add them to the cache if if they are not there.
+        It then returns either None or a Role object.
+
+        :param guild_id:Get the guild from the cache
+        :param role_id: Get the role id
+        :param fetch: Determine if the role should be fetched from discord or not if not found in the cache
+        :return: The role object of the given guild if exists
+        """
+
+        cached_guild: Optional[CachedGuild] = await self.get_guild(guild_id)
+        if not cached_guild:
+            return None
+
+        role: Optional[Role] = cached_guild.get_role_from_cache(role_id)
+
+        if role or not fetch:
+            return role
+
+        data = await self._state.http.get_roles(guild_id)
+        requested_roles: list[Role] = [Role(guild=cached_guild.guild, state=self._state, data=role_data)
+                                       for role_data in data]
+
+        for requested_role in requested_roles:
+            if not cached_guild.get_role_from_cache(requested_role.id):
+                cached_guild.add_role_to_cache(requested_role)
+
+        return cached_guild.get_role_from_cache(role_id)
+
+    async def add_role(self, guild_id: int, role: Role, delete_after: Optional[int] = None) -> None:
+        """
+        The add_role function adds a role to the cache.
+
+        :param guild_id: Identify the guild that the role is being added to
+        :param role: Add a role to the cache
+        :param delete_after: the amount of time the role should be in the cache
+        :return: None
+        """
+
+        cached_guild: Optional[CachedGuild] = await self.get_guild(guild_id)
+        if not cached_guild:
+            return None
+
+        cached_guild.add_role_to_cache(role)
+
+        if delete_after:
+            self._loop.call_later(
+                delete_after,
+                self._loop.create_task,
+                self.remove_role(guild_id, role.id)
+            )
+
+    async def remove_role(self, guild_id: int, role_id: int) -> None:
+        """
+        The remove_role function removes a role from the cache.
+
+        :param guild_id: Identify the guild
+        :param role_id: Identify the role that is being removed from the cache
+        :return: None
+        """
+
+        cached_guild: Optional[CachedGuild] = await self.get_guild(guild_id)
+
+        if not cached_guild:
+            return None
+
+        cached_guild.remove_role_from_cache(role_id)

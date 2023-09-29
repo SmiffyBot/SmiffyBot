@@ -1,6 +1,6 @@
-from cache import BotCache
-from typings import Bot_Settings, BotLogger
 from utilities import BotBase, CircuitBreaker, Database, bot_logger, bot_utils
+from typings import Bot_Settings, BotLogger
+from cache import BotCache
 
 
 class Smiffy(BotBase):
@@ -32,8 +32,12 @@ class Smiffy(BotBase):
 
         :return: None
         """
+
+        await self.cache.chunk_guilds(run_in_tasks=True)
+        # enabled run_in_task starts chunking members in separate tasks.
+        # This speeds up the bot launch process, but the members are not fully chunked before the bot is ready.
+
         bot_utils.print_welcome_message(bot=self)
-        self.cache.chunk_guilds()
 
     async def on_connect(self) -> None:
         """

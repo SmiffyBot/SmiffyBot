@@ -1092,23 +1092,8 @@ class BotBase(AutoShardedBot):
         :return: A role object or None
         """
 
-        role: Optional[Role] = guild.get_role(role_id)
-
-        if not fetch:
-            return role
-
-        self.logger.warning(f"Role: {role_id} was not found in the cache. Sending HTTP Request.")
-
-        roles: list[Role] = await guild.fetch_roles(cache=True)
-        result = filter(
-            lambda _role: _role if _role.id == role_id else None,
-            roles,
-        )
-
-        if not list(result):
-            return None
-
-        return list(result)[0]
+        role: Optional[Role] = await self.cache.get_role(guild.id, role_id, fetch)
+        return role
 
     async def getch_guild(self, guild_id: int) -> Optional[Guild]:
         """
@@ -1119,11 +1104,9 @@ class BotBase(AutoShardedBot):
         :param guild_id: Get the guild id of a server
         :return: The guild object or None
         """
-        cached_guild: Optional[CachedGuild] = await self.cache.get_cached_guild(guild_id)
-        if cached_guild:
-            return cached_guild.guild
+        cached_guild: Optional[CachedGuild] = await self.cache.get_guild(guild_id)
 
-        return cached_guild
+        return cached_guild.guild if cached_guild else None
 
     async def getch_channel(self, channel_id: int) -> Optional[GuildChannel]:
         """
