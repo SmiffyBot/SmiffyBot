@@ -50,7 +50,7 @@ class OnError(CustomCog):
                 exception.__traceback__,
             )
         )
-        if isinstance(exception, self.bot.ignore_exceptions):
+        if isinstance(getattr(exception, "original", exception), self.bot.ignore_exceptions):
             self.bot.logger.debug(f"Ignoring exception: {type(exception)}.")
             return
 
