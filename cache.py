@@ -3,7 +3,7 @@ from __future__ import annotations
 from time import time
 from typing import TYPE_CHECKING, Optional
 
-from nextcord import Guild, Member, errors, Role
+from nextcord import Guild, Member, Role, errors
 
 if TYPE_CHECKING:
     from asyncio import AbstractEventLoop
@@ -385,8 +385,9 @@ class BotCache:
             return role
 
         data = await self._state.http.get_roles(guild_id)
-        requested_roles: list[Role] = [Role(guild=cached_guild.guild, state=self._state, data=role_data)
-                                       for role_data in data]
+        requested_roles: list[Role] = [
+            Role(guild=cached_guild.guild, state=self._state, data=role_data) for role_data in data
+        ]
 
         for requested_role in requested_roles:
             if not cached_guild.get_role_from_cache(requested_role.id):
@@ -411,11 +412,7 @@ class BotCache:
         cached_guild.add_role_to_cache(role)
 
         if delete_after:
-            self._loop.call_later(
-                delete_after,
-                self._loop.create_task,
-                self.remove_role(guild_id, role.id)
-            )
+            self._loop.call_later(delete_after, self._loop.create_task, self.remove_role(guild_id, role.id))
 
     async def remove_role(self, guild_id: int, role_id: int) -> None:
         """
