@@ -260,7 +260,7 @@ class CommandGiveaway(CustomCog):
                             Because of the fact that we do not chunk people at the bot start
                             here we can get a User object, however we need a Member object
 
-                            because User does not have access to the .roles attribute.
+                            because User does not have .roles attribute that check_giveaway_requirement uses.
                             """
 
                             member_object: Optional[Member] = await self.bot.getch_member(
