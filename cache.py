@@ -92,9 +92,7 @@ class RequestLimiter:
 
         self.client.logger.debug(f"Added request: {request} to limiter.")
 
-        self.client.loop.call_later(
-            self.reset_after, self.remove_request, request
-        )
+        self.client.loop.call_later(self.reset_after, self.remove_request, request)
 
     def remove_request(self, request: CacheRequest) -> None:
         """
