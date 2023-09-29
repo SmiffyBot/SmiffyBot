@@ -33,6 +33,7 @@ from nextcord import (
     Permissions,
     SlashApplicationCommand,
     Status,
+    Locale
 )
 from nextcord import errors as nextcord_errors
 from nextcord import ui, utils
@@ -1042,7 +1043,7 @@ class BotBase(AutoShardedBot):
 
     @staticmethod
     async def check_global_ban(
-        interaction: InterT,  # pyright: ignore
+        interaction: CustomInteraction,  # pyright: ignore
     ) -> bool:
         """
         The check_global_ban function is a coroutine that checks if the user has been globally banned.
@@ -1069,6 +1070,25 @@ class BotBase(AutoShardedBot):
             f"Chcesz zgłosić odwołanie? Napisz do [xxenvy]({account_link})"
         )
 
+        return False
+
+    @staticmethod
+    async def check_uk_locale(interaction: CustomInteraction) -> bool:
+        """
+        The check_uk_locale function checks if the user's locale is set to uk.
+        If it is, then an error message will be sent and the function will return False.
+        Otherwise, True will be returned.
+
+        :param interaction: Get the locale of the user
+        :return: True if the user's locale is not ukrainian, and false otherwise
+        """
+
+        if interaction.locale != Locale.uk:
+            return True
+
+        await interaction.send_error_message(
+            description="Aby móc nadal korzystać z bota zmień język discorda z **Ukraińskiego** na **Polski!**"
+        )
         return False
 
     async def getch_role(
@@ -1217,6 +1237,7 @@ class BotBase(AutoShardedBot):
 
         if not getattr(self, "session", None):
             self.add_application_command_check(self.check_global_ban)
+            self.add_application_command_check(self.check_uk_locale)
 
     def get_interaction(self, data, *, cls=CustomInteraction) -> InterT:  # pyright: ignore
         # pylint: disable=useless-parent-delegation
