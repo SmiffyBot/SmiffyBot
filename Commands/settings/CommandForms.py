@@ -26,6 +26,7 @@ if TYPE_CHECKING:
 
     from bot import Smiffy
     from typings import DB_RESPONSE
+    from cache import CachedGuild
 
 
 class DecisionFormView(ui.View):
@@ -233,14 +234,17 @@ class FormModal(ui.Modal):
             return await interaction.send_error_message(description="Wystąpił nieoczekiwany błąd.")
 
         bot: Smiffy = interaction.bot
-        assert isinstance(interaction.user, Member) and bot.user
+
+        assert isinstance(interaction.user, Member) and bot.user and interaction.guild
 
         await interaction.response.defer()
 
         components: list[dict[str, list]] = interaction.data["components"]  # pyright: ignore
 
-        guild: Optional[Guild] = await bot.cache.get_guild(self.guild_id)
-        channel: Optional[GuildChannel] = await bot.cache.get_channel(interaction.guild_id, self.db_data[2])
+        cached_guild: Optional[CachedGuild] = await bot.cache.get_guild(self.guild_id)
+        guild: Optional[Guild] = cached_guild.guild if cached_guild else None
+
+        channel: Optional[GuildChannel] = await bot.cache.get_channel(interaction.guild.id, self.db_data[2])
 
         if not guild or not isinstance(channel, TextChannel):
             return await interaction.send_error_message(

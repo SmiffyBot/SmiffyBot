@@ -1,3 +1,6 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING, Optional, Iterable
+
 from asyncio import sleep
 from string import punctuation
 
@@ -12,17 +15,17 @@ from nextcord import (
     ui,
     utils,
 )
-
-from bot import Smiffy
 from enums import Emojis
 from utilities import (
     DB_RESPONSE,
     CustomCog,
     CustomInteraction,
-    Iterable,
-    Optional,
     PermissionHandler,
 )
+
+if TYPE_CHECKING:
+    from bot import Smiffy
+    from cache import CachedGuild
 
 
 class ReplyTextModal(ui.Modal):
@@ -139,7 +142,8 @@ class CommandLocalCommands(CustomCog):
 
         for command_data in commands:
             guild_id: int = command_data[0]
-            guild: Optional[Guild] = await self.bot.cache.get_guild(guild_id)
+            cached_guild: Optional[CachedGuild] = await self.bot.cache.get_guild(guild_id)
+            guild: Optional[Guild] = cached_guild.guild if cached_guild else None
 
             if not guild:
                 await self.bot.db.execute_fetchone(

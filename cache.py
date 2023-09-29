@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from time import time
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, cast
 
 from nextcord import ChannelType, Guild, Member, Role, errors
 from nextcord.channel import _threaded_guild_channel_factory
@@ -228,7 +228,7 @@ class BotCache:
             cachedGuild = CachedGuild(guild, self._logger)
             self._cached_guilds[guild.id] = cachedGuild
 
-            if guild.member_count <= 100 and small_server_chunk_members:
+            if guild.member_count and guild.member_count <= 100 and small_server_chunk_members:
                 if run_in_tasks:
                     self._loop.create_task(cachedGuild.chunk_members())
                 else:
@@ -317,8 +317,9 @@ class BotCache:
         cached_guild: Optional[CachedGuild] = await self.get_guild(member.guild.id)
 
         if cached_guild is None:
-            cached_guild: CachedGuild = self.add_guild(member.guild)
+            cached_guild = self.add_guild(member.guild)
 
+        cast(CachedGuild, cached_guild)
         cached_guild.add_member_to_cache(member)
 
         if delete_after:
@@ -371,7 +372,7 @@ class BotCache:
         if self._ws and self._ws.is_ratelimited():
             try:
                 member_data = await self._http.get_member(guild_id, member_id)
-                member: Member = Member(data=member_data, guild=cached_guild.guild, state=self._state)
+                member = Member(data=member_data, guild=cached_guild.guild, state=self._state)
             except (errors.Forbidden, errors.HTTPException):
                 self._logger.debug(f"Fetching member: {member_id} using HTTP failed.")
                 return None
@@ -384,9 +385,11 @@ class BotCache:
             if not members:
                 return None
 
-            member: Member = members[0]
+            member = members[0]
 
-        cached_guild.add_member_to_cache(member)
+        if member:
+            cached_guild.add_member_to_cache(member)
+
         return member
 
     async def add_role(self, guild_id: int, role: Role, delete_after: Optional[int] = None) -> None:
@@ -532,16 +535,17 @@ class BotCache:
             if channel_type in (ChannelType.group, ChannelType.private):
                 raise errors.InvalidData("Channel ID resolved to a private channel")
 
-            data_guild_id: int = int(data["guild_id"])
+            data_guild_id: int = int(data["guild_id"])  # pyright: ignore
 
             if guild_id != data_guild_id:
                 raise errors.InvalidData("Guild ID resolved to a different guild")
 
-            channel: GuildChannel = factory(guild=cached_guild.guild, state=self._state, data=data)
+            channel = factory(guild=cached_guild.guild, state=self._state, data=data)  # pyright: ignore
 
         except (errors.Forbidden, errors.HTTPException, errors.InvalidData):
             self._logger.debug(f"Fetching channel: {channel_id} using HTTP failed.")
             return None
 
-        await self.add_channel(guild_id, channel)
+        if channel:
+            await self.add_channel(guild_id, channel)
         return channel

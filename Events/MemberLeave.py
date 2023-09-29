@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
     from bot import Smiffy
     from typings import DB_RESPONSE
+    from cache import CachedGuild
 
 
 class MemberLeaveEvent(CustomCog):
@@ -192,7 +193,8 @@ class MemberLeaveEvent(CustomCog):
     async def on_raw_member_remove(self, event_data: RawMemberRemoveEvent):
         await self.bot.cache.remove_member(event_data.guild_id, event_data.user.id)
 
-        guild: Optional[Guild] = await self.bot.cache.get_guild(event_data.guild_id)
+        cached_guild: Optional[CachedGuild] = await self.bot.cache.get_guild(event_data.guild_id)
+        guild: Optional[Guild] = cached_guild.guild if cached_guild else None
 
         if guild:
             await self.update_invites(event_data.user, guild)

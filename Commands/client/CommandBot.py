@@ -17,6 +17,8 @@ if TYPE_CHECKING:
 
 class CommandBot(CustomCog):
     async def get_channel(self, interaction: CustomInteraction) -> Optional[TextChannel]:
+        assert interaction.guild
+
         channel_id: Optional[str] = bot_utils.get_value_from_config("CHANNEL_NOTIFY")
 
         if not isinstance(channel_id, int):
@@ -26,7 +28,7 @@ class CommandBot(CustomCog):
             )
             raise InvalidServerData
 
-        channel: Optional[GuildChannel] = await self.bot.cache.get_channel(interaction.guild_id, channel_id)
+        channel: Optional[GuildChannel] = await self.bot.cache.get_channel(interaction.guild.id, channel_id)
 
         if not channel or not isinstance(channel, TextChannel):
             await interaction.send_error_message(

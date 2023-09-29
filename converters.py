@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
     from bot import Smiffy
     from utilities import CustomInteraction
+    from cache import CachedGuild
 
     PartialMessageableChannel = Union[
         TextChannel,
@@ -87,18 +88,20 @@ class BaseConverter(OptionConverter, ABC):
         guild_id: Optional[int],
         channel_id: Optional[int],
     ) -> Optional[PartialMessageableChannel]:
-        if guild_id is not None:
-            guild: Optional[Guild] = await inter.bot.cache.get_guild(guild_id)
+        assert inter.guild
 
-            if guild is not None and channel_id is not None:
-                return guild._resolve_channel(channel_id)  # pyright: ignore
+        if guild_id is not None:
+            cached_guild: Optional[CachedGuild] = await inter.bot.cache.get_guild(guild_id)
+
+            if cached_guild is not None and channel_id is not None:
+                return cached_guild.guild._resolve_channel(channel_id)  # pyright: ignore
 
             return None
 
         if not channel_id:
             return inter.channel  # pyright: ignore
 
-        return await inter.bot.cache.get_channel(inter.guild.id, channel_id)
+        return await inter.bot.cache.get_channel(inter.guild.id, channel_id)  # pyright: ignore
 
     def __repr__(self) -> str:
         return f"<BaseConverter(type={self.type}, size={self.__sizeof__()})>"

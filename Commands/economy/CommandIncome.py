@@ -27,6 +27,7 @@ from .__main__ import EconomyCog, EconomyManager
 
 if TYPE_CHECKING:
     from bot import Smiffy
+    from cache import CachedGuild
 
 
 class IncomeHandler:
@@ -135,7 +136,9 @@ class IncomeHandler:
             channel_id: Optional[int] = role_income_data[2]
             channel_message: Optional[str] = role_income_data[3]
 
-            guild: Optional[Guild] = await self.bot.cache.get_guild(guild_id)
+            cached_guild: Optional[CachedGuild] = await self.bot.cache.get_guild(guild_id)
+            guild = cached_guild.guild if cached_guild else None
+
             if not guild:
                 return
 

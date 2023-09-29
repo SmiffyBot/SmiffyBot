@@ -25,6 +25,7 @@ if TYPE_CHECKING:
 
     from bot import Smiffy
     from typings import DB_RESPONSE
+    from cache import CachedGuild
 
 
 class PartnershipAdText(ui.Modal):
@@ -99,14 +100,17 @@ class CommandPartnerships(CustomCog):
         assert inter.guild and self.bot.user
 
         response: Iterable[DB_RESPONSE] = await self.bot.db.execute_fetchall("SELECT * FROM partnerships")
-        main_guild: Optional[Guild] = await self.bot.cache.get_guild(inter.guild.id)
+        cached_main_guild: Optional[CachedGuild] = await self.bot.cache.get_guild(inter.guild.id)
+        main_guild: Optional[Guild] = cached_main_guild.guild if cached_main_guild else None
 
         for partnership_data in response:
             guild_id: int = partnership_data[0]
             channel_id: int = partnership_data[1]
 
             if partnership_data[0] == inter.guild.id:
-                guild: Optional[Guild] = await self.bot.cache.get_guild(guild_id)
+                cached_guild: Optional[CachedGuild] = await self.bot.cache.get_guild(guild_id)
+                guild: Optional[Guild] = cached_guild.guild if cached_guild else None
+
                 if not guild:
                     continue
 

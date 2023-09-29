@@ -1429,7 +1429,7 @@ class CommandTickets(CustomCog):
 
         await interaction.response.defer()
 
-        category: Optional[GuildChannel] = await self.bot.cache.get_channel(interaction.guild_id, response[2])
+        category: Optional[GuildChannel] = await self.bot.cache.get_channel(interaction.guild.id, response[2])
 
         if not isinstance(category, CategoryChannel):
             return await interaction.send_error_message(
