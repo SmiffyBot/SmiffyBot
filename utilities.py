@@ -998,8 +998,6 @@ class BotBase(AutoShardedBot):
             ApplicationCommandIsGuildOnly,
         )
 
-        self._cache: BotCache = BotCache(self)
-
     @property
     def avatar_url(self) -> str:
         """
@@ -1176,7 +1174,7 @@ class BotBase(AutoShardedBot):
         :return: A member object if it exists in the guild, or none if it does not
         """
 
-        member: Optional[Member] = await self._cache.getch_member(guild.id, member_id)
+        member: Optional[Member] = await self.cache.get_member(guild.id, member_id)
         return member
 
     async def setup_session(self) -> None:

@@ -1,11 +1,10 @@
-from typing import ClassVar
-
 from typings import Bot_Settings, BotLogger
 from utilities import BotBase, CircuitBreaker, Database, bot_logger, bot_utils
+from cache import BotCache
 
 
 class Smiffy(BotBase):
-    __version__: ClassVar[str] = "2.1"
+    __version__: str = "2.1"
 
     def __init__(self, **kwargs: Bot_Settings):
         """
@@ -21,6 +20,7 @@ class Smiffy(BotBase):
         self.logger: BotLogger = bot_logger.get_logger
         self.db: Database = Database.setup(bot=self)
         self.circuit_breaker: CircuitBreaker = CircuitBreaker(client=self)
+        self.cache: BotCache = BotCache(client=self)
 
         bot_utils.load_cogs(bot=self)
         self.loop.create_task(bot_utils.set_activity(bot=self))
@@ -33,6 +33,7 @@ class Smiffy(BotBase):
         :return: None
         """
         bot_utils.print_welcome_message(bot=self)
+        self.cache.chunk_guilds()
 
     async def on_connect(self) -> None:
         """
