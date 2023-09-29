@@ -155,7 +155,10 @@ class VideoListener:
 
                     self.update_channel_data(guild_id, channel_data)
 
-                    channel: Optional[GuildChannel] = await self.bot.getch_channel(channel_id)
+                    channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
+                        guild_id,
+                        channel_id
+                    )
 
                     if not isinstance(channel, TextChannel):
                         self.delete_channel_data(guild_id)

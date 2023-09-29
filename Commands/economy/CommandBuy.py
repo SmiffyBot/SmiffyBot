@@ -67,7 +67,7 @@ class CommandBuy(CustomCog):
         if item_data["required_role"]:
             role_id: int = item_data["required_role"]
 
-            role: Optional[Role] = await self.bot.getch_role(interaction.guild, role_id=role_id)
+            role: Optional[Role] = await self.bot.cache.get_role(interaction.guild.id, role_id=role_id)
             if role and role not in interaction.user.roles:
                 return await interaction.send_error_message(
                     description=f"Nie posiadasz wymaganej roli: {role.mention}, aby zakupić ten przedmiot."
@@ -75,7 +75,7 @@ class CommandBuy(CustomCog):
 
         if item_data["given_role"]:
             role_id: int = item_data["given_role"]
-            role: Optional[Role] = await self.bot.getch_role(interaction.guild, role_id=role_id)
+            role: Optional[Role] = await self.bot.cache.get_role(interaction.guild.id, role_id=role_id)
             if role and role not in interaction.user.roles:
                 try:
                     await interaction.user.add_roles(role)

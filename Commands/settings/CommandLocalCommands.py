@@ -139,7 +139,7 @@ class CommandLocalCommands(CustomCog):
 
         for command_data in commands:
             guild_id: int = command_data[0]
-            guild: Optional[Guild] = await self.bot.getch_guild(guild_id)
+            guild: Optional[Guild] = await self.bot.cache.get_guild(guild_id)
 
             if not guild:
                 await self.bot.db.execute_fetchone(

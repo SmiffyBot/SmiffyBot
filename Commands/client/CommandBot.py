@@ -26,7 +26,10 @@ class CommandBot(CustomCog):
             )
             raise InvalidServerData
 
-        channel: Optional[GuildChannel] = await self.bot.getch_channel(channel_id)
+        channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
+            interaction.guild_id,
+            channel_id
+        )
 
         if not channel or not isinstance(channel, TextChannel):
             await interaction.send_error_message(

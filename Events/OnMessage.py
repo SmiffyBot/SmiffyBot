@@ -1103,7 +1103,10 @@ class OnMessageEvent(CustomCog):
                 elif alerts_data["type"] == "channel":
                     channel_id: int = int(alerts_data["channel_id"])
 
-                    channel: Optional[GuildChannel] = await self.bot.getch_channel(channel_id)
+                    channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
+                        message.guild.id,
+                        channel_id
+                    )
 
                     if isinstance(channel, TextChannel):
                         try:
@@ -1113,7 +1116,10 @@ class OnMessageEvent(CustomCog):
                 else:
                     channel_id: int = int(alerts_data["channel_id"])
 
-                    channel: Optional[GuildChannel] = await self.bot.getch_channel(channel_id)
+                    channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
+                        message.guild.id,
+                        channel_id
+                    )
 
                     try:
                         await message.author.send(formatted_message)
@@ -1137,8 +1143,8 @@ class OnMessageEvent(CustomCog):
                         role_mention: str = "Deleted role"
 
                         try:
-                            role: Optional[Role] = await self.bot.getch_role(
-                                message.guild,
+                            role: Optional[Role] = await self.bot.cache.get_role(
+                                message.guild.id,
                                 role_id,
                             )
 

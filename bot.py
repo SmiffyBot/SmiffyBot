@@ -33,7 +33,7 @@ class Smiffy(BotBase):
         :return: None
         """
 
-        await self.cache.chunk_guilds(run_in_tasks=True)
+        await self.cache.chunk_guilds(run_in_tasks=False)
         # enabled run_in_task starts chunking members in separate tasks.
         # This speeds up the bot launch process, but the members are not fully chunked before the bot is ready.
 

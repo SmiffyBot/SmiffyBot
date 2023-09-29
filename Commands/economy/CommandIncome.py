@@ -135,16 +135,16 @@ class IncomeHandler:
             channel_id: Optional[int] = role_income_data[2]
             channel_message: Optional[str] = role_income_data[3]
 
-            guild: Optional[Guild] = await self.bot.getch_guild(guild_id)
+            guild: Optional[Guild] = await self.bot.cache.get_guild(guild_id)
             if not guild:
                 return
 
-            role: Optional[Role] = await self.bot.getch_role(guild, role_id)
+            role: Optional[Role] = await self.bot.cache.get_role(guild.id, role_id)
             if not role:
                 return
 
             if channel_id and channel_message:
-                channel: Optional[GuildChannel] = await self.bot.getch_channel(channel_id)
+                channel: Optional[GuildChannel] = await self.bot.cache.get_channel(guild.id, channel_id)
 
                 try:
                     if isinstance(channel, TextChannel):
@@ -449,10 +449,11 @@ class CommandIncome(CustomCog):
         embed.set_thumbnail(url=interaction.guild_icon_url)
 
         for role_id, data in income_roles.items():
-            role: Optional[Role] = await self.bot.getch_role(
-                guild=interaction.guild,
+            role: Optional[Role] = await self.bot.cache.get_role(
+                guild_id=interaction.guild.id,
                 role_id=role_id,
             )
+
             if role:
                 interval: int = data[0]
                 income: int = data[1]
@@ -460,7 +461,11 @@ class CommandIncome(CustomCog):
                 channel_mention: str = "`Brak`"
 
                 if channel_id:
-                    channel: Optional[GuildChannel] = await self.bot.getch_channel(channel_id)
+                    channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
+                        interaction.guild.id,
+                        channel_id
+                    )
+
                     if isinstance(channel, TextChannel):
                         channel_mention = channel.mention
 

@@ -87,7 +87,7 @@ class CaptchaButtons(ui.View):
         if not response or not response[0]:
             return None
 
-        role: Optional[Role] = await bot.getch_role(guild, response[0])
+        role: Optional[Role] = await bot.cache.get_role(guild.id, response[0])
         return role
 
     @staticmethod
@@ -218,7 +218,7 @@ class ButtonVerifyView(ui.View):
                 guild: Guild,
                 role_id: int,
             ) -> Optional[Role]:
-                role: Optional[Role] = await bot.getch_role(guild, role_id)
+                role: Optional[Role] = await bot.cache.get_role(guild.id, role_id)
                 return role
 
             def __init__(self, *args, **kwargs):
@@ -252,8 +252,8 @@ class ButtonVerifyView(ui.View):
                         ephemeral=True,
                     )
 
-                role: Optional[Role] = await bot.getch_role(
-                    guild=interaction.guild,
+                role: Optional[Role] = await bot.cache.get_role(
+                    guild_id=interaction.guild.id,
                     role_id=response[2],
                 )
                 if not role:

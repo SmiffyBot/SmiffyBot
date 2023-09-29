@@ -25,7 +25,7 @@ class CommandLeaderboard(CustomCog):
 
         for account in accounts:
             user_id: int = account["user_id"]
-            member: Optional[Member] = await self.bot.getch_member(guild, user_id)
+            member: Optional[Member] = await self.bot.cache.get_member(guild.id, user_id)
             if not member:
                 await manager.delete_user_account(guild=guild, user_id=user_id)
                 continue

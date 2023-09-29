@@ -87,15 +87,19 @@ class BaseConverter(OptionConverter, ABC):
         guild_id: Optional[int],
         channel_id: Optional[int],
     ) -> Optional[PartialMessageableChannel]:
+
         if guild_id is not None:
-            guild: Optional[Guild] = await inter.bot.getch_guild(guild_id)
+            guild: Optional[Guild] = await inter.bot.cache.get_guild(guild_id)
 
             if guild is not None and channel_id is not None:
                 return guild._resolve_channel(channel_id)  # pyright: ignore
 
             return None
 
-        return await inter.bot.getch_channel(channel_id) if channel_id else inter.channel  # pyright: ignore
+        if not channel_id:
+            return inter.channel  # pyright: ignore
+
+        return await inter.bot.cache.get_channel(inter.guild.id, channel_id)
 
     def __repr__(self) -> str:
         return f"<BaseConverter(type={self.type}, size={self.__sizeof__()})>"
@@ -118,7 +122,7 @@ class RoleConverter(BaseConverter):
         match: Optional[re.Match] = self._get_id_match(value) or re.match(r"<@&([0-9]{15,20})>$", value)
 
         if match:
-            result: Optional[Role] = await interaction.bot.getch_role(guild, int(match.group(1)))
+            result: Optional[Role] = await interaction.bot.cache.get_role(guild.id, int(match.group(1)))
         else:
             result: Optional[Role] = utils.get(guild.roles, name=value)
 
@@ -251,7 +255,7 @@ class MemberConverter(BaseConverter):
 
             if not result:
                 user_id = int(match.group(1))
-                result = await bot.getch_member(guild, user_id)
+                result = await bot.cache.get_member(guild.id, user_id)
 
         if result is None:
             if user_id is not None:

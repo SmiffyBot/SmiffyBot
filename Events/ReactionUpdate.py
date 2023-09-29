@@ -25,13 +25,13 @@ if TYPE_CHECKING:
 class ReactionUpdateEvent(CustomCog):
     @CustomCog.listener()
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
-        channel: Optional[GuildChannel] = await self.bot.getch_channel(payload.channel_id)
+        channel: Optional[GuildChannel] = await self.bot.cache.get_channel(payload.guild_id, payload.channel_id)
 
         if not isinstance(channel, TextChannel):
             return
 
         message: PartialMessage = channel.get_partial_message(payload.message_id)
-        member: Optional[Member] = await self.bot.getch_member(channel.guild, payload.user_id)
+        member: Optional[Member] = await self.bot.cache.get_member(channel.guild.id, payload.user_id)
 
         if not member or member.bot:
             return
@@ -59,7 +59,7 @@ class ReactionUpdateEvent(CustomCog):
 
             for data in reactionroles_response:
                 if data[4] == str(clicked_emoji):
-                    role: Optional[Role] = await self.bot.getch_role(channel.guild, data[3])
+                    role: Optional[Role] = await self.bot.cache.get_role(channel.guild.id, data[3])
                     if not role:
                         embed = Embed(
                             title=f"{Emojis.REDBUTTON.value} Wystąpił bląd.",
@@ -169,13 +169,13 @@ class ReactionUpdateEvent(CustomCog):
 
     @CustomCog.listener()
     async def on_raw_reaction_remove(self, payload: RawReactionActionEvent):
-        channel: Optional[GuildChannel] = await self.bot.getch_channel(payload.channel_id)
+        channel: Optional[GuildChannel] = await self.bot.cache.get_channel(payload.guild_id, payload.channel_id)
 
         if not isinstance(channel, TextChannel):
             return
 
         message: PartialMessage = channel.get_partial_message(payload.message_id)
-        member: Optional[Member] = await self.bot.getch_member(channel.guild, payload.user_id)
+        member: Optional[Member] = await self.bot.cache.get_member(channel.guild.id, payload.user_id)
 
         if not member or member.bot:
             return
@@ -203,7 +203,7 @@ class ReactionUpdateEvent(CustomCog):
 
             for data in reactionroles_response:
                 if data[4] == str(clicked_emoji):
-                    role: Optional[Role] = await self.bot.getch_role(channel.guild, data[3])
+                    role: Optional[Role] = await self.bot.cache.get_role(channel.guild.id, data[3])
 
                     if not role:
                         embed = Embed(

@@ -80,7 +80,7 @@ class EconomyManager:
             return True
 
         if waited_seconds >= response[0]:
-            reset_bucket(cooldown.func, interaction)  # pyright: ignore
+            await reset_bucket(cooldown.func, interaction)  # pyright: ignore
             return False
 
         return True

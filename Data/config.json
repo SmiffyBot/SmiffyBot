@@ -8,6 +8,7 @@
   "SESSION_TIMEOUT": 10.0,
 
   "BOT_GUILD_INVITE": "",
+  "BOT_GUILD_ID": null,
   "CHANNEL_NOTIFY": null,
   "ERRORS_CHANNEL_NOTIFY": null,
 

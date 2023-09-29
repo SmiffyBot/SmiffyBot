@@ -230,7 +230,7 @@ class CommandInvites(CustomCog):
             left,
             bonus,
         ) in response:
-            member: Optional[Member] = await self.bot.getch_member(guild, user_id)
+            member: Optional[Member] = await self.bot.cache.get_member(guild.id, user_id)
             if member:
                 invites_data[member] = (normal - left) + bonus
 
@@ -652,8 +652,8 @@ class CommandInvites(CustomCog):
                 if member.id in invited_users:
                     inviter_id: int = user_data[1]
 
-                    inviter = await self.bot.getch_member(
-                        interaction.guild,
+                    inviter = await self.bot.cache.get_member(
+                        interaction.guild.id,
                         inviter_id,
                     )
 

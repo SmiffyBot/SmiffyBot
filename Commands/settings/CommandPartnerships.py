@@ -99,18 +99,18 @@ class CommandPartnerships(CustomCog):
         assert inter.guild and self.bot.user
 
         response: Iterable[DB_RESPONSE] = await self.bot.db.execute_fetchall("SELECT * FROM partnerships")
-        main_guild: Optional[Guild] = await self.bot.getch_guild(inter.guild.id)
+        main_guild: Optional[Guild] = await self.bot.cache.get_guild(inter.guild.id)
 
         for partnership_data in response:
             guild_id: int = partnership_data[0]
             channel_id: int = partnership_data[1]
 
             if partnership_data[0] == inter.guild.id:
-                guild: Optional[Guild] = await self.bot.getch_guild(guild_id)
+                guild: Optional[Guild] = await self.bot.cache.get_guild(guild_id)
                 if not guild:
                     continue
 
-                channel: Optional[GuildChannel] = await self.bot.getch_channel(channel_id)
+                channel: Optional[GuildChannel] = await self.bot.cache.get_channel(guild.id, channel_id)
                 if not isinstance(channel, TextChannel):
                     continue
 
