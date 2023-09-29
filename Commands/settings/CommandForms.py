@@ -240,10 +240,7 @@ class FormModal(ui.Modal):
         components: list[dict[str, list]] = interaction.data["components"]  # pyright: ignore
 
         guild: Optional[Guild] = await bot.cache.get_guild(self.guild_id)
-        channel: Optional[GuildChannel] = await bot.cache.get_channel(
-            interaction.guild_id,
-            self.db_data[2]
-        )
+        channel: Optional[GuildChannel] = await bot.cache.get_channel(interaction.guild_id, self.db_data[2])
 
         if not guild or not isinstance(channel, TextChannel):
             return await interaction.send_error_message(

@@ -462,8 +462,7 @@ class CommandIncome(CustomCog):
 
                 if channel_id:
                     channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
-                        interaction.guild.id,
-                        channel_id
+                        interaction.guild.id, channel_id
                     )
 
                     if isinstance(channel, TextChannel):

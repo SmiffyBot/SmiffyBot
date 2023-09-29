@@ -3,7 +3,7 @@ from __future__ import annotations
 from time import time
 from typing import TYPE_CHECKING, Optional
 
-from nextcord import Guild, Member, errors, Role, ChannelType
+from nextcord import ChannelType, Guild, Member, Role, errors
 from nextcord.channel import _threaded_guild_channel_factory
 
 if TYPE_CHECKING:
@@ -406,11 +406,7 @@ class BotCache:
         cached_guild.add_role_to_cache(role)
 
         if delete_after:
-            self._loop.call_later(
-                delete_after,
-                self._loop.create_task,
-                self.remove_role(guild_id, role.id)
-            )
+            self._loop.call_later(delete_after, self._loop.create_task, self.remove_role(guild_id, role.id))
 
     async def remove_role(self, guild_id: int, role_id: int) -> None:
         """
@@ -454,8 +450,9 @@ class BotCache:
         self._logger.warning(f"Role: {role_id} was not found in the cache. Sending HTTP Request.")
 
         data = await self._state.http.get_roles(guild_id)
-        requested_roles: list[Role] = [Role(guild=cached_guild.guild, state=self._state, data=role_data)
-                                       for role_data in data]
+        requested_roles: list[Role] = [
+            Role(guild=cached_guild.guild, state=self._state, data=role_data) for role_data in data
+        ]
 
         for requested_role in requested_roles:
             if not cached_guild.get_role_from_cache(requested_role.id):
@@ -463,7 +460,9 @@ class BotCache:
 
         return cached_guild.get_role_from_cache(role_id)
 
-    async def add_channel(self, guild_id: int, channel: GuildChannel, delete_after: Optional[int] = None) -> None:
+    async def add_channel(
+        self, guild_id: int, channel: GuildChannel, delete_after: Optional[int] = None
+    ) -> None:
         """
         The add_channel function adds a channel to the cache.
 
@@ -482,9 +481,7 @@ class BotCache:
 
         if delete_after:
             self._loop.call_later(
-                delete_after,
-                self._loop.create_task,
-                self.remove_channel(guild_id, channel.id)
+                delete_after, self._loop.create_task, self.remove_channel(guild_id, channel.id)
             )
 
     async def remove_channel(self, guild_id: int, channel_id: int) -> None:

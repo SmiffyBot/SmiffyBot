@@ -25,7 +25,9 @@ if TYPE_CHECKING:
 class ReactionUpdateEvent(CustomCog):
     @CustomCog.listener()
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
-        channel: Optional[GuildChannel] = await self.bot.cache.get_channel(payload.guild_id, payload.channel_id)
+        channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
+            payload.guild_id, payload.channel_id
+        )
 
         if not isinstance(channel, TextChannel):
             return
@@ -169,7 +171,9 @@ class ReactionUpdateEvent(CustomCog):
 
     @CustomCog.listener()
     async def on_raw_reaction_remove(self, payload: RawReactionActionEvent):
-        channel: Optional[GuildChannel] = await self.bot.cache.get_channel(payload.guild_id, payload.channel_id)
+        channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
+            payload.guild_id, payload.channel_id
+        )
 
         if not isinstance(channel, TextChannel):
             return

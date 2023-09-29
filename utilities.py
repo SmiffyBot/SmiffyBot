@@ -998,7 +998,7 @@ class BotBase(AutoShardedBot):
             nextcord_errors.ApplicationCheckFailure,
             MissingMusicPermissions,
             ApplicationCommandIsGuildOnly,
-            InvalidServerData
+            InvalidServerData,
         )
 
     @property

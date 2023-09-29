@@ -182,7 +182,9 @@ class MemberLeaveEvent(CustomCog):
             if inviter_id:
                 inviter: Optional[Member] = await self.bot.cache.get_member(guild.id, inviter_id)
 
-            channel: Optional[GuildChannel] = await self.bot.cache.get_channel(guild.id, notify_data["notify_channel"])
+            channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
+                guild.id, notify_data["notify_channel"]
+            )
             if isinstance(channel, TextChannel):
                 await self.handle_invites_notify(inviter, channel, member)
 

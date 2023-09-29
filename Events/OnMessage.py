@@ -1104,8 +1104,7 @@ class OnMessageEvent(CustomCog):
                     channel_id: int = int(alerts_data["channel_id"])
 
                     channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
-                        message.guild.id,
-                        channel_id
+                        message.guild.id, channel_id
                     )
 
                     if isinstance(channel, TextChannel):
@@ -1117,8 +1116,7 @@ class OnMessageEvent(CustomCog):
                     channel_id: int = int(alerts_data["channel_id"])
 
                     channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
-                        message.guild.id,
-                        channel_id
+                        message.guild.id, channel_id
                     )
 
                     try:

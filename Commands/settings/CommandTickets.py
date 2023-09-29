@@ -194,7 +194,9 @@ class CloseTicketButtonView(ui.View):
                             BytesIO(transcript.encode()),
                             filename=f"transcript-{interaction.channel.id}.html",
                         )
-                        channel: Optional[GuildChannel] = await bot.cache.get_channel(interaction.guild.id, response[0])
+                        channel: Optional[GuildChannel] = await bot.cache.get_channel(
+                            interaction.guild.id, response[0]
+                        )
 
                         if not isinstance(channel, TextChannel):
                             return
@@ -478,7 +480,9 @@ class PreviewButtonView(ui.View):
                         "Upewnij się, że podana rola oraz kategoria nadal istnieje."
                     )
 
-                category: Optional[GuildChannel] = await bot.cache.get_channel(interaction.guild.id, response[2])
+                category: Optional[GuildChannel] = await bot.cache.get_channel(
+                    interaction.guild.id, response[2]
+                )
 
                 if not isinstance(category, CategoryChannel):
                     return await interaction.send_error_message(

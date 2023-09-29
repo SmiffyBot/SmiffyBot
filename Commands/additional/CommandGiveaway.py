@@ -163,7 +163,9 @@ class CommandGiveaway(CustomCog):
             for giveaway_data in response:
                 _embed: Optional[Embed] = None
                 try:
-                    _channel: Optional[GuildChannel] = await self.bot.cache.get_channel(guild.id, giveaway_data[1])
+                    _channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
+                        guild.id, giveaway_data[1]
+                    )
                     if not _channel:
                         raise nextcord_errors.NotFound  # pyright: ignore
 

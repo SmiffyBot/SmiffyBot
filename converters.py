@@ -87,7 +87,6 @@ class BaseConverter(OptionConverter, ABC):
         guild_id: Optional[int],
         channel_id: Optional[int],
     ) -> Optional[PartialMessageableChannel]:
-
         if guild_id is not None:
             guild: Optional[Guild] = await inter.bot.cache.get_guild(guild_id)
 
