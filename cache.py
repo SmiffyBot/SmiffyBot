@@ -3,14 +3,14 @@ from __future__ import annotations
 from time import time
 from typing import TYPE_CHECKING, Optional
 
-from nextcord import Member, Guild, errors
+from nextcord import Guild, Member, errors
 
 if TYPE_CHECKING:
+    from asyncio import AbstractEventLoop
+
     from nextcord.gateway import DiscordWebSocket
     from nextcord.http import HTTPClient
     from nextcord.state import ConnectionState
-
-    from asyncio import AbstractEventLoop
 
     from bot import Smiffy
     from utilities import Logger
@@ -99,9 +99,7 @@ class CachedGuild:
 
 
 class BotCache:
-    __slots__: tuple[str, ...] = (
-        "client", "_state", "_http", "_ws", "_logger", "_cached_guilds", "_loop"
-    )
+    __slots__: tuple[str, ...] = ("client", "_state", "_http", "_ws", "_logger", "_cached_guilds", "_loop")
 
     def __init__(self, client: Smiffy) -> None:
         """
@@ -280,5 +278,5 @@ class BotCache:
             self._loop.call_later(
                 delete_after,
                 self._loop.create_task,
-                self.remove_member_from_cache(member.guild.id, member.id)
+                self.remove_member_from_cache(member.guild.id, member.id),
             )

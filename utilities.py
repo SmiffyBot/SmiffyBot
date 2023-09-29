@@ -42,6 +42,7 @@ from nextcord.ext.commands import AutoShardedBot, Cog
 from nextcord.ext.commands import RoleConverter as ncRoleConverter
 from nextcord.ext.commands import errors
 from orjson import loads
+
 from converters import RoleConverter
 from errors import (
     ApplicationCommandIsGuildOnly,
@@ -69,9 +70,8 @@ if TYPE_CHECKING:
     from nextcord.types.interactions import InteractionType as InteractionPayload
 
     from bot import Smiffy
-    from typings import InterT, UserType
-
     from cache import BotCache, CachedGuild
+    from typings import InterT, UserType
 
 
 class CircuitBreaker(Cordcutter):
