@@ -29,6 +29,23 @@ class CachedGuild:
         self._logger: Logger = logger
         self.__cached_members: dict[int, Member] = {member.id: member for member in guild.members}
 
+    async def chunk_members(self, limit: int = 100) -> None:
+        """
+        The chunk_members function is a coroutine that fetches members of the guild and caches them in a dictionary.
+        The function takes an optional limit parameter, which defaults to 100.
+        The limit parameter specifies how many members to fetch at once from the API.
+
+        :param limit: Set the limit of members to be fetched at a time
+        :return: None
+        """
+        self._logger.debug(f"Chunking {limit} members. Guild: {self.guild_id}.")
+
+        if limit >= 500:
+            self._logger.warning("Chunking more than 500 people at once. This can cause performance losses.")
+
+        async for member in self.guild.fetch_members(limit=limit):
+            self.__cached_members[member.id] = member
+
     def add_member_to_cache(self, member: Member) -> None:
         """
         The add_member_to_cache function adds a member to the cache.
@@ -120,6 +137,17 @@ class BotCache:
 
         end = time() - start
         self._logger.info(f"Cached {len(self._cached_guilds)} servers in {round(end, 4)}s")
+
+    async def global_chunk_members(self, limit: int = 100) -> None:
+        """
+        The global_chunk_members function is a coroutine that will chunk all members in the cached guilds.
+
+        :param limit: Set the limit of members to be fetched
+        :return: None
+        """
+
+        for cached_guilds in self.guilds:
+            await cached_guilds.chunk_members(limit=limit)
 
     def add_guild_to_cache(self, guild: Guild) -> CachedGuild:
         """
