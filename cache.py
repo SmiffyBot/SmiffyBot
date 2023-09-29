@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from time import time
+
 from typing import TYPE_CHECKING, Optional, cast
+from typings import CacheRequest
 
 from nextcord import ChannelType, Guild, Member, Role, errors
 from nextcord.channel import _threaded_guild_channel_factory
@@ -19,6 +21,94 @@ if TYPE_CHECKING:
 
 
 __all__ = ("CachedGuild", "BotCache")
+
+
+class RequestLimiter:
+    __slots__: tuple[str] = (
+        "dispatched_requests", "client", "limit", "reset_after"
+    )
+
+    def __init__(self, client: Smiffy, limit: int = 2, reset_after: int = 60):
+
+        self.client: Smiffy = client
+        self.limit = limit
+        self.reset_after = reset_after
+        self.dispatched_requests: dict[int, list[CacheRequest]] = {}
+
+    def __repr__(self) -> str:
+        return f"<RequestLimiter(limit={self.limit}, dispatched={len(self.dispatched_requests)})>"
+
+    def get_exact_request_amount(self, request: CacheRequest) -> int:
+        """
+        The get_exact_request_amount function is used to get the exact amount of requests.
+        The function then returns the number of times that request has been made.
+
+        :param request: Request to compare
+        :return: The number of requests that have been made exactly like the request passed as an argument
+        """
+
+        exact_requests: int = 0
+        data: list[CacheRequest] = self.dispatched_requests.get(request["guild_id"], [])
+
+        for r in data:
+            if r == request:
+                exact_requests += 1
+
+        return exact_requests
+
+    def get_status_from_request(self, request: CacheRequest) -> bool:
+        """
+        The get_status_from_request function checks if the next request via api can be executed.
+
+        :param request: Get the request amount
+        :return: A boolean
+        """
+
+        if self.get_exact_request_amount(request) >= self.limit:
+            return False
+
+        return True
+
+    def add_new_request(self, request: CacheRequest) -> None:
+        """
+        The add_new_request function is used to add a new request to the limiter.
+        It also creates a task which removes this request after reset_after seconds.
+
+        :param request: Add a request to the dispatched_requests dictionary
+        :return: None
+        """
+
+        data: list[CacheRequest] = self.dispatched_requests.get(request["guild_id"], [])
+
+        data.append(request)
+        self.dispatched_requests[request["guild_id"]] = data
+
+        self.client.logger.debug(f"Added request: {request} to limiter.")
+
+        self.client.loop.call_later(
+            self.reset_after,
+            self.client.loop.create_task,
+            self.remove_request(request)
+        )
+
+    def remove_request(self, request: CacheRequest) -> None:
+        """
+        The remove_request function is used to remove a request from the limiter.
+
+        :param request: Remove a request from the dispatched_requests dictionary
+        :return: None
+        """
+
+        guild_request: list[CacheRequest] = self.dispatched_requests.get(request["guild_id"], [])
+
+        for r in guild_request.copy():
+            if request == r:
+                guild_request.remove(request)
+                self.client.logger.debug(f"Removed request: {request} from limiter.")
+
+                break
+
+        self.dispatched_requests[request["guild_id"]] = guild_request
 
 
 class CachedGuild:
@@ -191,7 +281,8 @@ class CachedGuild:
 
 
 class BotCache:
-    __slots__: tuple[str, ...] = ("client", "_state", "_http", "_ws", "_logger", "_cached_guilds", "_loop")
+    __slots__: tuple[str, ...] = ("client", "_state", "_http", "_ws", "_logger",
+                                  "_cached_guilds", "_loop", "_dispatched_requests", "_request_limiter")
 
     def __init__(self, client: Smiffy) -> None:
         """
@@ -200,6 +291,7 @@ class BotCache:
         :param client: Pass the client object into the class
         :return: None
         """
+        self._request_limiter: RequestLimiter = RequestLimiter(client)
 
         self._loop: AbstractEventLoop = client.loop
         self._state: ConnectionState = client._connection
@@ -293,6 +385,14 @@ class BotCache:
         if cached_guild or not fetch:
             return cached_guild
 
+        request = CacheRequest(guild_id=guild_id, request_type="guild", args=(guild_id,))
+        if not self._request_limiter.get_status_from_request(request):
+            self._logger.debug(f"Ignoring sending request to discord API for guild: {guild_id}. "
+                               f"Limit requests: {self._request_limiter.limit} reached.")
+            return
+
+        self._request_limiter.add_new_request(request)
+
         try:
             self._logger.warning(f"Guild: {guild_id} was not found in the cache. Sending HTTP Request.")
 
@@ -366,6 +466,15 @@ class BotCache:
 
         if member:
             return member
+
+        request = CacheRequest(guild_id=guild_id, request_type="member", args=(guild_id, member_id))
+
+        if not self._request_limiter.get_status_from_request(request):
+            self._logger.debug(f"Ignoring sending request to discord API for member: {member_id}. "
+                               f"Limit requests: {self._request_limiter.limit} reached.")
+            return
+
+        self._request_limiter.add_new_request(request)
 
         self._logger.warning(f"Member: {member_id} was not found in the cache. Sending HTTP Request.")
 
@@ -450,6 +559,15 @@ class BotCache:
         if role or not fetch:
             return role
 
+        request = CacheRequest(guild_id=guild_id, request_type="role", args=(guild_id, role_id))
+
+        if not self._request_limiter.get_status_from_request(request):
+            self._logger.debug(f"Ignoring sending request to discord API for role: {role_id}. "
+                               f"Limit requests: {self._request_limiter.limit} reached.")
+            return
+
+        self._request_limiter.add_new_request(request)
+
         self._logger.warning(f"Role: {role_id} was not found in the cache. Sending HTTP Request.")
 
         data = await self._state.http.get_roles(guild_id)
@@ -503,25 +621,35 @@ class BotCache:
 
         cached_guild.remove_channel_from_cache(channel_id)
 
-    async def get_channel(self, guild_id: int, channel_id: int) -> Optional[GuildChannel]:
+    async def get_channel(self, guild_id: int, channel_id: int, fetch: bool = True) -> Optional[GuildChannel]:
         """
         The get_channel function is used to get a channel from the cache.
         If it's not in the cache, then it will be retrieved from Discord and added to the cache.
 
         :param guild_id: Specify the guild id of the channel we want to get
         :param channel_id: Get the channel id
+        :param fetch: Whether method should execute HTTP request if channel or guild was not in cache
         :return: The channel object or None
         """
 
-        cached_guild: Optional[CachedGuild] = await self.get_guild(guild_id)
+        cached_guild: Optional[CachedGuild] = await self.get_guild(guild_id, fetch)
         self._logger.debug(f"Getting channel: {channel_id} from cache.")
 
         if not cached_guild:
             return None
 
         channel: Optional[GuildChannel] = cached_guild.get_channel_from_cache(channel_id)
-        if channel:
+        if channel or not fetch:
             return channel
+
+        request = CacheRequest(guild_id=guild_id, request_type="channel", args=(guild_id, channel_id))
+
+        if not self._request_limiter.get_status_from_request(request):
+            self._logger.debug(f"Ignoring sending request to discord API for channel: {channel_id}. "
+                               f"Limit requests: {self._request_limiter.limit} reached.")
+            return
+
+        self._request_limiter.add_new_request(request)
 
         self._logger.warning(f"Channel: {channel_id} was not found in the cache. Sending HTTP Request.")
 

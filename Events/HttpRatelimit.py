@@ -23,7 +23,7 @@ class HttpRatelimit(CustomCog):
         if not isinstance(channel_id, int) or not isinstance(guild_id, int):
             raise InvalidServerData
 
-        channel: Optional[GuildChannel] = await self.bot.cache.get_channel(guild_id, channel_id)
+        channel: Optional[GuildChannel] = await self.bot.cache.get_channel(guild_id, channel_id, fetch=False)
 
         if not isinstance(channel, TextChannel):
             raise InvalidServerData
