@@ -22,16 +22,15 @@ class HttpRatelimit(CustomCog):
         if not isinstance(channel_id, int):
             raise InvalidServerData
 
-        if isinstance(channel_id, int):
-            channel: Optional[GuildChannel] = await self.bot.getch_channel(channel_id)
+        channel: Optional[GuildChannel] = await self.bot.getch_channel(channel_id)
 
-            if not isinstance(channel, TextChannel):
-                raise InvalidServerData
+        if not isinstance(channel, TextChannel):
+            raise InvalidServerData
 
-            try:
-                await channel.send(f"`🌟` **Reached HTTP Ratelimit.**\n- {kwargs}")
-            except (errors.Forbidden, errors.HTTPException):
-                self.bot.logger.warning("Failed to send Ratelimit notify.")
+        try:
+            await channel.send(f"`🌟` **Reached HTTP Ratelimit.**\n- {kwargs}")
+        except (errors.Forbidden, errors.HTTPException):
+            self.bot.logger.warning("Failed to send Ratelimit notify.")
 
     @CustomCog.listener()
     async def on_http_ratelimit(self, *args: Unpack[HTTPRatelimitParams]):
