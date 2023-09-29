@@ -306,7 +306,7 @@ class BotCache:
         :return: None
         """
 
-        self.client = client
+        self.client: Smiffy = client
         self._loop: AbstractEventLoop = client.loop
         self._state: ConnectionState = client._connection
         self._http: HTTPClient = self._state.http
@@ -330,7 +330,9 @@ class BotCache:
         """
 
         try:
-            shard_id: int = (guild_id >> 22) % self.client.shard_count
+            shard_count: int = self.client.shard_count if self.client.shard_count else 0
+
+            shard_id: int = (guild_id >> 22) % shard_count
             ws: DiscordWebSocket = self.client._get_websocket(shard_id=shard_id)
             return ws
         except KeyError:
