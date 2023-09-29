@@ -190,6 +190,8 @@ class MemberLeaveEvent(CustomCog):
 
     @CustomCog.listener()
     async def on_raw_member_remove(self, event_data: RawMemberRemoveEvent):
+        await self.bot.cache.remove_member(event_data.guild_id, event_data.user.id)
+
         guild: Optional[Guild] = await self.bot.cache.get_guild(event_data.guild_id)
 
         if guild:

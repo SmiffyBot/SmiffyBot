@@ -302,6 +302,8 @@ class MemberJoin(CustomCog):
 
     @CustomCog.listener()
     async def on_member_join(self, member: Member):
+        await self.bot.cache.add_member(member)
+
         await self.handle_invites(member)
 
         logs_channel: Optional[GuildChannel] = await self.get_logs_channel(member.guild)

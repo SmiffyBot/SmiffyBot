@@ -187,7 +187,7 @@ class CachedGuild:
         return hash(self) == hash(other)
 
     def __repr__(self) -> str:
-        return f"<CachedGuild(guild_id={self.guild_id}, chunked={self.chunked}>)"
+        return f"<CachedGuild(guild_id={self.guild_id}, chunked={self.chunked})>"
 
 
 class BotCache:
