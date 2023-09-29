@@ -257,10 +257,6 @@ class CommandGiveaway(CustomCog):
                     if user:
                         if not isinstance(user, Member):
                             """
-
-                            Because of the fact that we do not chunk people at the bot start
-                            here we can get a User object, however we need a Member object
-
                             Because of the fact that we do not chunk people at the bot start
                             here we can get a User object, however we need a Member object
 
