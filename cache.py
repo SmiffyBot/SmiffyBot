@@ -39,7 +39,7 @@ class CachedGuild:
         :return: None
         """
 
-        self._logger.debug(f"Added member: {member.id} from cache.")
+        self._logger.debug(f"Added member: {member.id} to cache.")
 
         self.__cached_members[member.id] = member
 
@@ -76,7 +76,7 @@ class CachedGuild:
         return hash(self) == hash(other)
 
     def __repr__(self) -> str:
-        return f"<CachedGuild(guild_id={self.guild_id}, cached_members={len(self.__cached_members)})"
+        return f"<CachedGuild(guild_id={self.guild_id}, cached_members={len(self.__cached_members)}>)"
 
 
 class BotCache:
