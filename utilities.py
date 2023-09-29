@@ -42,8 +42,6 @@ from nextcord.ext.commands import AutoShardedBot, Cog
 from nextcord.ext.commands import RoleConverter as ncRoleConverter
 from nextcord.ext.commands import errors
 from orjson import loads
-
-from cache import BotCache
 from converters import RoleConverter
 from errors import (
     ApplicationCommandIsGuildOnly,
@@ -72,6 +70,8 @@ if TYPE_CHECKING:
 
     from bot import Smiffy
     from typings import InterT, UserType
+
+    from cache import BotCache, CachedGuild
 
 
 class CircuitBreaker(Cordcutter):
@@ -1119,22 +1119,11 @@ class BotBase(AutoShardedBot):
         :param guild_id: Get the guild id of a server
         :return: The guild object or None
         """
-        guild: Optional[Guild] = self.get_guild(guild_id)
+        cached_guild: Optional[CachedGuild] = await self.cache.get_cached_guild(guild_id)
+        if cached_guild:
+            return cached_guild.guild
 
-        if guild:
-            return guild
-
-        self.logger.warning(f"Guild: {guild_id} was not found in the cache. Sending HTTP Request.")
-
-        try:
-            guild: Optional[Guild] = await self.fetch_guild(guild_id)
-
-            return guild
-        except (
-            nextcord_errors.Forbidden,
-            nextcord_errors.HTTPException,
-        ):
-            return None
+        return cached_guild
 
     async def getch_channel(self, channel_id: int) -> Optional[GuildChannel]:
         """

@@ -3,13 +3,14 @@ from __future__ import annotations
 from time import time
 from typing import TYPE_CHECKING, Optional
 
-from nextcord import Member, errors
+from nextcord import Member, Guild, errors
 
 if TYPE_CHECKING:
-    from nextcord import Guild
     from nextcord.gateway import DiscordWebSocket
     from nextcord.http import HTTPClient
     from nextcord.state import ConnectionState
+
+    from asyncio import AbstractEventLoop
 
     from bot import Smiffy
     from utilities import Logger
@@ -66,6 +67,10 @@ class CachedGuild:
         self._logger.debug(f"Getting: {member_id} from cache.")
         return self.__cached_members.get(member_id)
 
+    @property
+    def members(self) -> list[Member]:
+        return list(self.__cached_members.values())
+
     def __hash__(self) -> int:
         return hash((self.guild_id, len(self.__cached_members)))
 
@@ -77,7 +82,9 @@ class CachedGuild:
 
 
 class BotCache:
-    __slots__: tuple[str, ...] = ("client", "_state", "_http", "_ws", "_logger", "cached_guilds")
+    __slots__: tuple[str, ...] = (
+        "client", "_state", "_http", "_ws", "_logger", "_cached_guilds", "_loop"
+    )
 
     def __init__(self, client: Smiffy) -> None:
         """
@@ -87,14 +94,16 @@ class BotCache:
         :return: None
         """
 
-        self.client: Smiffy = client
-
+        self._loop: AbstractEventLoop = client.loop
         self._state: ConnectionState = client._connection
         self._http: HTTPClient = self._state.http
         self._ws: DiscordWebSocket = client.ws
         self._logger: Logger = client.logger
+        self._cached_guilds: dict[int, CachedGuild] = {}
 
-        self.cached_guilds: dict[int, CachedGuild] = {}
+    @property
+    def guilds(self) -> list[CachedGuild]:
+        return list(self._cached_guilds.values())
 
     def chunk_guilds(self) -> None:
         """
@@ -107,10 +116,10 @@ class BotCache:
         start = time()
 
         for guild in self._state.guilds:
-            self.cached_guilds[guild.id] = CachedGuild(guild, self._logger)
+            self._cached_guilds[guild.id] = CachedGuild(guild, self._logger)
 
         end = time() - start
-        self._logger.info(f"Cached {len(self.cached_guilds)} servers in {round(end, 4)}s")
+        self._logger.info(f"Cached {len(self._cached_guilds)} servers in {round(end, 4)}s")
 
     def add_guild_to_cache(self, guild: Guild) -> CachedGuild:
         """
@@ -121,7 +130,7 @@ class BotCache:
         """
 
         cached_guild: CachedGuild = CachedGuild(guild, self._logger)
-        self.cached_guilds[guild.id] = cached_guild
+        self._cached_guilds[guild.id] = cached_guild
 
         self._logger.debug(f"Added guild: {guild.id} to cache.")
 
@@ -136,28 +145,30 @@ class BotCache:
         """
 
         try:
-            del self.cached_guilds[guild_id]
+            del self._cached_guilds[guild_id]
             self._logger.debug(f"Removed guild: {guild_id} from cache.")
         except KeyError:
             pass
 
-    def get_cached_guild(self, guild_id: int) -> Optional[CachedGuild]:
+    async def get_cached_guild(self, guild_id: int, fetch: bool = True) -> Optional[CachedGuild]:
         """
         The get_cached_guild function is a helper function that returns the cached guild object for a given guild ID.
         If the guild isn't cached, it will be fetched from Discord and then added to the cache.
 
         :param guild_id: Get the guild from the client
+        :param fetch: Whether method should execute HTTP request if guild was not in cache
         :return: CachedGuild if found.
         """
 
-        cached_guild: Optional[CachedGuild] = self.cached_guilds.get(guild_id)
+        cached_guild: Optional[CachedGuild] = self._cached_guilds.get(guild_id)
 
-        if cached_guild:
+        if cached_guild or not fetch:
             return cached_guild
 
-        guild: Optional[Guild] = self.client.get_guild(guild_id)
-
-        if not guild:
+        try:
+            data = await self._http.get_guild(guild_id)
+            guild: Guild = Guild(data=data, state=self._state)
+        except (errors.Forbidden, errors.HTTPException):
             return None
 
         cached_guild = self.add_guild_to_cache(guild)
@@ -174,7 +185,7 @@ class BotCache:
         :return: A member object that contains all the information about a specific user in a guild
         """
 
-        cached_guild: Optional[CachedGuild] = self.get_cached_guild(guild_id)
+        cached_guild: Optional[CachedGuild] = await self.get_cached_guild(guild_id)
         if not cached_guild:
             return None
 
@@ -205,7 +216,7 @@ class BotCache:
         cached_guild.add_member_to_cache(member)
         return member
 
-    def remove_member_from_cache(self, guild_id: int, member_id: int) -> None:
+    async def remove_member_from_cache(self, guild_id: int, member_id: int) -> None:
         """
         The remove_member_from_cache function removes a member from the cache of a guild.
 
@@ -214,24 +225,32 @@ class BotCache:
         :return: None
         """
 
-        cached_guild: Optional[CachedGuild] = self.get_cached_guild(guild_id)
+        cached_guild: Optional[CachedGuild] = await self.get_cached_guild(guild_id)
 
         if not cached_guild:
             return None
 
         cached_guild.remove_member_from_cache(member_id)
 
-    def add_member_to_cache(self, member: Member) -> None:
+    async def add_member_to_cache(self, member: Member, delete_after: Optional[int] = None) -> None:
         """
         The add_member_to_cache function adds a member to the cache.
 
         :param member: Pass in the member object that we want to add to the cache
+        :param delete_after: Value in seconds after which it should remove the member object from the cache
         :return: None
         """
 
-        cached_guild: Optional[CachedGuild] = self.get_cached_guild(member.guild.id)
+        cached_guild: Optional[CachedGuild] = await self.get_cached_guild(member.guild.id)
 
-        if not cached_guild:
+        if cached_guild is None:
             cached_guild: CachedGuild = self.add_guild_to_cache(member.guild)
 
         cached_guild.add_member_to_cache(member)
+
+        if delete_after:
+            self._loop.call_later(
+                delete_after,
+                self._loop.create_task,
+                self.remove_member_from_cache(member.guild.id, member.id)
+            )
