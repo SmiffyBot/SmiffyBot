@@ -1,27 +1,24 @@
 from __future__ import annotations
+
+from time import time
 from typing import TYPE_CHECKING, Optional
 
 from nextcord import Member, errors
-from time import time
 
 if TYPE_CHECKING:
+    from nextcord import Guild
+    from nextcord.gateway import DiscordWebSocket
+    from nextcord.http import HTTPClient
+    from nextcord.state import ConnectionState
+
     from bot import Smiffy
     from utilities import Logger
 
-    from nextcord import Guild
-    from nextcord.gateway import DiscordWebSocket
-    from nextcord.state import ConnectionState
-    from nextcord.http import HTTPClient
 
-
-__all__ = (
-    "CachedGuild",
-    "BotCache"
-)
+__all__ = ("CachedGuild", "BotCache")
 
 
 class CachedGuild:
-
     __slots__ = ("guild", "guild_id", "_logger", "__cached_members")
 
     def __init__(self, guild: Guild, logger: Logger):
@@ -80,9 +77,7 @@ class CachedGuild:
 
 
 class BotCache:
-    __slots__: tuple[str, ...] = (
-        "client", "_state", "_http", "_ws", "_logger", "cached_guilds"
-    )
+    __slots__: tuple[str, ...] = ("client", "_state", "_http", "_ws", "_logger", "cached_guilds")
 
     def __init__(self, client: Smiffy) -> None:
         """
@@ -191,7 +186,6 @@ class BotCache:
             return member
 
         if self._ws.is_ratelimited():
-
             try:
                 member_data = await self._http.get_member(guild_id, member_id)
                 member: Member = Member(data=member_data, guild=nc_guild, state=self._state)

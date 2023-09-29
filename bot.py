@@ -1,6 +1,6 @@
+from cache import BotCache
 from typings import Bot_Settings, BotLogger
 from utilities import BotBase, CircuitBreaker, Database, bot_logger, bot_utils
-from cache import BotCache
 
 
 class Smiffy(BotBase):
