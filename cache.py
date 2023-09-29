@@ -1,18 +1,19 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional
+
 from nextcord import Member, errors
 
 if TYPE_CHECKING:
-    from utilities import BotBase
-
     from nextcord import Guild
     from nextcord.gateway import DiscordWebSocket
-    from nextcord.state import ConnectionState
     from nextcord.http import HTTPClient
+    from nextcord.state import ConnectionState
+
+    from utilities import BotBase
 
 
 class ChunkedGuild:
-
     __slots__ = ("guild", "guild_id", "__cached_members")
 
     def __init__(self, guild: Guild):
@@ -44,9 +45,7 @@ class ChunkedGuild:
 
 
 class BotCache:
-    __slots__: tuple[str, ...] = (
-        "client", "_state", "_http", "_ws", "cached_guilds"
-    )
+    __slots__: tuple[str, ...] = ("client", "_state", "_http", "_ws", "cached_guilds")
 
     def __init__(self, client: BotBase, chunk_guilds: bool = True):
         self.client: BotBase = client
@@ -92,7 +91,6 @@ class BotCache:
             return member
 
         if self._ws.is_ratelimited():
-
             try:
                 member_data = await self._http.get_member(guild_id, member_id)
                 member: Member = Member(data=member_data, guild=nc_guild, state=self._state)
