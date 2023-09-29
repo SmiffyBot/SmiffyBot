@@ -76,7 +76,7 @@ class EconomyManager:
             return True
 
         cooldown: Cooldown = get_shared_cooldown(cooldown_id)
-        waited_seconds: Optional[int] = self.get_waited_seconds(interaction, cooldown_id)
+        waited_seconds: Optional[int] = await self.get_waited_seconds(interaction, cooldown_id)
         if not waited_seconds:
             return True
 
