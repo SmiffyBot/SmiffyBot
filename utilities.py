@@ -113,7 +113,7 @@ class CircuitBreaker(Cordcutter):
 
 
 class BotUtils:
-    __slots__ = ("config_data",)
+    __slots__ = ("config_data", "intents")
 
     def __init__(self) -> None:
         """
@@ -271,9 +271,7 @@ class BotUtils:
 
         :return: intents of the bot
         """
-
-        intents = Intents.all()
-        return intents
+        return Intents(**{key: True for key in Intents.VALID_FLAGS if key != "presences"})
 
     @property
     def get_bot_settings(self) -> Bot_Settings:
