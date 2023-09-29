@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from time import time
-
 from typing import TYPE_CHECKING, Optional, cast
-from typings import CacheRequest
 
 from nextcord import ChannelType, Guild, Member, Role, errors
 from nextcord.channel import _threaded_guild_channel_factory
+
+from typings import CacheRequest
 
 if TYPE_CHECKING:
     from asyncio import AbstractEventLoop
@@ -24,12 +24,9 @@ __all__ = ("CachedGuild", "BotCache")
 
 
 class RequestLimiter:
-    __slots__: tuple[str] = (
-        "dispatched_requests", "client", "limit", "reset_after"
-    )
+    __slots__: tuple[str] = ("dispatched_requests", "client", "limit", "reset_after")
 
     def __init__(self, client: Smiffy, limit: int = 2, reset_after: int = 60):
-
         self.client: Smiffy = client
         self.limit = limit
         self.reset_after = reset_after
@@ -86,9 +83,7 @@ class RequestLimiter:
         self.client.logger.debug(f"Added request: {request} to limiter.")
 
         self.client.loop.call_later(
-            self.reset_after,
-            self.client.loop.create_task,
-            self.remove_request(request)
+            self.reset_after, self.client.loop.create_task, self.remove_request(request)
         )
 
     def remove_request(self, request: CacheRequest) -> None:
@@ -281,8 +276,17 @@ class CachedGuild:
 
 
 class BotCache:
-    __slots__: tuple[str, ...] = ("client", "_state", "_http", "_ws", "_logger",
-                                  "_cached_guilds", "_loop", "_dispatched_requests", "_request_limiter")
+    __slots__: tuple[str, ...] = (
+        "client",
+        "_state",
+        "_http",
+        "_ws",
+        "_logger",
+        "_cached_guilds",
+        "_loop",
+        "_dispatched_requests",
+        "_request_limiter",
+    )
 
     def __init__(self, client: Smiffy) -> None:
         """
@@ -387,8 +391,10 @@ class BotCache:
 
         request = CacheRequest(guild_id=guild_id, request_type="guild", args=(guild_id,))
         if not self._request_limiter.get_status_from_request(request):
-            self._logger.debug(f"Ignoring sending request to discord API for guild: {guild_id}. "
-                               f"Limit requests: {self._request_limiter.limit} reached.")
+            self._logger.debug(
+                f"Ignoring sending request to discord API for guild: {guild_id}. "
+                f"Limit requests: {self._request_limiter.limit} reached."
+            )
             return
 
         self._request_limiter.add_new_request(request)
@@ -470,8 +476,10 @@ class BotCache:
         request = CacheRequest(guild_id=guild_id, request_type="member", args=(guild_id, member_id))
 
         if not self._request_limiter.get_status_from_request(request):
-            self._logger.debug(f"Ignoring sending request to discord API for member: {member_id}. "
-                               f"Limit requests: {self._request_limiter.limit} reached.")
+            self._logger.debug(
+                f"Ignoring sending request to discord API for member: {member_id}. "
+                f"Limit requests: {self._request_limiter.limit} reached."
+            )
             return
 
         self._request_limiter.add_new_request(request)
@@ -562,8 +570,10 @@ class BotCache:
         request = CacheRequest(guild_id=guild_id, request_type="role", args=(guild_id, role_id))
 
         if not self._request_limiter.get_status_from_request(request):
-            self._logger.debug(f"Ignoring sending request to discord API for role: {role_id}. "
-                               f"Limit requests: {self._request_limiter.limit} reached.")
+            self._logger.debug(
+                f"Ignoring sending request to discord API for role: {role_id}. "
+                f"Limit requests: {self._request_limiter.limit} reached."
+            )
             return
 
         self._request_limiter.add_new_request(request)
@@ -645,8 +655,10 @@ class BotCache:
         request = CacheRequest(guild_id=guild_id, request_type="channel", args=(guild_id, channel_id))
 
         if not self._request_limiter.get_status_from_request(request):
-            self._logger.debug(f"Ignoring sending request to discord API for channel: {channel_id}. "
-                               f"Limit requests: {self._request_limiter.limit} reached.")
+            self._logger.debug(
+                f"Ignoring sending request to discord API for channel: {channel_id}. "
+                f"Limit requests: {self._request_limiter.limit} reached."
+            )
             return
 
         self._request_limiter.add_new_request(request)
