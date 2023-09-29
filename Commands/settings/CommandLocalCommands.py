@@ -60,7 +60,8 @@ class ReplyTextModal(ui.Modal):
             reply_text=reply_text,
         )
 
-        command.add_check(func=interaction.bot.check_global_ban)
+        command.add_check(func=interaction.bot.check_global_ban)  # pyright: ignore
+        command.add_check(interaction.bot.check_uk_locale)  # pyright: ignore
 
         await command.setup()
 
@@ -100,7 +101,8 @@ class SlashCommand(SlashApplicationCommand):
         self.guild: Guild = guild
         self.bot: Smiffy = bot
 
-        self.add_check(bot.check_global_ban)
+        self.add_check(bot.check_global_ban)  # pyright: ignore
+        self.add_check(bot.check_uk_locale)  # pyright: ignore
 
     async def _callback(self, interaction: CustomInteraction):
         return await interaction.send(self.reply_text)

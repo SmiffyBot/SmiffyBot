@@ -1236,8 +1236,8 @@ class BotBase(AutoShardedBot):
         """
 
         if not getattr(self, "session", None):
-            self.add_application_command_check(self.check_global_ban)
-            self.add_application_command_check(self.check_uk_locale)
+            self.add_application_command_check(self.check_global_ban)  # pyright: ignore
+            self.add_application_command_check(self.check_uk_locale)  # pyright: ignore
 
     def get_interaction(self, data, *, cls=CustomInteraction) -> InterT:  # pyright: ignore
         # pylint: disable=useless-parent-delegation
