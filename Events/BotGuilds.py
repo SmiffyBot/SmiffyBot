@@ -45,7 +45,7 @@ class BotGuilds(CustomCog):
             embed = Embed(
                 title=f"{Emojis.REDBUTTON.value} Wystąpił błąd.",
                 description=f"{Emojis.REPLY.value} Nie posiadam wymaganej permisji: `Administrator`."
-                f"\n\nJest ona wymagana to poprawnego działania. "
+                f"\n\nJest ona wymagana do poprawnego działania. "
                 f"Dodaj mnie ponownie z zaproszenia poniżej i nie zmieniaj moich uprawnień.",
                 color=Color.red(),
                 timestamp=utils.utcnow(),
