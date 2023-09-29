@@ -4,14 +4,13 @@ import re
 from abc import ABC
 from typing import TYPE_CHECKING, Any, Generic, Iterable, Optional, Type, TypeVar, Union
 
-from nextcord import HTTPException, Member, Message, OptionConverter, Role, utils
+from nextcord import Member, Message, OptionConverter, Role, utils
 from nextcord.abc import GuildChannel
 
 from enums import GuildChannelTypes
 
 if TYPE_CHECKING:
     from nextcord import DMChannel, Guild, PartialMessageable, TextChannel, Thread
-    from nextcord.gateway import DiscordWebSocket
 
     from bot import Smiffy
     from cache import CachedGuild

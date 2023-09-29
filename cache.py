@@ -316,6 +316,10 @@ class BotCache:
 
         self._request_limiter: RequestLimiter = RequestLimiter(client)
 
+    @property
+    def guilds(self) -> list[CachedGuild]:
+        return list(self._cached_guilds.values())
+
     def get_websocket_by_guild_id(self, guild_id: int) -> DiscordWebSocket:
         """
         The get_websocket_by_guild_id function takes a guild_id and returns the websocket that is connected to the shard
@@ -331,10 +335,6 @@ class BotCache:
             return ws
         except KeyError:
             return self._global_ws
-
-    @property
-    def guilds(self) -> list[CachedGuild]:
-        return list(self._cached_guilds.values())
 
     async def chunk_guilds(self, run_in_tasks: bool, small_server_chunk_members: bool = True) -> None:
         """
