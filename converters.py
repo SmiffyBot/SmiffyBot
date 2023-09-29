@@ -207,27 +207,7 @@ class MemberConverter(BaseConverter):
 
     @staticmethod
     async def query_member_by_id(bot: Smiffy, guild: Guild, user_id: int) -> Optional[Member]:
-        ws: DiscordWebSocket = bot._get_websocket(shard_id=guild.shard_id)
-
-        if ws.is_ratelimited():
-            # If we're being rate limited on the WS, then fall back to using the HTTP API
-            # So we don't have to wait ~60 seconds for the query to finish
-
-            try:
-                member = await guild.fetch_member(user_id)
-            except HTTPException:
-                return None
-
-            guild._add_member(member)
-            return member
-
-        # If we're not being rate limited then we can use the websocket to actually query
-        members: list[Member] = await guild.query_members(limit=1, user_ids=[user_id])
-
-        if not members:
-            return None
-
-        return members[0]
+        return await bot.cache.get_member(guild.id, user_id)
 
     async def convert(
         self,

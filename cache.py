@@ -24,7 +24,7 @@ __all__ = ("CachedGuild", "BotCache")
 
 
 class RequestLimiter:
-    __slots__: tuple[str] = ("dispatched_requests", "client", "limit", "reset_after")
+    __slots__: tuple[str, ...] = ("dispatched_requests", "client", "limit", "reset_after")
 
     def __init__(self, client: Smiffy, limit: int = 2, reset_after: int = 60):
         """
@@ -290,7 +290,7 @@ class BotCache:
         "client",
         "_state",
         "_http",
-        "_ws",
+        "_global_ws",
         "_logger",
         "_cached_guilds",
         "_loop",
@@ -306,14 +306,31 @@ class BotCache:
         :return: None
         """
 
+        self.client = client
         self._loop: AbstractEventLoop = client.loop
         self._state: ConnectionState = client._connection
         self._http: HTTPClient = self._state.http
-        self._ws: DiscordWebSocket = client.ws
+        self._global_ws: DiscordWebSocket = client.ws
         self._logger: Logger = client.logger
         self._cached_guilds: dict[int, CachedGuild] = {}
 
         self._request_limiter: RequestLimiter = RequestLimiter(client)
+
+    def get_websocket_by_guild_id(self, guild_id: int) -> DiscordWebSocket:
+        """
+        The get_websocket_by_guild_id function takes a guild_id and returns the websocket that is connected to the shard
+        If no such shard exists, it returns the global websocket.
+
+        :param guild_id: Used to get the shard_id
+        :return: The websocket that the guild is connected to or global ws
+        """
+
+        try:
+            shard_id: int = (guild_id >> 22) % self.client.shard_count
+            ws: DiscordWebSocket = self.client._get_websocket(shard_id=shard_id)
+            return ws
+        except KeyError:
+            return self._global_ws
 
     @property
     def guilds(self) -> list[CachedGuild]:
@@ -497,7 +514,8 @@ class BotCache:
 
         self._logger.warning(f"Member: {member_id} was not found in the cache. Sending HTTP Request.")
 
-        if self._ws and self._ws.is_ratelimited():
+        ws: DiscordWebSocket = self.get_websocket_by_guild_id(guild_id)
+        if ws.is_ratelimited():
             try:
                 member_data = await self._http.get_member(guild_id, member_id)
                 member = Member(data=member_data, guild=cached_guild.guild, state=self._state)
