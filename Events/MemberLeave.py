@@ -15,8 +15,8 @@ if TYPE_CHECKING:
     from nextcord.abc import GuildChannel
 
     from bot import Smiffy
-    from typings import DB_RESPONSE
     from cache import CachedGuild
+    from typings import DB_RESPONSE
 
 
 class MemberLeaveEvent(CustomCog):

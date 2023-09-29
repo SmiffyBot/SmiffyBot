@@ -14,8 +14,8 @@ if TYPE_CHECKING:
     from nextcord.gateway import DiscordWebSocket
 
     from bot import Smiffy
-    from utilities import CustomInteraction
     from cache import CachedGuild
+    from utilities import CustomInteraction
 
     PartialMessageableChannel = Union[
         TextChannel,

@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     from nextcord import Guild, Message
 
     from bot import Smiffy
-    from typings import DB_RESPONSE
     from cache import CachedGuild
+    from typings import DB_RESPONSE
 
 
 class DecisionFormView(ui.View):

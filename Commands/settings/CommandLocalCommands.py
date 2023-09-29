@@ -1,8 +1,8 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Iterable
 
 from asyncio import sleep
 from string import punctuation
+from typing import TYPE_CHECKING, Iterable, Optional
 
 from nextcord import (
     Color,
@@ -15,13 +15,9 @@ from nextcord import (
     ui,
     utils,
 )
+
 from enums import Emojis
-from utilities import (
-    DB_RESPONSE,
-    CustomCog,
-    CustomInteraction,
-    PermissionHandler,
-)
+from utilities import DB_RESPONSE, CustomCog, CustomInteraction, PermissionHandler
 
 if TYPE_CHECKING:
     from bot import Smiffy

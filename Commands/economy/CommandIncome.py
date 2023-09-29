@@ -8,7 +8,6 @@ from nextcord import (
     Color,
     Embed,
     Forbidden,
-    Guild,
     HTTPException,
     Role,
     SlashOption,
