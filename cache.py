@@ -36,7 +36,7 @@ class CachedGuild:
 
     async def chunk_members(self, limit: int = 100) -> None:
         """
-        The chunk_members function is a coroutine that fetches members of the guild and caches them into cache.
+        The chunk_members function is a coroutine that fetches members of the guild and catch them into cache.
         The function takes an optional limit parameter, which defaults to 100.
         The limit parameter specifies how many members to fetch at once from the API.
 
