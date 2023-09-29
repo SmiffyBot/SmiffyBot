@@ -20,16 +20,20 @@ class OnError(CustomCog):
         super().__init__(bot)
 
         self.channel_id: Optional[int] = bot_utils.get_value_from_config("ERRORS_CHANNEL_NOTIFY")
+        self.guild_id: Optional[int] = bot_utils.get_value_from_config("BOT_GUILD_ID")
 
-        if not isinstance(self.channel_id, int):
+        if not isinstance(self.channel_id, int) or not isinstance(self.guild_id, int):
             raise InvalidServerData
 
     async def send_error_log_to_channel(self, exception: Any, *args: Any):
-        if isinstance(self.channel_id, int):
-            channel: Optional[GuildChannel] = await self.bot.getch_channel(self.channel_id)
+        if "errors.InvalidServerData" in exception:
+            return
+
+        if isinstance(self.channel_id, int) and isinstance(self.guild_id, int):
+            channel: Optional[GuildChannel] = await self.bot.cache.get_channel(self.guild_id, self.channel_id)
 
             if not isinstance(channel, TextChannel):
-                raise InvalidServerData
+                raise InvalidServerData()
 
             await channel.send(f"`❌` **An error occurred:** {exception}\n- `{args}`")
 
@@ -46,7 +50,7 @@ class OnError(CustomCog):
                 exception.__traceback__,
             )
         )
-        if isinstance(exception, self.bot.ignore_exceptions):
+        if isinstance(getattr(exception, "original", exception), self.bot.ignore_exceptions):
             self.bot.logger.debug(f"Ignoring exception: {type(exception)}.")
             return
 

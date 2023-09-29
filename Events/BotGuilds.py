@@ -72,6 +72,8 @@ class BotGuilds(CustomCog):
         if not guild.me.guild_permissions.administrator:
             return
 
+        self.bot.cache.add_guild(guild)
+
         gif: File = File(
             "./Data/images/smiffy-help-2.gif",
             filename="bot.gif",
@@ -113,6 +115,10 @@ sprawdzić używając {help_mention}.
                 break
             except errors.Forbidden:
                 continue
+
+    @CustomCog.listener()
+    async def on_guild_remove(self, guild: Guild):
+        self.bot.cache.remove_guild(guild.id)
 
 
 def setup(bot: Smiffy):

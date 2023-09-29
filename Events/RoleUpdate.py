@@ -16,6 +16,8 @@ if TYPE_CHECKING:
 class RoleUpdate(CustomCog):
     @CustomCog.listener()
     async def on_guild_role_create(self, role: Role):
+        await self.bot.cache.add_role(role.guild.id, role)
+
         logs_channel: Optional[GuildChannel] = await self.get_logs_channel(role.guild)
 
         if isinstance(logs_channel, TextChannel):
@@ -118,6 +120,8 @@ class RoleUpdate(CustomCog):
 
     @CustomCog.listener()
     async def on_guild_role_delete(self, role: Role):
+        await self.bot.cache.remove_role(role.guild.id, role.id)
+
         logs_channel: Optional[GuildChannel] = await self.get_logs_channel(role.guild)
 
         if isinstance(logs_channel, TextChannel):

@@ -109,8 +109,8 @@ class CloseTicketButtonView(ui.View):
                     roles_list: list[int] = literal_eval(response[0])
                     if roles_list:
                         roles: list[Role | None] = [
-                            await bot.getch_role(
-                                interaction.guild,
+                            await bot.cache.get_role(
+                                interaction.guild.id,
                                 role_id,
                             )
                             for role_id in roles_list
@@ -194,7 +194,9 @@ class CloseTicketButtonView(ui.View):
                             BytesIO(transcript.encode()),
                             filename=f"transcript-{interaction.channel.id}.html",
                         )
-                        channel: Optional[GuildChannel] = await bot.getch_channel(response[0])
+                        channel: Optional[GuildChannel] = await bot.cache.get_channel(
+                            interaction.guild.id, response[0]
+                        )
 
                         if not isinstance(channel, TextChannel):
                             return
@@ -478,7 +480,9 @@ class PreviewButtonView(ui.View):
                         "Upewnij się, że podana rola oraz kategoria nadal istnieje."
                     )
 
-                category: Optional[GuildChannel] = await bot.getch_channel(response[2])
+                category: Optional[GuildChannel] = await bot.cache.get_channel(
+                    interaction.guild.id, response[2]
+                )
 
                 if not isinstance(category, CategoryChannel):
                     return await interaction.send_error_message(
@@ -490,16 +494,16 @@ class PreviewButtonView(ui.View):
 
                 if isinstance(roles_data, list):
                     roles: list[Role | None] = [
-                        await bot.getch_role(
-                            interaction.guild,
+                        await bot.cache.get_role(
+                            interaction.guild.id,
                             role,
                         )
                         for role in roles_data
                     ]
                 else:
                     roles: list[Role | None] = [
-                        await bot.getch_role(
-                            interaction.guild,
+                        await bot.cache.get_role(
+                            interaction.guild.id,
                             roles_data,
                         )
                     ]
@@ -1425,7 +1429,7 @@ class CommandTickets(CustomCog):
 
         await interaction.response.defer()
 
-        category: Optional[GuildChannel] = await self.bot.getch_channel(response[2])
+        category: Optional[GuildChannel] = await self.bot.cache.get_channel(interaction.guild.id, response[2])
 
         if not isinstance(category, CategoryChannel):
             return await interaction.send_error_message(
@@ -1438,13 +1442,13 @@ class CommandTickets(CustomCog):
         roles_close: list[str] = []
 
         for role_id in literal_eval(response[4]):
-            role: Optional[Role] = await self.bot.getch_role(interaction.guild, role_id)
+            role: Optional[Role] = await self.bot.cache.get_role(interaction.guild.id, role_id)
             if role:
                 roles.append(role.mention)
 
         if response_close and response_close[7]:
             for role_id in literal_eval(response_close[7]):
-                role: Optional[Role] = await self.bot.getch_role(interaction.guild, role_id)
+                role: Optional[Role] = await self.bot.cache.get_role(interaction.guild.id, role_id)
 
                 if role:
                     roles_close.append(role.mention)

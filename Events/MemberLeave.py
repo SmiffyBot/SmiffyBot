@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from nextcord.abc import GuildChannel
 
     from bot import Smiffy
+    from cache import CachedGuild
     from typings import DB_RESPONSE
 
 
@@ -180,15 +181,20 @@ class MemberLeaveEvent(CustomCog):
             inviter: Optional[Member] = None
 
             if inviter_id:
-                inviter: Optional[Member] = await self.bot.getch_member(guild, inviter_id)
+                inviter: Optional[Member] = await self.bot.cache.get_member(guild.id, inviter_id)
 
-            channel: Optional[GuildChannel] = await self.bot.getch_channel(notify_data["notify_channel"])
+            channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
+                guild.id, notify_data["notify_channel"]
+            )
             if isinstance(channel, TextChannel):
                 await self.handle_invites_notify(inviter, channel, member)
 
     @CustomCog.listener()
     async def on_raw_member_remove(self, event_data: RawMemberRemoveEvent):
-        guild: Optional[Guild] = await self.bot.getch_guild(event_data.guild_id)
+        await self.bot.cache.remove_member(event_data.guild_id, event_data.user.id)
+
+        cached_guild: Optional[CachedGuild] = await self.bot.cache.get_guild(event_data.guild_id)
+        guild: Optional[Guild] = cached_guild.guild if cached_guild else None
 
         if guild:
             await self.update_invites(event_data.user, guild)
@@ -199,7 +205,9 @@ class MemberLeaveEvent(CustomCog):
         )
 
         if logs_response:
-            logs_channel: Optional[GuildChannel] = await self.bot.getch_channel(logs_response[0])
+            logs_channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
+                event_data.guild_id, logs_response[0]
+            )
 
             account_age_timestamp: str = f"<t:{int(mktime(event_data.user.created_at.timetuple()))}:R>"
             account_age: str = str(event_data.user.created_at)[0:19]
@@ -246,7 +254,9 @@ class MemberLeaveEvent(CustomCog):
             (event_data.guild_id,),
         )
         if lobby_response and lobby_response[0] and guild:
-            lobby_channel: Optional[GuildChannel] = await self.bot.getch_channel(lobby_response[0])
+            lobby_channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
+                event_data.guild_id, lobby_response[0]
+            )
 
             if isinstance(lobby_channel, TextChannel):
                 data: tuple[str, ...] = literal_eval(lobby_response[1])

@@ -120,7 +120,9 @@ class CommandCoinflip(CustomCog):
             if not response or not response[0]:
                 return await interaction.send_error_message(description="Wystąpił nieoczekiwany błąd.")
 
-            waited_seconds: Optional[int] = EconomyManager.get_waited_seconds(interaction, "command_coinflip")
+            waited_seconds: Optional[int] = await EconomyManager.get_waited_seconds(
+                interaction, "command_coinflip"
+            )
             if not waited_seconds:
                 return await interaction.send_error_message(description="Spróbuj ponownie użyć komendy.")
 

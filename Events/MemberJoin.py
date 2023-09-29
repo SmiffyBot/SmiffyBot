@@ -212,7 +212,7 @@ class MemberJoin(CustomCog):
         channel_id: int = data["notify_channel"]
         notify_content: str = data["notify_content"]
 
-        channel: Optional[GuildChannel] = await self.bot.getch_channel(channel_id)
+        channel: Optional[GuildChannel] = await self.bot.cache.get_channel(joiner.guild.id, channel_id)
 
         if not isinstance(channel, TextChannel):
             return
@@ -302,6 +302,8 @@ class MemberJoin(CustomCog):
 
     @CustomCog.listener()
     async def on_member_join(self, member: Member):
+        await self.bot.cache.add_member(member)
+
         await self.handle_invites(member)
 
         logs_channel: Optional[GuildChannel] = await self.get_logs_channel(member.guild)
@@ -354,8 +356,8 @@ class MemberJoin(CustomCog):
 
         if startrole_response and startrole_response[0]:
             try:
-                role: Optional[Role] = await self.bot.getch_role(
-                    member.guild,
+                role: Optional[Role] = await self.bot.cache.get_role(
+                    member.guild.id,
                     startrole_response[0],
                 )
                 if role:
@@ -375,7 +377,10 @@ class MemberJoin(CustomCog):
         )
 
         if welcomes_response and welcomes_response[0]:
-            lobby_channel: Optional[GuildChannel] = await self.bot.getch_channel(welcomes_response[0])
+            lobby_channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
+                member.guild.id, welcomes_response[0]
+            )
+
             if isinstance(lobby_channel, TextChannel):
                 try:
                     data: tuple[str, ...] = literal_eval(welcomes_response[1])

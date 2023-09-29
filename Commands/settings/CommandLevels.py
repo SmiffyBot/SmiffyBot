@@ -145,7 +145,7 @@ class RemoveRoleRewardSelect(ui.Select):
         try:
             role_id: int = roles_data[level]
 
-            role: Optional[Role | str] = await bot.getch_role(interaction.guild, int(role_id))
+            role: Optional[Role | str] = await bot.cache.get_role(interaction.guild.id, int(role_id))
             role_mention: str = role.mention if role else "Deleted role"
 
             del roles_data[level]
@@ -471,7 +471,7 @@ class SelectRolesMenus(ui.Select):
         )
 
         for level, role_id in roles_data.items():
-            role: Optional[Role] = await bot.getch_role(inter.guild, int(role_id))
+            role: Optional[Role] = await bot.cache.get_role(inter.guild.id, int(role_id))
 
             if role:
                 role_mention: str = role.mention
@@ -1828,7 +1828,7 @@ class CommandLevels(CustomCog):
 
             totalxp: int = (level * level * 50) + xp
 
-            member: Optional[Member] = await self.bot.getch_member(guild, member_id)
+            member: Optional[Member] = await self.bot.cache.get_member(guild.id, member_id)
 
             if not member:
                 continue

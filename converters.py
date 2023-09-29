@@ -4,16 +4,16 @@ import re
 from abc import ABC
 from typing import TYPE_CHECKING, Any, Generic, Iterable, Optional, Type, TypeVar, Union
 
-from nextcord import HTTPException, Member, Message, OptionConverter, Role, utils
+from nextcord import Member, Message, OptionConverter, Role, utils
 from nextcord.abc import GuildChannel
 
 from enums import GuildChannelTypes
 
 if TYPE_CHECKING:
     from nextcord import DMChannel, Guild, PartialMessageable, TextChannel, Thread
-    from nextcord.gateway import DiscordWebSocket
 
     from bot import Smiffy
+    from cache import CachedGuild
     from utilities import CustomInteraction
 
     PartialMessageableChannel = Union[
@@ -87,15 +87,20 @@ class BaseConverter(OptionConverter, ABC):
         guild_id: Optional[int],
         channel_id: Optional[int],
     ) -> Optional[PartialMessageableChannel]:
-        if guild_id is not None:
-            guild: Optional[Guild] = await inter.bot.getch_guild(guild_id)
+        assert inter.guild
 
-            if guild is not None and channel_id is not None:
-                return guild._resolve_channel(channel_id)  # pyright: ignore
+        if guild_id is not None:
+            cached_guild: Optional[CachedGuild] = await inter.bot.cache.get_guild(guild_id)
+
+            if cached_guild is not None and channel_id is not None:
+                return cached_guild.guild._resolve_channel(channel_id)  # pyright: ignore
 
             return None
 
-        return await inter.bot.getch_channel(channel_id) if channel_id else inter.channel  # pyright: ignore
+        if not channel_id:
+            return inter.channel  # pyright: ignore
+
+        return await inter.bot.cache.get_channel(inter.guild.id, channel_id)  # pyright: ignore
 
     def __repr__(self) -> str:
         return f"<BaseConverter(type={self.type}, size={self.__sizeof__()})>"
@@ -118,7 +123,7 @@ class RoleConverter(BaseConverter):
         match: Optional[re.Match] = self._get_id_match(value) or re.match(r"<@&([0-9]{15,20})>$", value)
 
         if match:
-            result: Optional[Role] = await interaction.bot.getch_role(guild, int(match.group(1)))
+            result: Optional[Role] = await interaction.bot.cache.get_role(guild.id, int(match.group(1)))
         else:
             result: Optional[Role] = utils.get(guild.roles, name=value)
 
@@ -201,27 +206,7 @@ class MemberConverter(BaseConverter):
 
     @staticmethod
     async def query_member_by_id(bot: Smiffy, guild: Guild, user_id: int) -> Optional[Member]:
-        ws: DiscordWebSocket = bot._get_websocket(shard_id=guild.shard_id)
-
-        if ws.is_ratelimited():
-            # If we're being rate limited on the WS, then fall back to using the HTTP API
-            # So we don't have to wait ~60 seconds for the query to finish
-
-            try:
-                member = await guild.fetch_member(user_id)
-            except HTTPException:
-                return None
-
-            guild._add_member(member)
-            return member
-
-        # If we're not being rate limited then we can use the websocket to actually query
-        members: list[Member] = await guild.query_members(limit=1, user_ids=[user_id])
-
-        if not members:
-            return None
-
-        return members[0]
+        return await bot.cache.get_member(guild.id, user_id)
 
     async def convert(
         self,
@@ -251,7 +236,7 @@ class MemberConverter(BaseConverter):
 
             if not result:
                 user_id = int(match.group(1))
-                result = await bot.getch_member(guild, user_id)
+                result = await bot.cache.get_member(guild.id, user_id)
 
         if result is None:
             if user_id is not None:

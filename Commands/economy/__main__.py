@@ -30,12 +30,12 @@ class EconomyManager:
         self.bot: Smiffy = bot
 
     @staticmethod
-    def get_waited_seconds(inter: CustomInteraction, cooldown_id: str) -> Optional[int]:
+    async def get_waited_seconds(inter: CustomInteraction, cooldown_id: str) -> Optional[int]:
         cooldown: Cooldown = get_shared_cooldown(cooldown_id)
 
         try:
             cooldown_end: Optional[datetime] = cooldown.get_cooldown_times_per(
-                bucket=cooldown.get_bucket(inter)  # pyright: ignore
+                bucket=await cooldown.get_bucket(inter)  # pyright: ignore
             ).next_reset  # pyright: ignore
 
             if not cooldown_end:
@@ -44,7 +44,8 @@ class EconomyManager:
         except AttributeError:
             return None
 
-        cooldown_seconds: int = (cooldown_end - datetime.utcnow()).seconds
+        tz_info = cooldown_end.tzinfo
+        cooldown_seconds: int = (cooldown_end - datetime.now(tz_info)).seconds
         waited_seconds: int = 43200 - cooldown_seconds
         return waited_seconds
 
@@ -75,12 +76,12 @@ class EconomyManager:
             return True
 
         cooldown: Cooldown = get_shared_cooldown(cooldown_id)
-        waited_seconds: Optional[int] = self.get_waited_seconds(interaction, cooldown_id)
+        waited_seconds: Optional[int] = await self.get_waited_seconds(interaction, cooldown_id)
         if not waited_seconds:
             return True
 
         if waited_seconds >= response[0]:
-            reset_bucket(cooldown.func, interaction)  # pyright: ignore
+            await reset_bucket(cooldown.func, interaction)  # pyright: ignore
             return False
 
         return True

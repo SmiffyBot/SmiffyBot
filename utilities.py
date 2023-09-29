@@ -70,6 +70,7 @@ if TYPE_CHECKING:
     from nextcord.types.interactions import InteractionType as InteractionPayload
 
     from bot import Smiffy
+    from cache import BotCache
     from typings import InterT, UserType
 
 
@@ -683,7 +684,7 @@ class CustomCog(Cog):
         if not response:
             return None
 
-        channel: Optional[GuildChannel] = await self.bot.getch_channel(response[1])
+        channel: Optional[GuildChannel] = await self.bot.cache.get_channel(guild.id, response[1])
 
         if not channel:
             await self.bot.db.execute_fetchone(
@@ -979,6 +980,7 @@ class BotBase(AutoShardedBot):
     session: BotSession
     pool: NodePool
     logger: Logger
+    cache: BotCache
 
     def __init__(self, **kwargs: Bot_Settings) -> None:
         """
@@ -996,6 +998,7 @@ class BotBase(AutoShardedBot):
             nextcord_errors.ApplicationCheckFailure,
             MissingMusicPermissions,
             ApplicationCommandIsGuildOnly,
+            InvalidServerData,
         )
 
     @property
@@ -1072,123 +1075,6 @@ class BotBase(AutoShardedBot):
         )
 
         return False
-
-    async def getch_role(
-        self,
-        guild: Guild,
-        role_id: int,
-        fetch: bool = False,
-    ) -> Optional[Role]:
-        """
-        The getch_role function is a helper function that attempts to retrieve a role from the guild's cache.
-        If it fails, it will attempt to fetch the roles from Discord and then return the result of that search.
-        This is useful for when you need to get a role by ID but don't want your bot to crash if it isn't cached.
-
-        :param guild: Specify the guild that we are looking for a role in
-        :param role_id: Get the role id
-        :param fetch: bool: Determine whether or not the function should fetch roles
-        :return: A role object or None
-        """
-
-        role: Optional[Role] = guild.get_role(role_id)
-
-        if not fetch:
-            return role
-
-        self.logger.warning(f"Role: {role_id} was not found in the cache. Sending HTTP Request.")
-
-        roles: list[Role] = await guild.fetch_roles(cache=True)
-        result = filter(
-            lambda _role: _role if _role.id == role_id else None,
-            roles,
-        )
-
-        if not list(result):
-            return None
-
-        return list(result)[0]
-
-    async def getch_guild(self, guild_id: int) -> Optional[Guild]:
-        """
-        The getch_guild function is a wrapper for the get_guild and fetch_guild functions.
-        It first tries to get the guild from cache, if it fails then it will try to fetch
-        the guild. If that fails too, then None is returned.
-
-        :param guild_id: Get the guild id of a server
-        :return: The guild object or None
-        """
-        guild: Optional[Guild] = self.get_guild(guild_id)
-
-        if guild:
-            return guild
-
-        self.logger.warning(f"Guild: {guild_id} was not found in the cache. Sending HTTP Request.")
-
-        try:
-            guild: Optional[Guild] = await self.fetch_guild(guild_id)
-
-            return guild
-        except (
-            nextcord_errors.Forbidden,
-            nextcord_errors.HTTPException,
-        ):
-            return None
-
-    async def getch_channel(self, channel_id: int) -> Optional[GuildChannel]:
-        """
-        The getch_channel function is a wrapper for the get_channel and fetch_channel functions.
-        It first tries to get the channel from cache, if it fails then it will try to fetch
-        the channel. If that fails too, then None is returned.
-
-        :param channel_id: Get the channel id
-        :return: The channel object or None
-        """
-
-        channel = self.get_channel(channel_id)
-
-        if isinstance(channel, GuildChannel):
-            return channel
-
-        try:
-            self.logger.warning(f"Channel: {channel_id} was not found in the cache. Sending HTTP Request.")
-
-            channel = await self.fetch_channel(channel_id)
-
-            if not isinstance(channel, GuildChannel):
-                return None
-
-            return channel
-        except (
-            nextcord_errors.Forbidden,
-            nextcord_errors.HTTPException,
-        ):
-            return None
-
-    async def getch_member(self, guild: Guild, member_id: int) -> Optional[Member]:
-        """
-        The getch_member function tries to retrieve the `Member` object from the cache thanks to the .get method
-        if it fails it will try again, but this time with a request to discord using .fetch method
-
-        :param guild: Guild: Get the guild object
-        :param member_id: int: Get the member id of a user
-        :return: A member object if it exists in the guild, or none if it does not
-        """
-
-        member: Optional[Member] = guild.get_member(member_id)
-
-        if member:
-            return member
-
-        try:
-            self.logger.warning(f"Member: {member_id} was not found in the cache. Sending HTTP Request.")
-
-            member: Optional[Member] = await guild.fetch_member(member_id)
-            return member
-        except (
-            nextcord_errors.Forbidden,
-            nextcord_errors.HTTPException,
-        ):
-            return None
 
     async def setup_session(self) -> None:
         """

@@ -163,7 +163,9 @@ class CommandGiveaway(CustomCog):
             for giveaway_data in response:
                 _embed: Optional[Embed] = None
                 try:
-                    _channel: Optional[GuildChannel] = await self.bot.getch_channel(giveaway_data[1])
+                    _channel: Optional[GuildChannel] = await self.bot.cache.get_channel(
+                        guild.id, giveaway_data[1]
+                    )
                     if not _channel:
                         raise nextcord_errors.NotFound  # pyright: ignore
 
@@ -263,8 +265,8 @@ class CommandGiveaway(CustomCog):
                             because User does not have .roles attribute that check_giveaway_requirement uses.
                             """
 
-                            member_object: Optional[Member] = await self.bot.getch_member(
-                                message.guild, user.id
+                            member_object: Optional[Member] = await self.bot.cache.get_member(
+                                message.guild.id, user.id
                             )
 
                             if not member_object:

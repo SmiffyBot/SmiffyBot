@@ -16,6 +16,8 @@ if TYPE_CHECKING:
 class ChannelUpdate(CustomCog):
     @CustomCog.listener()
     async def on_guild_channel_create(self, new_channel: GuildChannel):
+        await self.bot.cache.add_channel(guild_id=new_channel.guild.id, channel=new_channel)
+
         logs_channel: Optional[GuildChannel] = await self.get_logs_channel(new_channel.guild)
 
         if not isinstance(logs_channel, TextChannel):
@@ -75,6 +77,8 @@ class ChannelUpdate(CustomCog):
 
     @CustomCog.listener()
     async def on_guild_channel_delete(self, deleted_channel: GuildChannel):
+        await self.bot.cache.remove_channel(deleted_channel.guild.id, deleted_channel.id)
+
         logs_channel: Optional[GuildChannel] = await self.get_logs_channel(deleted_channel.guild)
 
         if not isinstance(logs_channel, TextChannel):

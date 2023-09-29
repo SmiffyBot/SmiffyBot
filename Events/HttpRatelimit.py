@@ -18,11 +18,12 @@ if TYPE_CHECKING:
 class HttpRatelimit(CustomCog):
     async def send_ratelimit_notify_to_channel(self, **kwargs: Any):
         channel_id: Optional[int] = bot_utils.get_value_from_config("ERRORS_CHANNEL_NOTIFY")
+        guild_id: Optional[int] = bot_utils.get_value_from_config("BOT_GUILD_ID")
 
-        if not isinstance(channel_id, int):
+        if not isinstance(channel_id, int) or not isinstance(guild_id, int):
             raise InvalidServerData
 
-        channel: Optional[GuildChannel] = await self.bot.getch_channel(channel_id)
+        channel: Optional[GuildChannel] = await self.bot.cache.get_channel(guild_id, channel_id, fetch=False)
 
         if not isinstance(channel, TextChannel):
             raise InvalidServerData

@@ -25,8 +25,8 @@ class CommandSerwer(CustomCog):
 
         guild_name: str = interaction.guild.name
 
-        guild_owner: Optional[Member] = await self.bot.getch_member(
-            interaction.guild,
+        guild_owner: Optional[Member] = await self.bot.cache.get_member(
+            interaction.guild.id,
             interaction.guild.owner_id,
         )
 

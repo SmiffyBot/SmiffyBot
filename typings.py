@@ -2,7 +2,16 @@
 from __future__ import annotations
 
 from logging import Logger
-from typing import TYPE_CHECKING, Any, Optional, Tuple, TypedDict, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Literal,
+    Optional,
+    Tuple,
+    TypedDict,
+    TypeVar,
+    Union,
+)
 
 from aiosqlite import Row
 
@@ -20,6 +29,12 @@ PlayerT = TypeVar("PlayerT", bound="VoiceProtocol")
 InterT = TypeVar("InterT", bound="Interaction")
 UserType = Union["Member", "User"]
 HTTPRatelimitParams = Tuple[int, int, float, str, Optional[str]]
+
+
+class CacheRequest(TypedDict):
+    guild_id: int
+    request_type: Literal["channel", "role", "member", "guild"]
+    args: tuple[Any, ...]
 
 
 class EconomyUserData(TypedDict):
