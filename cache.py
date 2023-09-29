@@ -27,6 +27,16 @@ class RequestLimiter:
     __slots__: tuple[str] = ("dispatched_requests", "client", "limit", "reset_after")
 
     def __init__(self, client: Smiffy, limit: int = 2, reset_after: int = 60):
+        """
+        RequestLimiter is responsible for handling the number of requests that go to the discord api.
+        If there are more identical requests than the set limit, the request is blocked.
+
+        :param client: Access the client object
+        :param limit: Set the maximum number of exact requests that can be sent to the api in a given time frame
+        :param reset_after: Set the time after which the cache will be reset
+        :return: None
+        """
+
         self.client: Smiffy = client
         self.limit = limit
         self.reset_after = reset_after
@@ -295,7 +305,6 @@ class BotCache:
         :param client: Pass the client object into the class
         :return: None
         """
-        self._request_limiter: RequestLimiter = RequestLimiter(client)
 
         self._loop: AbstractEventLoop = client.loop
         self._state: ConnectionState = client._connection
@@ -303,6 +312,8 @@ class BotCache:
         self._ws: DiscordWebSocket = client.ws
         self._logger: Logger = client.logger
         self._cached_guilds: dict[int, CachedGuild] = {}
+
+        self._request_limiter: RequestLimiter = RequestLimiter(client)
 
     @property
     def guilds(self) -> list[CachedGuild]:
