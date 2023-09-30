@@ -1462,7 +1462,7 @@ async def user_role_has_music_permissions(
 
     assert isinstance(interaction.user, Member) and interaction.guild
 
-    if interaction.user == interaction.guild.owner:
+    if interaction.user.id == interaction.guild.owner_id:
         return True
 
     bot: Smiffy = interaction.bot

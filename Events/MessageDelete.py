@@ -16,6 +16,9 @@ if TYPE_CHECKING:
 class MessageDelete(CustomCog):
     @CustomCog.listener()
     async def on_message_delete(self, message: Message):
+        if message.author.bot:
+            return
+
         if not isinstance(message.channel, (Thread, TextChannel)):
             return
 
