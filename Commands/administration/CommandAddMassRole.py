@@ -44,23 +44,42 @@ class CommandAddMassRole(CustomCog):
         if role.is_default() or role.is_bot_managed() or role.is_premium_subscriber():
             return await interaction.send_error_message(description="Podana rola nie może zostać użyta.")
 
-        for member in interaction.guild.members:
-            try:
-                if role not in member.roles:
-                    await member.add_roles(
-                        role,
-                        reason="Smiffy - AddMassRole",
-                    )
-            except (
-                errors.Forbidden,
-                errors.HTTPException,
-            ):
-                pass
+        index: int = 0
+        if interaction.guild.members != interaction.guild.member_count:
+            async for member in interaction.guild.fetch_members(limit=interaction.guild.member_count):
+                interaction.guild._add_member(member)
+
+                try:
+                    if role not in member.roles:
+                        await member.add_roles(
+                            role,
+                            reason="Smiffy - AddMassRole",
+                        )
+                        index += 1
+                except (
+                        errors.Forbidden,
+                        errors.HTTPException,
+                ):
+                    pass
+        else:
+            for member in interaction.guild.members:
+                try:
+                    if role not in member.roles:
+                        await member.add_roles(
+                            role,
+                            reason="Smiffy - AddMassRole",
+                        )
+                        index += 1
+                except (
+                    errors.Forbidden,
+                    errors.HTTPException,
+                ):
+                    pass
 
         return await interaction.send_success_message(
             title=f"Pomyślnie nadano role {Emojis.GREENBUTTON.value}",
             description=f"<:reply:1129168370642718833> Nadano role: {role.mention} "
-            f"dla `{interaction.guild.member_count}` osób",
+            f"dla `{index}` osób",
         )
 
 

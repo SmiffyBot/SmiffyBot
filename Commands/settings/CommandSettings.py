@@ -48,7 +48,7 @@ class CommandSettings(CustomCog):
     async def settings(self, interaction: CustomInteraction) -> None:
         await interaction.response.defer()
 
-        help_mention: str = interaction.get_command_mention(command_name="help")
+        help_mention: str = interaction.get_command_mention(command_name="pomoc")
 
         embed = Embed(
             title="`🛠️` Ustawienia na serwerze",

@@ -702,7 +702,7 @@ class CommandVerification(CustomCog):
         await interaction.response.defer()
 
         preview_embed = Embed(
-            title="<a:success:984490514332139600> Weryfikacja",
+            title=f"{Emojis.GREENBUTTON.value} Weryfikacja",
             color=Color.from_rgb(98, 231, 133),
             timestamp=utils.utcnow(),
             description=f"{Emojis.REPLY.value} Naciśnij przycisk poniżej, aby się zweryfikować.",
