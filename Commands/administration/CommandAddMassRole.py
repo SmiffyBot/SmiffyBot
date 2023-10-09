@@ -57,8 +57,8 @@ class CommandAddMassRole(CustomCog):
                         )
                         index += 1
                 except (
-                        errors.Forbidden,
-                        errors.HTTPException,
+                    errors.Forbidden,
+                    errors.HTTPException,
                 ):
                     pass
         else:
@@ -78,8 +78,7 @@ class CommandAddMassRole(CustomCog):
 
         return await interaction.send_success_message(
             title=f"Pomyślnie nadano role {Emojis.GREENBUTTON.value}",
-            description=f"<:reply:1129168370642718833> Nadano role: {role.mention} "
-            f"dla `{index}` osób",
+            description=f"<:reply:1129168370642718833> Nadano role: {role.mention} " f"dla `{index}` osób",
         )
 
 
