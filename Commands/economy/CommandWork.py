@@ -79,7 +79,9 @@ class CommandWork(CustomCog):
             if not response or not response[0]:
                 return await interaction.send_error_message(description="Wystąpił nieoczekiwany błąd.")
 
-            waited_seconds: Optional[int] = await EconomyManager.get_waited_seconds(interaction, "command_work")
+            waited_seconds: Optional[int] = await EconomyManager.get_waited_seconds(
+                interaction, "command_work"
+            )
 
             if not waited_seconds:
                 return await interaction.send_error_message(

@@ -27,13 +27,13 @@ from nextcord import (
     Game,
     Intents,
     Interaction,
+    Locale,
     Member,
     MemberCacheFlags,
     Message,
     Permissions,
     SlashApplicationCommand,
     Status,
-    Locale
 )
 from nextcord import errors as nextcord_errors
 from nextcord import ui, utils
